@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Document-OrderResponse>
+
+  <Document-Header>
+    <DocumentReceiveDateTime>2009-02-03T12:33:45</DocumentReceiveDateTime>
+    <DocumentProcessDateTime>2009-02-03T12:33:45</DocumentProcessDateTime>
+    <DocumentID>23</DocumentID>
+    <DocumentUID>5e7db75e342d9636c040d8720a0e8cac</DocumentUID>
+    <DocumentLink>https://service.ediweb.eu/edi/showDocument.jsp?uid=5e7db75e342d9636c040d8720 a0e8cac</DocumentLink>
+    <DocumentVersion>1.0</DocumentVersion>
+    <DocumentType>ORDRSP</DocumentType>
+    <DocumentSource>E</DocumentSource>
+    <OriginalFileName>roman.xml</OriginalFileName>
+    <SenderMessageID>0005</SenderMessageID>
+  </Document-Header>
+
+  <OrderResponse-Header>
+    <OrderResponseNumber>123</OrderResponseNumber>
+    <OrderResponseDate>2007-01-03</OrderResponseDate>
+    <ExpectedDeliveryDate>2009-01-02</ExpectedDeliveryDate>
+    <ExpectedDeliveryDateFrom>2009-01-01</ExpectedDeliveryDateFrom>
+    <ExpectedDeliveryDateTo>2009-01-15</ExpectedDeliveryDateTo>
+    <ExpectedShipmentDate>2009-01-15</ExpectedShipmentDate>
+    <OrderResponseCurrency>RUB</OrderResponseCurrency>
+    <PromotionReference>123</PromotionReference>
+    <DocumentFunctionCode>9</DocumentFunctionCode>
+    <DocumentNameCode>231</DocumentNameCode>
+    <OrderPaymentType>10</OrderPaymentType>
+    <Remarks>RemarksText</Remarks>
+
+    <Order>
+      <BuyerOrderNumber>YB00843551</BuyerOrderNumber>
+      <BuyerOrderDate>2015-04-22</BuyerOrderDate>
+      <SellerOrderNumber>Seller M222</SellerOrderNumber>
+      <SellerOrderDate>1999-09-09</SellerOrderDate>
+    </Order>
+
+    <Reference>
+      <ContractNumber>wf432</ContractNumber>
+      <ContractDate>2015-01-01</ContractDate>
+
+      <Reference-Elements>
+
+        <Reference-Element>
+          <Reference-Type>AQY</Reference-Type>
+          <Reference-Id>item1.jpg</Reference-Id>
+          <Reference-Date></Reference-Date>
+
+          <AdditionalData>
+
+            <Content>
+              ![CDATA[
+
+              <Root>
+                <Value>1</Value>
+              </Root>
+              ]]
+            </Content>
+          </AdditionalData>
+        </Reference-Element>
+      </Reference-Elements>
+    </Reference>
+  </OrderResponse-Header>
+
+  <Document-Parties>
+
+    <Sender>
+      <ILN>2000000000998</ILN>
+      <CodeBySender>AAA</CodeBySender>
+      <CodeByReceiver>1111</CodeByReceiver>
+      <Name>SenderName</Name>
+    </Sender>
+
+    <Receiver>
+      <ILN>4607164999995</ILN>
+      <CodeBySender>BBB</CodeBySender>
+      <CodeByReceiver>1111</CodeByReceiver>
+      <Name>ReceiverName</Name>
+    </Receiver>
+
+    <Creator>
+      <SystemUniqueCode>D333</SystemUniqueCode>
+      <CodeBySender>E324</CodeBySender>
+      <CodeByReceiver>FF-091</CodeByReceiver>
+      <Name>Agent</Name>
+      <TelephoneNumber>111</TelephoneNumber>
+      <E-mail>agent@email</E-mail>
+      <CreationType>A</CreationType>
+    </Creator>
+  </Document-Parties>
+
+  <DetailsOfTransport>
+    <TermsOfDelivery>BY</TermsOfDelivery>
+    <CarrierName>CarrierName_1</CarrierName>
+    <TemperatureMode></TemperatureMode>
+
+    <Line-Transport>
+      <DeliveryDateTime></DeliveryDateTime>
+      <EndOfLoadingTime></EndOfLoadingTime>
+      <ShipmentStartDateTime></ShipmentStartDateTime>
+      <ShipmentEndDateTime></ShipmentEndDateTime>
+    </Line-Transport>
+  </DetailsOfTransport>
+
+  <OrderResponse-Parties>
+
+    <Buyer>
+      <ILN>1111111111111</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z111</CodeBySeller>
+      <UtilizationRegisterNumber>10951469</UtilizationRegisterNumber>
+      <TaxID>111122223344</TaxID>
+      <Name>BuyerName</Name>
+    </Buyer>
+
+    <BuyerAgent>
+      <ILN>1111111111111</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z111</CodeBySeller>
+      <UtilizationRegisterNumber>10951469</UtilizationRegisterNumber>
+      <TaxID>111122223344</TaxID>
+      <Name>Name</Name>
+    </BuyerAgent>
+
+    <Payer>
+      <ILN>1111111111111</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z111</CodeBySeller>
+      <UtilizationRegisterNumber>10951469</UtilizationRegisterNumber>
+      <TaxID>111122223344</TaxID>
+      <Name>Name</Name>
+    </Payer>
+
+    <Invoicee>
+      <ILN>1111111111111</ILN>
+      <CodeByBuyer>Z333</CodeByBuyer>
+      <CodeBySeller>X234</CodeBySeller>
+      <UtilizationRegisterNumber>10951469</UtilizationRegisterNumber>
+      <TaxID>111122223344</TaxID>
+      <Name>Rimi FOOD</Name>
+      <RoomNumber></RoomNumber>
+      <Housing></Housing>
+      <HouseNumber></HouseNumber>
+      <StreetAndNumber>Porguvalja 2</StreetAndNumber>
+      <CityName>Juri</CityName>
+      <PostalCode>78001</PostalCode>
+      <Country>EE</Country>
+
+      <AccountInfo>
+        <AccountNumber>10002028538005</AccountNumber>
+        <CorrespondentAccount>30101810500</CorrespondentAccount>
+        <IBAN>EE241010002028538005</IBAN>
+        <BIC>EEUHEE2X</BIC>
+        <BankName>Eesti Uhispank</BankName>
+        <BankCity>Tallinn</BankCity>
+        <BankVATNumber></BankVATNumber>
+      </AccountInfo>
+    </Invoicee>
+
+    <UltimateCustomer>
+      <ILN>1111111111111</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z111</CodeBySeller>
+      <UtilizationRegisterNumber>10951469</UtilizationRegisterNumber>
+      <TaxID>111122223344</TaxID>
+      <Name>Name</Name>
+    </UltimateCustomer>
+
+    <Seller>
+      <ILN>1111111111111</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z111</CodeBySeller>
+      <UtilizationRegisterNumber>10951469</UtilizationRegisterNumber>
+      <TaxID>111122223344</TaxID>
+      <Name>Name</Name>
+
+      <OperatorDetails>
+        <Name>Operator Name</Name>
+        <TelephoneNumber>123-456-789</TelephoneNumber>
+        <E-mail>operator@email</E-mail>
+        <CodeBySeller>AAA</CodeBySeller>
+      </OperatorDetails>
+    </Seller>
+
+    <DeliveryPoint>
+      <ILN>4607164990022</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z345</CodeBySeller>
+      <Name>DeliveryPointName</Name>
+      <RoomNumber></RoomNumber>
+      <Housing></Housing>
+      <HouseNumber></HouseNumber>
+      <StreetAndNumber>Randvere 2</StreetAndNumber>
+      <CityName>Tabasalu</CityName>
+      <StateCode>11</StateCode>
+      <PostalCode>74001</PostalCode>
+      <Country>EE</Country>
+    </DeliveryPoint>
+
+    <ShipFrom>
+      <ILN>1234123412341</ILN>
+      <CodeByBuyer>Z123</CodeByBuyer>
+      <CodeBySeller>Z345</CodeBySeller>
+      <Name>ShipFromName</Name>
+      <RoomNumber></RoomNumber>
+      <Housing></Housing>
+      <HouseNumber></HouseNumber>
+      <StreetAndNumber>Randvere 2</StreetAndNumber>
+    </ShipFrom>
+  </OrderResponse-Parties>
+
+  <OrderResponse-Lines>
+
+    <Line>
+
+      <Line-Item>
+        <LineNumber>1</LineNumber>
+        <EAN>4610000620373</EAN>
+        <BuyerItemCode>3060810911</BuyerItemCode>
+        <SupplierItemCode>789012</SupplierItemCode>
+        <GS1DataBar></GS1DataBar>
+        <ItemDescription>ItemDescription_1</ItemDescription>
+        <SubstituteEAN>1111111111111</SubstituteEAN>
+        <BuyerSubstituteItemCode>123456</BuyerSubstituteItemCode>
+        <SupplierSubstituteItemCode>123456</SupplierSubstituteItemCode>
+        <SubstituteItemDescription>Item 1</SubstituteItemDescription>
+        <ItemStatus>5</ItemStatus>
+        <ItemType>CU</ItemType>
+        <OrderedQuantity>3.000</OrderedQuantity>
+        <RecommendedQuantity>2.000</RecommendedQuantity>
+        <AllocatedDelivered>2.000</AllocatedDelivered>
+        <QuantityToBeDelivered>1.000</QuantityToBeDelivered>
+        <QuantityDifference>1.000</QuantityDifference>
+        <OrderedUnitPacksize>1.000</OrderedUnitPacksize>
+        <UnitOfMeasure>PCE</UnitOfMeasure>
+        <OrderedUnitNetPrice>33.3500</OrderedUnitNetPrice>
+        <OrderedUnitGrossPrice>36.6800</OrderedUnitGrossPrice>
+        <SuggestedPrice>49.99</SuggestedPrice>
+        <TaxRate>10.00</TaxRate>
+        <Discount>15.00</Discount>
+        <NetAmount>15.00</NetAmount>
+        <TaxAmount>15.00</TaxAmount>
+        <GrossAmount>15.00</GrossAmount>
+        <ExpirationDate>2005-05-05</ExpirationDate>
+        <ExpectedDeliveryDate>1999-09-09</ExpectedDeliveryDate>
+        <ExpectedDeliveryTime>07:30</ExpectedDeliveryTime>
+        <SpecialConditionCode>15</SpecialConditionCode>
+        <CountryOfOrigin>PL</CountryOfOrigin>
+        <UnitWeight></UnitWeight>
+        <NetWeight></NetWeight>
+        <GrossWeight></GrossWeight>
+        <BoxWeight></BoxWeight>
+        <PalletWeight></PalletWeight>
+        <Caliber>10</Caliber>
+        <PalletQuantity></PalletQuantity>
+        <BoxesQuantity></BoxesQuantity>
+      </Line-Item>
+
+      <Line-Order>
+        <BuyerOrderNumber>Order</BuyerOrderNumber>
+        <BuyerOrderDate>1999-09-09</BuyerOrderDate>
+        <BuyerLineNumber>0000169420001</BuyerLineNumber>
+        <SellerOrderNumber>Seller M222</SellerOrderNumber>
+        <SellerOrderDate>1999-09-09</SellerOrderDate>
+        <SellerLineNumber>0000169420001</SellerLineNumber>
+      </Line-Order>
+
+      <Package-Identification>
+
+        <Goods-Identity>
+          <Type>PC1</Type>
+
+          <Range>
+            <ID-Begin></ID-Begin>
+          </Range>
+          <QuantityPerPack>22.000</QuantityPerPack>
+          <BaseUnit>PCE</BaseUnit>
+          <PackagingUnit>PA</PackagingUnit>
+        </Goods-Identity>
+      </Package-Identification>
+
+      <Line-Reference>
+
+        <Reference-Elements>
+
+          <Reference-Element>
+            <Reference-Type>AQY</Reference-Type>
+            <Reference-Id>item1.jpg</Reference-Id>
+            <Reference-Date></Reference-Date>
+
+            <AdditionalData>
+
+              <Content>
+                ![CDATA[
+
+                <Root>
+                  <Value>1</Value>
+                </Root>
+                ]]
+              </Content>
+            </AdditionalData>
+          </Reference-Element>
+        </Reference-Elements>
+      </Line-Reference>
+
+      <Line-Contract>
+        <ContractNumber>102548-95</ContractNumber>
+        <ContractDate>2014-12-28</ContractDate>
+
+        <Reference-Elements>
+
+          <Reference-Element>
+            <Reference-Type>AQY</Reference-Type>
+            <Reference-Id>item1.jpg</Reference-Id>
+            <Reference-Date>2015-01-16</Reference-Date>
+
+            <AdditionalData>
+              <Content><![CDATA[<Root parser_line_number="262"><Value parser_line_number="262">1</Value></Root>]]></Content>
+            </AdditionalData>
+          </Reference-Element>
+
+          <Reference-Element>
+            <Reference-Type>ABT</Reference-Type>
+            <Reference-Id>1235/4356/3453453</Reference-Id>
+          </Reference-Element>
+        </Reference-Elements>
+      </Line-Contract>
+    </Line>
+  </OrderResponse-Lines>
+
+  <OrderResponse-Summary>
+    <TotalLines>1</TotalLines>
+    <TotalPackages>123</TotalPackages>
+    <TotalAmount>2.000</TotalAmount>
+    <TotalNetAmount>44.30</TotalNetAmount>
+    <TotalTaxAmount>48.00</TotalTaxAmount>
+    <TotalGrossAmount>48.00</TotalGrossAmount>
+  </OrderResponse-Summary>
+
+  <Document-Attachments>
+
+    <Document-File>
+      <Attachment-Type>O</Attachment-Type>
+      <Content-Type>application/EDIFACT</Content-Type>
+      <Content-Encoding>identity</Content-Encoding>
+      <File-Name>![CDATA[ORDERS_2233.edi ]]</File-Name>
+      <Content>![UNB+UNOC:3+0000000000000:14+0000000000000:14+090423:111 1+4513491372++ORDERS']]</Content>
+    </Document-File>
+  </Document-Attachments>
+</Document-OrderResponse>

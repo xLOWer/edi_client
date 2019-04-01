@@ -1,0 +1,49 @@
+﻿<Window x:Class="EdiClient.EdiSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EdiClient"
+        xmlns:conf="clr-namespace:EdiClient.AppSettings"
+        mc:Ignorable="d"
+        Title="Настройки" Height="180" Width="500" Closed="WindowClosed">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Хост" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+               HorizontalContentAlignment="Center"
+               FontWeight="Bold"/>
+
+
+        <Label Content="Имя пользователя EDI" Grid.Column="0" Grid.Row="1"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_User), Mode=TwoWay}" Grid.Column="1" Grid.Row="1"/>
+
+        <Label Content="Пароль пользователя EDI" Grid.Column="0" Grid.Row="2"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_Password), Mode=TwoWay}" Grid.Column="1" Grid.Row="2" />
+
+        <Label Content="GLN пользователя EDI" Grid.Column="0" Grid.Row="3"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_GLN), Mode=TwoWay}" Grid.Column="1" Grid.Row="3"/>
+        
+        <Label Content="URL EDI" Grid.Column="0" Grid.Row="4"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_Url), Mode=TwoWay}" Grid.Column="1" Grid.Row="4"/>
+
+    </Grid>
+</Window>

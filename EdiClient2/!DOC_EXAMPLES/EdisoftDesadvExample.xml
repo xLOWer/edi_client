@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Document-DespatchAdvice>
+  <DespatchAdvice-Header>
+    <DespatchAdviceNumber>desadv_number</DespatchAdviceNumber>
+    <!-- Номер документа = Номер ТН -->
+    <DespatchAdviceDate>2015-10-23</DespatchAdviceDate>
+    <!-- Дата документа = Дата ТН -->
+    <BillOfLadingNumber>ТТН-12345</BillOfLadingNumber>
+    <!-- Номер ТТН -->
+    <BillOfLadingDate>2014-04-21</BillOfLadingDate>
+    <!-- Дата  ТТН -->
+    <EstimatedDeliveryDate>2015-10-24</EstimatedDeliveryDate>
+    <!-- Дата поставки -->
+    <EstimatedDeliveryTime>00:00</EstimatedDeliveryTime>
+    <!-- Время поставки -->
+    <BuyerOrderNumber>order_number</BuyerOrderNumber>
+    <!-- Номер заказа -->
+    <BuyerOrderDate>2015-10-21</BuyerOrderDate>
+    <!-- Дата заказа -->
+    <UTDnumber>21988</UTDnumber>
+    <!-- Номер УПД -->
+    <UTDDate>2018-01-12</UTDDate>
+    <!-- Дата УПД -->
+    <DocumentFunctionCode>9</DocumentFunctionCode>
+    <!-- Всегда "9" -->
+    <DocumentNameCode>351</DocumentNameCode>
+    <!-- Всегда "351" -->
+    <Remarks>Прибыть строго к: 2015-10-24 11:00;</Remarks>
+    <!-- Комментарий -->
+    <Reference>
+      <ContractNumber>02-6/11908-АР</ContractNumber>
+      <!-- Номер договора -->
+      <Reference-Elements>
+        <Reference-Element>
+          <Reference-Type>Z01</Reference-Type>
+          <Reference-Id>1320.000</Reference-Id>
+        </Reference-Element>
+        <Reference-Element>
+          <Reference-Type>Z02</Reference-Type>
+          <Reference-Id>1</Reference-Id>
+        </Reference-Element>
+        <Reference-Element>
+          <Reference-Type>TL</Reference-Type>
+        </Reference-Element>
+      </Reference-Elements>
+    </Reference>
+  </DespatchAdvice-Header>
+  <Document-Parties>
+    <Sender>
+      <ILN>2964303000052</ILN>
+      <!-- ILN Отправителя -->
+    </Sender>
+    <Receiver>
+      <ILN>4606038000003</ILN>
+      <!-- ILN получателя, для Х5 всегда 4606038000003 -->
+      <Name>X5 Retail Group N.V.</Name>
+      <!-- Наименование получателя -->
+    </Receiver>
+  </Document-Parties>
+  <DespatchAdvice-Transport>
+    <ConveyanceReferenceNumber>а101тв 197</ConveyanceReferenceNumber>
+    <!-- Номер транспортного средства -->
+    <ModeOfTransport>30</ModeOfTransport>
+    <VehicleType>Мерседес</VehicleType>
+    <!-- Марка автомашины  -->
+    <CarrierName>Имя</CarrierName>
+    <!-- ФИО водителя -->
+    <DispatchDateOfDelivery>2015-10-24</DispatchDateOfDelivery>
+    <ArrivalDateOfDelivery>2015-10-24</ArrivalDateOfDelivery>
+    <Capacity>0.0000</Capacity>
+  </DespatchAdvice-Transport>
+  <DespatchAdvice-Parties>
+    <Buyer>
+      <ILN>4606038008351</ILN>
+      <!-- ILN юр. лица покупателя -->
+      <Name>ТД Перекресток, ЗАО (X5)</Name>
+      <!-- Наименование покупателя -->
+    </Buyer>
+    <Seller>
+      <ILN>2964303000052</ILN>
+      <!-- ILN поставщика -->
+      <CodeByBuyer>7000004833</CodeByBuyer>
+      <!-- Код поставщика в системе X5 -->
+      <TaxID>7714586865</TaxID>
+      <!-- ИНН поставщика -->
+      <TaxRegistrationReasonCode>773401087</TaxRegistrationReasonCode>
+      <!-- КПП поставщика -->
+      <Name>Тестовый поставщик</Name>
+      <!-- Наименование поставщика -->
+    </Seller>
+    <DeliveryPoint>
+      <ILN>4606038018183</ILN>
+      <!-- ILN точки поставки (магазин/РЦ) -->
+      <Name>РЦ Лобня (Р50)(Московская обл.)</Name>
+      <!-- Наименование точки доставки -->
+      <StreetAndNumber>Краснополянский проезд, 1</StreetAndNumber>
+      <!-- Улица и номер дома точки доставки -->
+      <CityName>г.Лобня</CityName>
+      <!-- Город точки доставки -->
+      <StateCode>50</StateCode>
+      <!-- Код региона точки доставки -->
+      <PostalCode>141734</PostalCode>
+      <!-- Индекс точки доставки -->
+      <Country>RU</Country>
+      <!-- Страна точки доставки -->
+    </DeliveryPoint>
+  </DespatchAdvice-Parties>
+  <DespatchAdvice-Consignment>
+    <Packing-Sequence>
+      <Line>
+        <Line-Item>
+          <LineNumber>1</LineNumber>
+          <!-- Номер товарной линии -->
+          <EAN>4600987008517</EAN>
+          <!-- Штрих-код товара -->
+          <BuyerItemCode>3470332</BuyerItemCode>
+          <!-- PLU код товара X5 -->
+          <SupplierItemCode>12324</SupplierItemCode>
+          <!-- Внутренний код товара поставщика -->
+          <ItemDescription>Товар 1</ItemDescription>
+          <!-- Описание товара -->
+          <OrderedQuantity>1320.000</OrderedQuantity>
+          <!-- Заказанное количество -->
+          <QuantityDespatched>1320.000</QuantityDespatched>
+          <!-- Количество отправленное -->
+          <UnitPacksize>1.000</UnitPacksize>
+          <!-- Количество товара в упаковке -->
+          <UnitVolume>0.0000</UnitVolume>
+          <!-- Объем единицы -->
+          <UnitOfMeasure>PCE</UnitOfMeasure>
+          <!--
+Единица измерения (PCE = штуки, CT=коробы, KGM=килограммы)
+-->
+          <ExpirationDate>2014-06-20</ExpirationDate>
+          <!-- Дата окончания срока действия -->
+          <ProductionDate>2014-06-20</ProductionDate>
+          <!-- Дата производства -->
+          <BatchNumber>6</BatchNumber>
+          <!-- Номер партии -->
+        </Line-Item>
+        <Line-Order>
+          <BuyerLineNumber>1</BuyerLineNumber>
+        </Line-Order>
+        <Package-Identification>
+          <Goods-Identity>
+            <Type>BJ</Type>
+            <!-- Тип поля = описание палеты -->
+            <Range>
+              <ID-Begin>146070431000015858</ID-Begin>
+              <!-- SSCC код палеты -->
+            </Range>
+            <QuantityPerPack>1320.000</QuantityPerPack>
+            <!-- Количество данного товара в этой палете -->
+          </Goods-Identity>
+        </Package-Identification>
+      </Line>
+      <Line>
+        <Line-Item>
+          <LineNumber>2</LineNumber>
+          <!-- Номер товарной линии -->
+          <EAN>4600987008519</EAN>
+          <!-- Штрих-код товара -->
+          <BuyerItemCode>3470336</BuyerItemCode>
+          <!-- PLU код товара X5 -->
+          <SupplierItemCode>12524</SupplierItemCode>
+          <!-- Внутренний код товара поставщика -->
+          <ItemDescription>Товар 2</ItemDescription>
+          <!-- Описание товара -->
+          <OrderedQuantity>1320.000</OrderedQuantity>
+          <!-- Заказанное количество -->
+          <QuantityDespatched>1320.000</QuantityDespatched>
+          <!-- Количество отправленное -->
+          <UnitPacksize>1.000</UnitPacksize>
+          <!-- Количество товара в упаковке -->
+          <UnitVolume>0.0000</UnitVolume>
+          <!-- Объем единицы -->
+          <UnitOfMeasure>PCE</UnitOfMeasure>
+          <!--
+Единица измерения (PCE = штуки, CT=коробы, KGM=килограммы)
+-->
+        </Line-Item>
+        <Line-Order>
+          <BuyerLineNumber>1</BuyerLineNumber>
+        </Line-Order>
+        <Package-Identification>
+          <Goods-Identity>
+            <Type>BJ</Type>
+            <!-- Тип поля = описание палеты -->
+            <Range>
+              <ID-Begin>146070431000015858</ID-Begin>
+              <!-- SSCC код палеты -->
+            </Range>
+            <QuantityPerPack>1320.000</QuantityPerPack>
+            <!-- Количество данного товара в этой палете -->
+          </Goods-Identity>
+        </Package-Identification>
+      </Line>
+    </Packing-Sequence>
+  </DespatchAdvice-Consignment>
+  <DespatchAdvice-Summary>
+    <TotalPSequence>1</TotalPSequence>
+    <!-- Всегда "1" -->
+    <TotalLines>2</TotalLines>
+    <!-- Количество товарных линий -->
+    <TotalGoodsDespatchedAmount>1320.000</TotalGoodsDespatchedAmount>
+    <!-- Общее заказанное количество -->
+    <TotalNetAmount>67980.0000</TotalNetAmount>
+    <!-- Сумма по документу, без НДС  -->
+  </DespatchAdvice-Summary>
+</Document-DespatchAdvice>

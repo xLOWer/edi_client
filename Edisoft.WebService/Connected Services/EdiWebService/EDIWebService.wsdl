@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="urn:wsedi" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="EDIWebService" targetNamespace="urn:wsedi" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://soap3.ediweb.ru:443/wsedi/services/platform?xsd=1" namespace="urn:wsedi" />
+    </xsd:schema>
+  </types>
+  <message name="getDocument">
+    <part name="parameters" element="tns:getDocument" />
+  </message>
+  <message name="getDocumentResponse">
+    <part name="parameters" element="tns:getDocumentResponse" />
+  </message>
+  <message name="send">
+    <part name="parameters" element="tns:send" />
+  </message>
+  <message name="sendResponse">
+    <part name="parameters" element="tns:sendResponse" />
+  </message>
+  <message name="receive">
+    <part name="parameters" element="tns:receive" />
+  </message>
+  <message name="receiveResponse">
+    <part name="parameters" element="tns:receiveResponse" />
+  </message>
+  <message name="receiveBinary">
+    <part name="parameters" element="tns:receiveBinary" />
+  </message>
+  <message name="receiveBinaryResponse">
+    <part name="parameters" element="tns:receiveBinaryResponse" />
+  </message>
+  <message name="execSQLtoDoc">
+    <part name="parameters" element="tns:execSQLtoDoc" />
+  </message>
+  <message name="execSQLtoDocResponse">
+    <part name="parameters" element="tns:execSQLtoDocResponse" />
+  </message>
+  <message name="needUpdate">
+    <part name="parameters" element="tns:needUpdate" />
+  </message>
+  <message name="needUpdateResponse">
+    <part name="parameters" element="tns:needUpdateResponse" />
+  </message>
+  <message name="sendPDA">
+    <part name="parameters" element="tns:sendPDA" />
+  </message>
+  <message name="sendPDAResponse">
+    <part name="parameters" element="tns:sendPDAResponse" />
+  </message>
+  <message name="sendBinary">
+    <part name="parameters" element="tns:sendBinary" />
+  </message>
+  <message name="sendBinaryResponse">
+    <part name="parameters" element="tns:sendBinaryResponse" />
+  </message>
+  <message name="changeDocumentStatus">
+    <part name="parameters" element="tns:changeDocumentStatus" />
+  </message>
+  <message name="changeDocumentStatusResponse">
+    <part name="parameters" element="tns:changeDocumentStatusResponse" />
+  </message>
+  <message name="receivePDA">
+    <part name="parameters" element="tns:receivePDA" />
+  </message>
+  <message name="receivePDAResponse">
+    <part name="parameters" element="tns:receivePDAResponse" />
+  </message>
+  <message name="listPB">
+    <part name="parameters" element="tns:listPB" />
+  </message>
+  <message name="listPBResponse">
+    <part name="parameters" element="tns:listPBResponse" />
+  </message>
+  <message name="importDocument">
+    <part name="parameters" element="tns:importDocument" />
+  </message>
+  <message name="importDocumentResponse">
+    <part name="parameters" element="tns:importDocumentResponse" />
+  </message>
+  <message name="listPBEx">
+    <part name="parameters" element="tns:listPBEx" />
+  </message>
+  <message name="listPBExResponse">
+    <part name="parameters" element="tns:listPBExResponse" />
+  </message>
+  <message name="listPBExAll">
+    <part name="parameters" element="tns:listPBExAll" />
+  </message>
+  <message name="listPBExAllResponse">
+    <part name="parameters" element="tns:listPBExAllResponse" />
+  </message>
+  <message name="listMB">
+    <part name="parameters" element="tns:listMB" />
+  </message>
+  <message name="listMBResponse">
+    <part name="parameters" element="tns:listMBResponse" />
+  </message>
+  <message name="listMBAll">
+    <part name="parameters" element="tns:listMBAll" />
+  </message>
+  <message name="listMBAllResponse">
+    <part name="parameters" element="tns:listMBAllResponse" />
+  </message>
+  <message name="listMBAllEx">
+    <part name="parameters" element="tns:listMBAllEx" />
+  </message>
+  <message name="listMBAllExResponse">
+    <part name="parameters" element="tns:listMBAllExResponse" />
+  </message>
+  <message name="listMBAllExXML">
+    <part name="parameters" element="tns:listMBAllExXML" />
+  </message>
+  <message name="listMBAllExXMLResponse">
+    <part name="parameters" element="tns:listMBAllExXMLResponse" />
+  </message>
+  <message name="listMBEx">
+    <part name="parameters" element="tns:listMBEx" />
+  </message>
+  <message name="listMBExResponse">
+    <part name="parameters" element="tns:listMBExResponse" />
+  </message>
+  <message name="listMBLast">
+    <part name="parameters" element="tns:listMBLast" />
+  </message>
+  <message name="listMBLastResponse">
+    <part name="parameters" element="tns:listMBLastResponse" />
+  </message>
+  <message name="listMBRef">
+    <part name="parameters" element="tns:listMBRef" />
+  </message>
+  <message name="listMBRefResponse">
+    <part name="parameters" element="tns:listMBRefResponse" />
+  </message>
+  <message name="relationshipsXML">
+    <part name="parameters" element="tns:relationshipsXML" />
+  </message>
+  <message name="relationshipsXMLResponse">
+    <part name="parameters" element="tns:relationshipsXMLResponse" />
+  </message>
+  <message name="execSQL">
+    <part name="parameters" element="tns:execSQL" />
+  </message>
+  <message name="execSQLResponse">
+    <part name="parameters" element="tns:execSQLResponse" />
+  </message>
+  <message name="generateDocument">
+    <part name="parameters" element="tns:generateDocument" />
+  </message>
+  <message name="generateDocumentResponse">
+    <part name="parameters" element="tns:generateDocumentResponse" />
+  </message>
+  <message name="localizationInfoXML">
+    <part name="parameters" element="tns:localizationInfoXML" />
+  </message>
+  <message name="localizationInfoXMLResponse">
+    <part name="parameters" element="tns:localizationInfoXMLResponse" />
+  </message>
+  <message name="checkPacketStatus">
+    <part name="parameters" element="tns:checkPacketStatus" />
+  </message>
+  <message name="checkPacketStatusResponse">
+    <part name="parameters" element="tns:checkPacketStatusResponse" />
+  </message>
+  <message name="listForIntegration">
+    <part name="parameters" element="tns:listForIntegration" />
+  </message>
+  <message name="listForIntegrationResponse">
+    <part name="parameters" element="tns:listForIntegrationResponse" />
+  </message>
+  <message name="listBinaryforIntegrationFNS">
+    <part name="parameters" element="tns:listBinaryforIntegrationFNS" />
+  </message>
+  <message name="listBinaryforIntegrationFNSResponse">
+    <part name="parameters" element="tns:listBinaryforIntegrationFNSResponse" />
+  </message>
+  <message name="receiveDocForIntegration">
+    <part name="parameters" element="tns:receiveDocForIntegration" />
+  </message>
+  <message name="receiveDocForIntegrationResponse">
+    <part name="parameters" element="tns:receiveDocForIntegrationResponse" />
+  </message>
+  <message name="setIntegrationState">
+    <part name="parameters" element="tns:setIntegrationState" />
+  </message>
+  <message name="setIntegrationStateResponse">
+    <part name="parameters" element="tns:setIntegrationStateResponse" />
+  </message>
+  <message name="receiveBinaryforIntegration">
+    <part name="parameters" element="tns:receiveBinaryforIntegration" />
+  </message>
+  <message name="receiveBinaryforIntegrationResponse">
+    <part name="parameters" element="tns:receiveBinaryforIntegrationResponse" />
+  </message>
+  <message name="listForIntegrationErrors">
+    <part name="parameters" element="tns:listForIntegrationErrors" />
+  </message>
+  <message name="listForIntegrationErrorsResponse">
+    <part name="parameters" element="tns:listForIntegrationErrorsResponse" />
+  </message>
+  <message name="listForIntegrationIgnored">
+    <part name="parameters" element="tns:listForIntegrationIgnored" />
+  </message>
+  <message name="listForIntegrationIgnoredResponse">
+    <part name="parameters" element="tns:listForIntegrationIgnoredResponse" />
+  </message>
+  <message name="getIntegrationState">
+    <part name="parameters" element="tns:getIntegrationState" />
+  </message>
+  <message name="getIntegrationStateResponse">
+    <part name="parameters" element="tns:getIntegrationStateResponse" />
+  </message>
+  <message name="reprocessIntegrationDocs">
+    <part name="parameters" element="tns:reprocessIntegrationDocs" />
+  </message>
+  <message name="reprocessIntegrationDocsResponse">
+    <part name="parameters" element="tns:reprocessIntegrationDocsResponse" />
+  </message>
+  <message name="listForIntegrationErrorsPattern">
+    <part name="parameters" element="tns:listForIntegrationErrorsPattern" />
+  </message>
+  <message name="listForIntegrationErrorsPatternResponse">
+    <part name="parameters" element="tns:listForIntegrationErrorsPatternResponse" />
+  </message>
+  <message name="receivePrintForm">
+    <part name="parameters" element="tns:receivePrintForm" />
+  </message>
+  <message name="receivePrintFormResponse">
+    <part name="parameters" element="tns:receivePrintFormResponse" />
+  </message>
+  <message name="organizationInfo">
+    <part name="parameters" element="tns:organizationInfo" />
+  </message>
+  <message name="organizationInfoResponse">
+    <part name="parameters" element="tns:organizationInfoResponse" />
+  </message>
+  <message name="organizationInfoXML">
+    <part name="parameters" element="tns:organizationInfoXML" />
+  </message>
+  <message name="organizationInfoXMLResponse">
+    <part name="parameters" element="tns:organizationInfoXMLResponse" />
+  </message>
+  <message name="receiveFnsArchive">
+    <part name="parameters" element="tns:receiveFnsArchive" />
+  </message>
+  <message name="receiveFnsArchiveResponse">
+    <part name="parameters" element="tns:receiveFnsArchiveResponse" />
+  </message>
+  <message name="relationships">
+    <part name="parameters" element="tns:relationships" />
+  </message>
+  <message name="relationshipsResponse">
+    <part name="parameters" element="tns:relationshipsResponse" />
+  </message>
+  <portType name="EDIWebServicePortType">
+    <operation name="getDocument">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:getDocumentRequest" message="tns:getDocument" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:getDocumentResponse" message="tns:getDocumentResponse" />
+    </operation>
+    <operation name="send">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:sendRequest" message="tns:send" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:sendResponse" message="tns:sendResponse" />
+    </operation>
+    <operation name="receive">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receiveRequest" message="tns:receive" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receiveResponse" message="tns:receiveResponse" />
+    </operation>
+    <operation name="receiveBinary">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receiveBinaryRequest" message="tns:receiveBinary" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receiveBinaryResponse" message="tns:receiveBinaryResponse" />
+    </operation>
+    <operation name="execSQLtoDoc">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:execSQLtoDocRequest" message="tns:execSQLtoDoc" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:execSQLtoDocResponse" message="tns:execSQLtoDocResponse" />
+    </operation>
+    <operation name="needUpdate">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:needUpdateRequest" message="tns:needUpdate" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:needUpdateResponse" message="tns:needUpdateResponse" />
+    </operation>
+    <operation name="sendPDA">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:sendPDARequest" message="tns:sendPDA" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:sendPDAResponse" message="tns:sendPDAResponse" />
+    </operation>
+    <operation name="sendBinary">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:sendBinaryRequest" message="tns:sendBinary" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:sendBinaryResponse" message="tns:sendBinaryResponse" />
+    </operation>
+    <operation name="changeDocumentStatus">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:changeDocumentStatusRequest" message="tns:changeDocumentStatus" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:changeDocumentStatusResponse" message="tns:changeDocumentStatusResponse" />
+    </operation>
+    <operation name="receivePDA">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receivePDARequest" message="tns:receivePDA" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receivePDAResponse" message="tns:receivePDAResponse" />
+    </operation>
+    <operation name="listPB">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listPBRequest" message="tns:listPB" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listPBResponse" message="tns:listPBResponse" />
+    </operation>
+    <operation name="importDocument">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:importDocumentRequest" message="tns:importDocument" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:importDocumentResponse" message="tns:importDocumentResponse" />
+    </operation>
+    <operation name="listPBEx">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listPBExRequest" message="tns:listPBEx" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listPBExResponse" message="tns:listPBExResponse" />
+    </operation>
+    <operation name="listPBExAll">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listPBExAllRequest" message="tns:listPBExAll" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listPBExAllResponse" message="tns:listPBExAllResponse" />
+    </operation>
+    <operation name="listMB">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBRequest" message="tns:listMB" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBResponse" message="tns:listMBResponse" />
+    </operation>
+    <operation name="listMBAll">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBAllRequest" message="tns:listMBAll" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBAllResponse" message="tns:listMBAllResponse" />
+    </operation>
+    <operation name="listMBAllEx">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBAllExRequest" message="tns:listMBAllEx" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBAllExResponse" message="tns:listMBAllExResponse" />
+    </operation>
+    <operation name="listMBAllExXML">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBAllExXMLRequest" message="tns:listMBAllExXML" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBAllExXMLResponse" message="tns:listMBAllExXMLResponse" />
+    </operation>
+    <operation name="listMBEx">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBExRequest" message="tns:listMBEx" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBExResponse" message="tns:listMBExResponse" />
+    </operation>
+    <operation name="listMBLast">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBLastRequest" message="tns:listMBLast" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBLastResponse" message="tns:listMBLastResponse" />
+    </operation>
+    <operation name="listMBRef">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listMBRefRequest" message="tns:listMBRef" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listMBRefResponse" message="tns:listMBRefResponse" />
+    </operation>
+    <operation name="relationshipsXML">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:relationshipsXMLRequest" message="tns:relationshipsXML" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:relationshipsXMLResponse" message="tns:relationshipsXMLResponse" />
+    </operation>
+    <operation name="execSQL">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:execSQLRequest" message="tns:execSQL" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:execSQLResponse" message="tns:execSQLResponse" />
+    </operation>
+    <operation name="generateDocument">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:generateDocumentRequest" message="tns:generateDocument" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:generateDocumentResponse" message="tns:generateDocumentResponse" />
+    </operation>
+    <operation name="localizationInfoXML">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:localizationInfoXMLRequest" message="tns:localizationInfoXML" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:localizationInfoXMLResponse" message="tns:localizationInfoXMLResponse" />
+    </operation>
+    <operation name="checkPacketStatus">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:checkPacketStatusRequest" message="tns:checkPacketStatus" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:checkPacketStatusResponse" message="tns:checkPacketStatusResponse" />
+    </operation>
+    <operation name="listForIntegration">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationRequest" message="tns:listForIntegration" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationResponse" message="tns:listForIntegrationResponse" />
+    </operation>
+    <operation name="listBinaryforIntegrationFNS">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listBinaryforIntegrationFNSRequest" message="tns:listBinaryforIntegrationFNS" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listBinaryforIntegrationFNSResponse" message="tns:listBinaryforIntegrationFNSResponse" />
+    </operation>
+    <operation name="receiveDocForIntegration">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receiveDocForIntegrationRequest" message="tns:receiveDocForIntegration" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receiveDocForIntegrationResponse" message="tns:receiveDocForIntegrationResponse" />
+    </operation>
+    <operation name="setIntegrationState">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:setIntegrationStateRequest" message="tns:setIntegrationState" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:setIntegrationStateResponse" message="tns:setIntegrationStateResponse" />
+    </operation>
+    <operation name="receiveBinaryforIntegration">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receiveBinaryforIntegrationRequest" message="tns:receiveBinaryforIntegration" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receiveBinaryforIntegrationResponse" message="tns:receiveBinaryforIntegrationResponse" />
+    </operation>
+    <operation name="listForIntegrationErrors">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationErrorsRequest" message="tns:listForIntegrationErrors" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationErrorsResponse" message="tns:listForIntegrationErrorsResponse" />
+    </operation>
+    <operation name="listForIntegrationIgnored">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationIgnoredRequest" message="tns:listForIntegrationIgnored" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationIgnoredResponse" message="tns:listForIntegrationIgnoredResponse" />
+    </operation>
+    <operation name="getIntegrationState">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:getIntegrationStateRequest" message="tns:getIntegrationState" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:getIntegrationStateResponse" message="tns:getIntegrationStateResponse" />
+    </operation>
+    <operation name="reprocessIntegrationDocs">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:reprocessIntegrationDocsRequest" message="tns:reprocessIntegrationDocs" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:reprocessIntegrationDocsResponse" message="tns:reprocessIntegrationDocsResponse" />
+    </operation>
+    <operation name="listForIntegrationErrorsPattern">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationErrorsPatternRequest" message="tns:listForIntegrationErrorsPattern" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:listForIntegrationErrorsPatternResponse" message="tns:listForIntegrationErrorsPatternResponse" />
+    </operation>
+    <operation name="receivePrintForm">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receivePrintFormRequest" message="tns:receivePrintForm" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receivePrintFormResponse" message="tns:receivePrintFormResponse" />
+    </operation>
+    <operation name="organizationInfo">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:organizationInfoRequest" message="tns:organizationInfo" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:organizationInfoResponse" message="tns:organizationInfoResponse" />
+    </operation>
+    <operation name="organizationInfoXML">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:organizationInfoXMLRequest" message="tns:organizationInfoXML" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:organizationInfoXMLResponse" message="tns:organizationInfoXMLResponse" />
+    </operation>
+    <operation name="receiveFnsArchive">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:receiveFnsArchiveRequest" message="tns:receiveFnsArchive" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:receiveFnsArchiveResponse" message="tns:receiveFnsArchiveResponse" />
+    </operation>
+    <operation name="relationships">
+      <input wsam:Action="urn:wsedi:EDIWebServicePortType:relationshipsRequest" message="tns:relationships" />
+      <output wsam:Action="urn:wsedi:EDIWebServicePortType:relationshipsResponse" message="tns:relationshipsResponse" />
+    </operation>
+  </portType>
+  <binding name="EDIWebServicePortBinding" type="tns:EDIWebServicePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="getDocument">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="send">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receive">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receiveBinary">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="execSQLtoDoc">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="needUpdate">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendPDA">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendBinary">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="changeDocumentStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receivePDA">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listPB">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="importDocument">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listPBEx">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listPBExAll">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMB">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMBAll">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMBAllEx">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMBAllExXML">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMBEx">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMBLast">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listMBRef">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="relationshipsXML">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="execSQL">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="generateDocument">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="localizationInfoXML">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="checkPacketStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listForIntegration">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listBinaryforIntegrationFNS">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receiveDocForIntegration">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="setIntegrationState">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receiveBinaryforIntegration">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listForIntegrationErrors">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listForIntegrationIgnored">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getIntegrationState">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="reprocessIntegrationDocs">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="listForIntegrationErrorsPattern">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receivePrintForm">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="organizationInfo">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="organizationInfoXML">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="receiveFnsArchive">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="relationships">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="EDIWebService">
+    <port name="EDIWebServicePort" binding="tns:EDIWebServicePortBinding">
+      <soap:address location="https://soap3.ediweb.ru:443/wsedi/services/platform" />
+    </port>
+  </service>
+</definitions>

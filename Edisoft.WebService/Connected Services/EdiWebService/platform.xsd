@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="urn:wsedi" targetNamespace="urn:wsedi" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="changeDocumentStatus" type="tns:changeDocumentStatus" />
+  <xs:element name="changeDocumentStatusResponse" type="tns:changeDocumentStatusResponse" />
+  <xs:element name="checkPacketStatus" type="tns:checkPacketStatus" />
+  <xs:element name="checkPacketStatusResponse" type="tns:checkPacketStatusResponse" />
+  <xs:element name="execSQL" type="tns:execSQL" />
+  <xs:element name="execSQLResponse" type="tns:execSQLResponse" />
+  <xs:element name="execSQLtoDoc" type="tns:execSQLtoDoc" />
+  <xs:element name="execSQLtoDocResponse" type="tns:execSQLtoDocResponse" />
+  <xs:element name="generateDocument" type="tns:generateDocument" />
+  <xs:element name="generateDocumentResponse" type="tns:generateDocumentResponse" />
+  <xs:element name="getDocument" type="tns:getDocument" />
+  <xs:element name="getDocumentResponse" type="tns:getDocumentResponse" />
+  <xs:element name="getIntegrationState" type="tns:getIntegrationState" />
+  <xs:element name="getIntegrationStateResponse" type="tns:getIntegrationStateResponse" />
+  <xs:element name="importDocument" type="tns:importDocument" />
+  <xs:element name="importDocumentResponse" type="tns:importDocumentResponse" />
+  <xs:element name="listBinaryforIntegrationFNS" type="tns:listBinaryforIntegrationFNS" />
+  <xs:element name="listBinaryforIntegrationFNSResponse" type="tns:listBinaryforIntegrationFNSResponse" />
+  <xs:element name="listForIntegration" type="tns:listForIntegration" />
+  <xs:element name="listForIntegrationErrors" type="tns:listForIntegrationErrors" />
+  <xs:element name="listForIntegrationErrorsPattern" type="tns:listForIntegrationErrorsPattern" />
+  <xs:element name="listForIntegrationErrorsPatternResponse" type="tns:listForIntegrationErrorsPatternResponse" />
+  <xs:element name="listForIntegrationErrorsResponse" type="tns:listForIntegrationErrorsResponse" />
+  <xs:element name="listForIntegrationIgnored" type="tns:listForIntegrationIgnored" />
+  <xs:element name="listForIntegrationIgnoredResponse" type="tns:listForIntegrationIgnoredResponse" />
+  <xs:element name="listForIntegrationResponse" type="tns:listForIntegrationResponse" />
+  <xs:element name="listMB" type="tns:listMB" />
+  <xs:element name="listMBAll" type="tns:listMBAll" />
+  <xs:element name="listMBAllEx" type="tns:listMBAllEx" />
+  <xs:element name="listMBAllExResponse" type="tns:listMBAllExResponse" />
+  <xs:element name="listMBAllExXML" type="tns:listMBAllExXML" />
+  <xs:element name="listMBAllExXMLResponse" type="tns:listMBAllExXMLResponse" />
+  <xs:element name="listMBAllResponse" type="tns:listMBAllResponse" />
+  <xs:element name="listMBEx" type="tns:listMBEx" />
+  <xs:element name="listMBExResponse" type="tns:listMBExResponse" />
+  <xs:element name="listMBLast" type="tns:listMBLast" />
+  <xs:element name="listMBLastResponse" type="tns:listMBLastResponse" />
+  <xs:element name="listMBRef" type="tns:listMBRef" />
+  <xs:element name="listMBRefResponse" type="tns:listMBRefResponse" />
+  <xs:element name="listMBResponse" type="tns:listMBResponse" />
+  <xs:element name="listPB" type="tns:listPB" />
+  <xs:element name="listPBEx" type="tns:listPBEx" />
+  <xs:element name="listPBExAll" type="tns:listPBExAll" />
+  <xs:element name="listPBExAllResponse" type="tns:listPBExAllResponse" />
+  <xs:element name="listPBExResponse" type="tns:listPBExResponse" />
+  <xs:element name="listPBResponse" type="tns:listPBResponse" />
+  <xs:element name="localizationInfoXML" type="tns:localizationInfoXML" />
+  <xs:element name="localizationInfoXMLResponse" type="tns:localizationInfoXMLResponse" />
+  <xs:element name="mailbox-response" type="tns:content" />
+  <xs:element name="needUpdate" type="tns:needUpdate" />
+  <xs:element name="needUpdateResponse" type="tns:needUpdateResponse" />
+  <xs:element name="organizationInfo" type="tns:organizationInfo" />
+  <xs:element name="organizationInfoResponse" type="tns:organizationInfoResponse" />
+  <xs:element name="organizationInfoXML" type="tns:organizationInfoXML" />
+  <xs:element name="organizationInfoXMLResponse" type="tns:organizationInfoXMLResponse" />
+  <xs:element name="receive" type="tns:receive" />
+  <xs:element name="receiveBinary" type="tns:receiveBinary" />
+  <xs:element name="receiveBinaryResponse" type="tns:receiveBinaryResponse" />
+  <xs:element name="receiveBinaryforIntegration" type="tns:receiveBinaryforIntegration" />
+  <xs:element name="receiveBinaryforIntegrationResponse" type="tns:receiveBinaryforIntegrationResponse" />
+  <xs:element name="receiveDocForIntegration" type="tns:receiveDocForIntegration" />
+  <xs:element name="receiveDocForIntegrationResponse" type="tns:receiveDocForIntegrationResponse" />
+  <xs:element name="receiveFnsArchive" type="tns:receiveFnsArchive" />
+  <xs:element name="receiveFnsArchiveResponse" type="tns:receiveFnsArchiveResponse" />
+  <xs:element name="receivePDA" type="tns:receivePDA" />
+  <xs:element name="receivePDAResponse" type="tns:receivePDAResponse" />
+  <xs:element name="receivePrintForm" type="tns:receivePrintForm" />
+  <xs:element name="receivePrintFormResponse" type="tns:receivePrintFormResponse" />
+  <xs:element name="receiveResponse" type="tns:receiveResponse" />
+  <xs:element name="relation-response" type="tns:contentRelationships" />
+  <xs:element name="relationships" type="tns:relationships" />
+  <xs:element name="relationshipsResponse" type="tns:relationshipsResponse" />
+  <xs:element name="relationshipsXML" type="tns:relationshipsXML" />
+  <xs:element name="relationshipsXMLResponse" type="tns:relationshipsXMLResponse" />
+  <xs:element name="reprocessIntegrationDocs" type="tns:reprocessIntegrationDocs" />
+  <xs:element name="reprocessIntegrationDocsResponse" type="tns:reprocessIntegrationDocsResponse" />
+  <xs:element name="send" type="tns:send" />
+  <xs:element name="sendBinary" type="tns:sendBinary" />
+  <xs:element name="sendBinaryResponse" type="tns:sendBinaryResponse" />
+  <xs:element name="sendPDA" type="tns:sendPDA" />
+  <xs:element name="sendPDAResponse" type="tns:sendPDAResponse" />
+  <xs:element name="sendResponse" type="tns:sendResponse" />
+  <xs:element name="setIntegrationState" type="tns:setIntegrationState" />
+  <xs:element name="setIntegrationStateResponse" type="tns:setIntegrationStateResponse" />
+  <xs:complexType name="execSQLtoDoc">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="uid" type="xs:string" />
+      <xs:element minOccurs="0" name="params" type="xs:string" />
+      <xs:element minOccurs="0" name="senderILN" type="xs:string" />
+      <xs:element minOccurs="0" name="receiverILN" type="xs:string" />
+      <xs:element minOccurs="0" name="docType" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="execSQLtoDocResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="retRes">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="qualified" name="cnt" type="xs:string" />
+      <xs:element minOccurs="0" form="qualified" name="res" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAllEx">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="receiveBinary" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAllExResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getDocument">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element name="documentId" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getDocumentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="send">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentVersion" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="documentTest" type="xs:string" />
+      <xs:element minOccurs="0" name="controlNumber" type="xs:string" />
+      <xs:element minOccurs="0" name="documentContent" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegration">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="userLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="userPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="receiver" type="xs:string" />
+      <xs:element minOccurs="0" name="docType" type="xs:string" />
+      <xs:element minOccurs="0" name="itemCount" type="xs:string" />
+      <xs:element minOccurs="0" name="dateFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="dateTo" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendPDA">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentVersion" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="documentTest" type="xs:string" />
+      <xs:element minOccurs="0" name="controlNumber" type="xs:string" />
+      <xs:element minOccurs="0" name="documentContent" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+      <xs:element minOccurs="0" name="creationType" type="xs:string" />
+      <xs:element minOccurs="0" name="hardwareId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendPDAResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listPBEx">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentVersion" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="documentTest" type="xs:string" />
+      <xs:element minOccurs="0" name="dateFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="dateTo" type="xs:string" />
+      <xs:element minOccurs="0" name="itemFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="itemTo" type="xs:string" />
+      <xs:element minOccurs="0" name="orderBy" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listPBExResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organizationInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="inn" type="xs:string" />
+      <xs:element minOccurs="0" name="kpp" type="xs:string" />
+      <xs:element minOccurs="0" name="ogrn" type="xs:string" />
+      <xs:element minOccurs="0" name="fnsId" type="xs:string" />
+      <xs:element minOccurs="0" name="gln" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organizationInfoResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="localizationInfoXML">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="type" type="xs:string" />
+      <xs:element minOccurs="0" name="sender" type="xs:string" />
+      <xs:element minOccurs="0" name="headquarters" type="xs:string" />
+      <xs:element minOccurs="0" name="localization" type="xs:string" />
+      <xs:element minOccurs="0" name="regionCode" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="localizationInfoXMLResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:localizationInfoXMLModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="localizationInfoXMLModel">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:resultAbstract">
+        <xs:sequence>
+          <xs:element minOccurs="0" form="qualified" name="cnt" type="tns:contentLocalizationInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="resultAbstract" abstract="true">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="qualified" name="message-error" type="xs:string" />
+      <xs:element minOccurs="0" form="qualified" name="res" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="contentLocalizationInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="localization-info" type="tns:localizationInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="localizationInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="cityName" type="xs:string" />
+      <xs:element minOccurs="0" name="codeByReceiver" type="xs:string" />
+      <xs:element minOccurs="0" name="codeBySender" type="xs:string" />
+      <xs:element minOccurs="0" name="country" type="xs:string" />
+      <xs:element minOccurs="0" name="email" type="xs:string" />
+      <xs:element minOccurs="0" name="headquartersIln" type="xs:string" />
+      <xs:element minOccurs="0" name="headquartersInn" type="xs:string" />
+      <xs:element minOccurs="0" name="headquartersName" type="xs:string" />
+      <xs:element minOccurs="0" name="iln" type="xs:string" />
+      <xs:element minOccurs="0" name="inn" type="xs:string" />
+      <xs:element minOccurs="0" name="kpp" type="xs:string" />
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="phoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" name="postalCode" type="xs:string" />
+      <xs:element minOccurs="0" name="stateCode" type="xs:string" />
+      <xs:element minOccurs="0" name="streetAndNumber" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationErrors">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationErrorsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receive">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="changeDocumentStatus" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveBinary">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveBinaryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:ediFileData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ediFileData">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="qualified" name="fileData" type="xs:base64Binary" />
+      <xs:element minOccurs="0" form="qualified" name="fileName" type="xs:string" />
+      <xs:element minOccurs="0" form="qualified" name="res" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationships">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationshipsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveFnsArchive">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:long" />
+      <xs:element minOccurs="0" name="fileId" type="xs:string" />
+      <xs:element name="includePdf" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveFnsArchiveResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:ediFileData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMB">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentVersion" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="documentTest" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStatus" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="changeDocumentStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+      <xs:element minOccurs="0" name="status" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="changeDocumentStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationshipsXML">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationshipsXMLResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:relationshipsModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relationshipsModel">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:resultAbstract">
+        <xs:sequence>
+          <xs:element minOccurs="0" form="qualified" name="cnt" type="tns:contentRelationships" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="contentRelationships">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="relation" type="tns:relation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="relation">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="description" type="xs:string" />
+      <xs:element minOccurs="0" name="direction" type="xs:string" />
+      <xs:element minOccurs="0" name="document-standard" type="xs:string" />
+      <xs:element minOccurs="0" name="document-type" type="xs:string" />
+      <xs:element minOccurs="0" name="form" type="xs:string" />
+      <xs:element minOccurs="0" name="partner-iln" type="xs:string" />
+      <xs:element minOccurs="0" name="partner-name" type="xs:string" />
+      <xs:element minOccurs="0" name="relation-id" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="importDocument">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="userLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="userPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentGuid" type="xs:string" />
+      <xs:element minOccurs="0" name="documentCreationDate" type="xs:string" />
+      <xs:element minOccurs="0" name="documentContent" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="importDocumentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendBinary">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerIln" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="fileName" type="xs:string" />
+      <xs:element minOccurs="0" name="data" nillable="true" type="xs:base64Binary" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendBinaryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receivePrintForm">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+      <xs:element minOccurs="0" name="filename-orig" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receivePrintFormResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:ediFileData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationIgnored">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationIgnoredResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveBinaryforIntegration">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="userLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="userPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveBinaryforIntegrationResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:ediFileData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="checkPacketStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element name="packetId" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="checkPacketStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBLast">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBLastResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveDocForIntegration">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="userLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="userPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receiveDocForIntegrationResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listPB">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentVersion" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="documentTest" type="xs:string" />
+      <xs:element minOccurs="0" name="dateFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="dateTo" type="xs:string" />
+      <xs:element minOccurs="0" name="itemFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="itemTo" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listPBResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receivePDA">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="changeDocumentStatus" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+      <xs:element minOccurs="0" name="hardwareId" type="xs:string" />
+      <xs:element minOccurs="0" name="lastUpdateDateTime" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="receivePDAResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="execSQL">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="uid" type="xs:string" />
+      <xs:element minOccurs="0" name="params" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="execSQLResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listPBExAll">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listPBExAllResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getIntegrationState">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getIntegrationStateResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listBinaryforIntegrationFNS">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="userLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="userPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listBinaryforIntegrationFNSResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBRef">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="documentNumber" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBRefResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:listMBAllExModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAllExModel">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:resultAbstract">
+        <xs:sequence>
+          <xs:element minOccurs="0" form="qualified" name="cnt" type="tns:content" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="content">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="document-info" type="tns:documentInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="documentInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="buyer-iln" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-date-not-after" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-date-not-before" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-initials-signatory" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-issuer-adres" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-issuer-inn" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-issuer-ogrn" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-issuer-organization" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-position" type="xs:string" />
+      <xs:element minOccurs="0" name="cert-serial-number" type="xs:integer" />
+      <xs:element minOccurs="0" name="cert-thumbprint" type="xs:string" />
+      <xs:element minOccurs="0" name="comment" type="xs:string" />
+      <xs:element minOccurs="0" name="comment-event" type="xs:string" />
+      <xs:element minOccurs="0" name="create-date-time" type="xs:string" />
+      <xs:element minOccurs="0" name="del-street-and-number" type="xs:string" />
+      <xs:element minOccurs="0" name="delivery-code-by-sender" type="xs:string" />
+      <xs:element minOccurs="0" name="delivery-iln" type="xs:string" />
+      <xs:element minOccurs="0" name="delivery-name" type="xs:string" />
+      <xs:element minOccurs="0" name="document-control-number" type="xs:string" />
+      <xs:element minOccurs="0" name="document-date" type="xs:string" />
+      <xs:element minOccurs="0" name="document-id" type="xs:string" />
+      <xs:element minOccurs="0" name="document-number" type="xs:string" />
+      <xs:element minOccurs="0" name="document-standard" type="xs:string" />
+      <xs:element minOccurs="0" name="document-status" type="xs:string" />
+      <xs:element minOccurs="0" name="document-test" type="xs:string" />
+      <xs:element minOccurs="0" name="document-type" type="xs:string" />
+      <xs:element minOccurs="0" name="document-type-fns" type="xs:string" />
+      <xs:element minOccurs="0" name="document-version" type="xs:string" />
+      <xs:element minOccurs="0" name="error-text" type="xs:string" />
+      <xs:element minOccurs="0" name="event-type" type="xs:string" />
+      <xs:element minOccurs="0" name="file-content" type="xs:string" />
+      <xs:element minOccurs="0" name="file-name" type="xs:string" />
+      <xs:element minOccurs="0" name="filename-orig" type="xs:string" />
+      <xs:element minOccurs="0" name="fns-status" type="xs:string" />
+      <xs:element minOccurs="0" name="is-signature-required" type="xs:string" />
+      <xs:element minOccurs="0" name="parent-document-id" type="xs:string" />
+      <xs:element minOccurs="0" name="partner-iln" type="xs:string" />
+      <xs:element minOccurs="0" name="receive-date" type="xs:string" />
+      <xs:element minOccurs="0" name="receiver-box-id	" type="xs:string" />
+      <xs:element minOccurs="0" name="reference-number" type="xs:string" />
+      <xs:element minOccurs="0" name="sender-box-id" type="xs:string" />
+      <xs:element minOccurs="0" name="is-sign" type="xs:string" />
+      <xs:element minOccurs="0" name="tracking-id" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="setIntegrationState">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="userLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="userPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+      <xs:element minOccurs="0" name="state" type="xs:string" />
+      <xs:element minOccurs="0" name="message" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="setIntegrationStateResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="reprocessIntegrationDocs">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingIds" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="reprocessIntegrationDocsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAll">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="receiveBinary" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAllResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAllExXML">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="receiveBinary" type="xs:boolean" />
+      <xs:element minOccurs="0" name="lastDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="endDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="uuid" type="xs:string" />
+      <xs:element minOccurs="0" name="direction" type="xs:string" />
+      <xs:element minOccurs="0" name="status" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBAllExXMLResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:listMBAllExModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="needUpdate">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="needUpdateResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="generateDocument">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="trackingId" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="generateDocumentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBEx">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="partnerILN" type="xs:string" />
+      <xs:element minOccurs="0" name="documentType" type="xs:string" />
+      <xs:element minOccurs="0" name="documentVersion" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="documentTest" type="xs:string" />
+      <xs:element minOccurs="0" name="dateFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="dateTo" type="xs:string" />
+      <xs:element minOccurs="0" name="itemFrom" type="xs:string" />
+      <xs:element minOccurs="0" name="itemTo" type="xs:string" />
+      <xs:element minOccurs="0" name="documentStatus" type="xs:string" />
+      <xs:element name="timeout" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listMBExResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationErrorsPattern">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="systemLogin" type="xs:string" />
+      <xs:element minOccurs="0" name="systemPassword" type="xs:string" />
+      <xs:element minOccurs="0" name="pattern" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listForIntegrationErrorsPatternResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:retRes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organizationInfoXML">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="password" type="xs:string" />
+      <xs:element minOccurs="0" name="inn" type="xs:string" />
+      <xs:element minOccurs="0" name="kpp" type="xs:string" />
+      <xs:element minOccurs="0" name="ogrn" type="xs:string" />
+      <xs:element minOccurs="0" name="fnsId" type="xs:string" />
+      <xs:element minOccurs="0" name="gln" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organizationInfoXMLResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:organizationInfoModel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organizationInfoModel">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:resultAbstract">
+        <xs:sequence>
+          <xs:element minOccurs="0" form="qualified" name="cnt" type="tns:contentOrganizationInfo" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="contentOrganizationInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="organization-info" type="tns:organizationInfoSoap" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organizationInfoSoap">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="address" type="xs:string" />
+      <xs:element minOccurs="0" name="boxId" type="xs:string" />
+      <xs:element minOccurs="0" name="city" type="xs:string" />
+      <xs:element minOccurs="0" name="fnsId" type="xs:string" />
+      <xs:element minOccurs="0" name="gln" type="xs:string" />
+      <xs:element minOccurs="0" name="inn" type="xs:string" />
+      <xs:element minOccurs="0" name="kpp" type="xs:string" />
+      <xs:element minOccurs="0" name="nameFull" type="xs:string" />
+      <xs:element minOccurs="0" name="nameShort" type="xs:string" />
+      <xs:element minOccurs="0" name="ogrn" type="xs:string" />
+      <xs:element minOccurs="0" name="region" type="xs:string" />
+      <xs:element minOccurs="0" name="stateCode" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
