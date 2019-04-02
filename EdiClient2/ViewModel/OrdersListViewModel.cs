@@ -35,6 +35,7 @@ namespace EdiClient.ViewModel.Orders
 
         public override void UpdateView()
         {
+            IsCanRefresh = false;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -48,22 +49,22 @@ namespace EdiClient.ViewModel.Orders
                     var docNums = "";
                     foreach (var doc in Documents)
                     {
-                        docNums += ","+doc.OrderHeader.OrderNumber;
+                        docNums += ","+doc?.OrderHeader?.OrderNumber;
                     }
-                    docNums = docNums.Trim(',');
+                    docNums = docNums?.Trim(',');
 
                     var detailsFailed = OrdersRepository.GetDetailsFailed(docNums);
                     foreach (var doc in Documents)
                     {
-                        if (docsAlredyInBufferTable.Contains(doc.OrderHeader.OrderNumber))
+                        if (docsAlredyInBufferTable.Contains(doc?.OrderHeader?.OrderNumber))
                         {
                             doc.IsInDatabase = true;
                         }
                         if (doc.IsFailed && doc.IsInDatabase)
-                            OrdersRepository.UpdateFailedDetails(doc.OrderHeader.OrderNumber);
+                            OrdersRepository.UpdateFailedDetails(doc?.OrderHeader?.OrderNumber);
                         foreach (var line in doc.OrderLines.Lines)
                         {
-                            if (detailsFailed.Contains(line.LineItem.BuyerItemCode))
+                            if (detailsFailed.Contains(line?.LineItem?.BuyerItemCode))
                             {
                                 line.IsFailed = true;
                                 doc.IsFailed = true;
@@ -79,6 +80,7 @@ namespace EdiClient.ViewModel.Orders
             }
             watch.Stop();
             Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+            IsCanRefresh = true;
         }
 
         public override void SaveToXml(object o = null)

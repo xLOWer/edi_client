@@ -33,12 +33,22 @@ namespace EdiClient.ViewModel.Common
             }
         }
 
+        private bool isCanRefresh { get; set; } = true;
         private string time;
         private DateTime dateTo;
         private DateTime dateFrom;
         private TModel selectedItem;
         private List<TModel> documents;
 
+        public bool IsCanRefresh
+        {
+            get { return isCanRefresh; }
+            set
+            {
+                isCanRefresh = value;
+                NotifyPropertyChanged("IsCanRefresh");
+            }
+        }
         public string Time
         {
             get { return time; }
@@ -112,7 +122,12 @@ namespace EdiClient.ViewModel.Common
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
 
-        public virtual void Refresh(object o = null) { Task.Factory.StartNew(() => Refresh()); }
+        public virtual void Refresh(object o = null)
+        {
+            Task.Factory.StartNew(() => {
+                Refresh();
+            });
+        }
 
         public virtual void UpdateView()
         {

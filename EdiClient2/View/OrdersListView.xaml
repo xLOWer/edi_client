@@ -45,17 +45,59 @@
                         DisplayDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  SelectedDateFormat="Long" Grid.Column="1" Margin="2,2" />
 
             <Button ToolTip="Предыдущий день" Grid.Column="2" Margin="2,2" BorderBrush="Transparent" Background="Transparent"   BorderThickness="0"
-                    Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}">
-                <Image Source="{Binding ImageBack}" Margin="-1"/>
+                    Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}"  
+                    IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <Image Source="{Binding ImageBack}" Margin="-1">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
             </Button>
 
             <Button ToolTip="Следующий день" Grid.Column="3" Margin="2,2"  BorderBrush="Transparent" Background="Transparent"   BorderThickness="0"
-                    Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}" >
-                <Image Source="{Binding ImageForward}" Margin="-1"/>
+                    Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}" 
+                    IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <Image Source="{Binding ImageForward}" Margin="-1" >
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
             </Button>
 
-            <Button ToolTip="Обновить" Margin="2,2" Command="{Binding RefreshCommand}" Grid.Column="5" BorderBrush="Transparent" Background="Transparent"   BorderThickness="0">
-                <Image Source="{Binding ImageRefresh}" Margin="-1"/> 
+            <Button ToolTip="Обновить" Margin="2,2" Command="{Binding RefreshCommand}" Grid.Column="5" BorderBrush="Transparent" Background="Transparent"   
+                    BorderThickness="0" IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <Image Source="{Binding ImageRefresh}" Margin="-1">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
             </Button>
 
             <Button ToolTip="Создать документ в трейдере" Margin="2,2" Command="{Binding CreateTraderDocumentCommand}" Grid.Column="6" 
@@ -82,6 +124,7 @@
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         SelectedItem="{Binding  Path=(repo:OrdersRepository.SelectedRelationship), Mode=TwoWay}"
                         DisplayMemberPath="Name"
+                        IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                         SelectedValuePath="Name"/>
         </Grid>
         
@@ -107,9 +150,6 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                             <Setter Property="Background" Value="#ff9696"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                            <Setter Property="Background" Value="White"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

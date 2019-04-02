@@ -66,7 +66,7 @@ namespace EdiClient.Services.Repository
             NativeTaskList.Clear();
 
             var docNums = GetAllOrderIds() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
-            var ex = Orders.Where(x => !docNums.Contains(x.OrderHeader.OrderNumber)).ToList() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
+            var ex = Orders?.Where(x => !docNums.Contains(x?.OrderHeader?.OrderNumber))?.ToList() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
             SetIncomingOrdersIntoBufferTable(ex);
             return Orders;
         }
