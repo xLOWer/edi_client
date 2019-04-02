@@ -20,13 +20,8 @@ namespace EdiClient.Services.Repository
         internal static void SendOrdrsp(DocumentOrderResponse order)
         {
             EdiService.Send(order.OrderResponseParties.Buyer.ILN, "ORDRSP", "", "", "T", "", XmlService<DocumentOrderResponse>.Serialize(order), 20);
-
-            var insertSql = $@"UPDATE EDI_DOC SET IS_IN_EDI_AS_ORDRSP = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
-= (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
-= (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{order.OrderResponseHeader.OrderResponseNumber}' and rownum = 1) and rownum = 1)";
-
-            DbService.Insert(insertSql);
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            DbService.Insert(SqlConfiguratorService.Sql_UpdateEdiDocSetIsInEdiAsORDRSP(order.OrderResponseHeader.OrderResponseNumber));
+            ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -122,7 +117,7 @@ namespace EdiClient.Services.Repository
                         });
                     }
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return ordrsp ?? new List<DocumentOrderResponse>();
         }
 

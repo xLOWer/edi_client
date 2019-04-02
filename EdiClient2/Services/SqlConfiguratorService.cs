@@ -21,6 +21,10 @@ namespace EdiClient.Services
             => "SELECT ID FROM edi_doc WHERE HAS_FAILED_DETAILS = 1";
         internal static string Sql_SelectAllOrderIds() 
             => "SELECT ORDER_NUMBER FROM HPCSERVICE.EDI_DOC";
+        internal static string Sql_UpdateEdiDocSetIsInEdiAsORDRSP(string code) =>
+            $@"UPDATE EDI_DOC SET IS_IN_EDI_AS_ORDRSP = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
+            = (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
+            = (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{code}' and rownum = 1) and rownum = 1)";
         internal static string Sql_SelectOrdrspDetails(string traderDocId)
         {
             return $@"SELECT 

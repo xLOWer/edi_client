@@ -58,7 +58,7 @@ namespace EdiClient.Services
                 OracleConnectionService.CloseDatabaseConnect();
             }
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             return DataGridItems;
         }
 
@@ -72,7 +72,7 @@ namespace EdiClient.Services
                 command.ExecuteNonQuery();
                 OracleConnectionService.CloseDatabaseConnect();
             }
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
         }
 
         internal static void Insert(List<string> Sqls)
@@ -88,7 +88,7 @@ namespace EdiClient.Services
                     OracleConnectionService.CloseDatabaseConnect();
                 }
             }
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
 
         }
 
@@ -121,7 +121,7 @@ namespace EdiClient.Services
             }
 
             Documents = ToListof(DataGridItems).ToList();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             return Documents;
         }
 
@@ -144,7 +144,7 @@ namespace EdiClient.Services
             }
 
             Documents = ToListof(DataGridItems).ToList();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             return Documents;
         }
 

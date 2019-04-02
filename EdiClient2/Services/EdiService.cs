@@ -71,7 +71,7 @@ namespace EdiClient.Services
         /// <returns></returns>
         internal static OrganizationInfo OrganizationInfo(string inn, string kpp, string ogrn, string fnsId, string gln)
         {
-            LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             retRes returnedResult = null;
             XmlSerializer serializer = new XmlSerializer(typeof(OrganizationInfo));
 
@@ -89,7 +89,7 @@ namespace EdiClient.Services
 
         internal static List<Relation> Relationships(int timeout = 5000)
         {
-            LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             var ser = new XmlSerializer(typeof(RelationResponse));
             retRes returnedResult = null;
             //var s = Client?.State;
@@ -117,7 +117,7 @@ namespace EdiClient.Services
         /// <returns></returns>
         internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
         {
-            LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             var ser = new XmlSerializer(typeof(TModel));
             retRes returnedResult = null;
 
@@ -146,7 +146,7 @@ namespace EdiClient.Services
         /// <param name="timeout">Таймаут на выполнение вызова метода(мс)</param>
         internal static void Send(string partnerILN, string documentType, string documentVersion, string documentStandard, string documentTest, string controlNumber, string documentContent, int timeout = 5000)
         {
-            LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             retRes returnedResult = null;
 
             returnedResult = Client.send(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
@@ -159,7 +159,7 @@ namespace EdiClient.Services
 
         internal static List<DocumentInfo> ListMBAll(bool getBinaryData = false)
         {
-            LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
@@ -202,7 +202,7 @@ namespace EdiClient.Services
             , string documentStatus
             , int timeout = 5000)
         {
-            LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 

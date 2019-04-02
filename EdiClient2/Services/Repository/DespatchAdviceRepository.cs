@@ -18,7 +18,7 @@ namespace EdiClient.Services.Repository
             Relationships = EdiService.Relationships().Where(x => x.documentType == "DESADV").ToList() ?? throw new Exception("При загрузке связей возникла ошибка");
             SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception("Не выбрана связь с покупателем"));
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace EdiClient.Services.Repository
             DbService.Insert($@"UPDATE EDI_DOC SET IS_IN_EDI_AS_DESADV = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
 = (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
 = (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{advice.DespatchAdviceHeader.DespatchAdviceNumber}' and rownum = 1) and rownum = 1)");
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{advice}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{advice}", 2);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace EdiClient.Services.Repository
 
                     });
                 }
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return advice ?? new List<DocumentDespatchAdvice>();
         }
 

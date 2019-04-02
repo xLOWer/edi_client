@@ -79,15 +79,15 @@ namespace EdiClient.ViewModel.Common
 
         public virtual void CreateTraderDocument(object o = null)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
         }
         public virtual void ToEdi(object o = null)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
         }
         public virtual void SaveToXml(object o = null)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
         }
 
         protected void NotifyPropertyChanged(string info)

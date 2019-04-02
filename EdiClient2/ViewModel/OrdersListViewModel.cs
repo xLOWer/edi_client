@@ -13,7 +13,7 @@ namespace EdiClient.ViewModel.Orders
 {
     public class OrdersListViewModel : ListViewModel<DocumentOrder>, INotifyPropertyChanged
     {
-        public override bool IsButtonEnabled => SelectedItem != null && !SelectedItem.IsInDatabase;
+        public override bool IsButtonEnabled => SelectedItem != null && !SelectedItem.IsInDatabase && !SelectedItem.IsFailed;
 
         public OrdersListViewModel()
         {

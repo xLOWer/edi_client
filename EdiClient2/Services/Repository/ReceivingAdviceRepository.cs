@@ -34,7 +34,7 @@ namespace EdiClient.Services.Repository
                                             , ""
                                             , ""
                                             , "") ?? throw new Exception("При загрузке новых уведомлений об отгрузке возникла ошибка");
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         public static List<DocumentReceivingAdvice> GetRecadv(DateTime dateFrom, DateTime dateTo)
@@ -49,7 +49,7 @@ namespace EdiClient.Services.Repository
 
             Task.WaitAll(NativeTaskList.ToArray());
             NativeTaskList.Clear();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return Advices;
         }
 

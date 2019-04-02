@@ -19,9 +19,10 @@ namespace EdiClient.Services.Repository
         public static List<Model.WebModel.RelationResponse.Relation> Relationships { get; set; }
         public static Model.WebModel.RelationResponse.Relation SelectedRelationship { get; set; }
         public static List<DocumentOrder> Orders { get; set; }
-
         private static List<Model.WebModel.DocumentInfo> NewOrders { get; set; }
         private static List<Task> NativeTaskList = new List<Task>();
+
+
 
         internal static void UpdateData(DateTime dateFrom, DateTime dateTo)
         {
@@ -40,7 +41,7 @@ namespace EdiClient.Services.Repository
                                             , "").Where(x => x.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList()
                                             ?? throw new Exception("При загрузке новых заказов возникла ошибка");
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace EdiClient.Services.Repository
             var ex = Orders.Where(x => !docNums.Contains(x.OrderHeader.OrderNumber)).ToList();
             SetIncomingOrdersIntoBufferTable(ex);
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return Orders;
         }
 
@@ -91,7 +92,7 @@ namespace EdiClient.Services.Repository
             DbService.ExecuteCommand(commands);
             commands.Clear();
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
         }
 
@@ -103,7 +104,7 @@ namespace EdiClient.Services.Repository
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
             return list;
         }
@@ -120,7 +121,7 @@ namespace EdiClient.Services.Repository
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
             return list;
         }
@@ -137,7 +138,7 @@ namespace EdiClient.Services.Repository
                 foreach (DataRow r in dt.Rows)
                     list.Add(r.ItemArray[2].ToString() ?? "");
             dt.Clear();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
             return list;
         }
@@ -154,7 +155,7 @@ namespace EdiClient.Services.Repository
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
             return list;
 
@@ -180,7 +181,7 @@ namespace EdiClient.Services.Repository
             DbService.ExecuteCommand(commands);
             commands.Clear();
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -250,7 +251,7 @@ namespace EdiClient.Services.Repository
                     });
                 }
 
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return commands;
 
         }

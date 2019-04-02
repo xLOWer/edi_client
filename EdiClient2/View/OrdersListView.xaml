@@ -105,7 +105,7 @@
                             <Setter Property="Background" Value="#b3e6ff"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Setter Property="Background" Value="#ffe6e6"/>
+                            <Setter Property="Background" Value="#ff9696"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                             <Setter Property="Background" Value="White"/>
@@ -192,7 +192,7 @@
                             <Setter Property="Background" Value="White"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Setter Property="Background" Value="#ffe6e6"/>
+                            <Setter Property="Background" Value="#ff9696"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
