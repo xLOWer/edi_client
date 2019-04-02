@@ -35,6 +35,7 @@ namespace EdiClient.ViewModel.Orders
 
         public override void UpdateView()
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
                 base.UpdateView();
@@ -76,6 +77,8 @@ namespace EdiClient.ViewModel.Orders
             {
                 Utilites.Error(ex);
             }
+            watch.Stop();
+            Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
         }
 
         public override void SaveToXml(object o = null)

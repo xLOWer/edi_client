@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EdiClient.View"
       xmlns:repo="clr-namespace:EdiClient.Services.Repository"
+      xmlns:utils="clr-namespace:EdiClient.Services"
       xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -174,6 +175,8 @@
             <Label Grid.Column="8" Content="Σобщ + Σндс:"/>
             <Label Grid.Column="9" Content="{Binding Path=SelectedItem.OrderSummary.TotalGrossAmount, Converter={StaticResource MoneyStringConverter}}" 
                    HorizontalContentAlignment="Left" FontWeight="Bold"/>
+
+            <Label Grid.Column="10" Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
         </Grid>
 
         <DataGrid Name="OrdrspDataGrid"  PresentationTraceSources.TraceLevel="High"     

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Threading;
 
 namespace EdiClient.Services.Repository
 {
@@ -61,10 +62,11 @@ namespace EdiClient.Services.Repository
                             => AddOrders(rel.partnerIln, rel.documentType, order.trackingId, rel.documentStandard, order.partneriln)));
 
             Task.WaitAll(NativeTaskList.ToArray());
+            Thread.Sleep(200);
             NativeTaskList.Clear();
 
-            var docNums = GetAllOrderIds() ?? throw new Exception("Не были загружены данные из базы, повторите попытку");
-            var ex = Orders.Where(x => !docNums.Contains(x.OrderHeader.OrderNumber)).ToList();
+            var docNums = GetAllOrderIds() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
+            var ex = Orders.Where(x => !docNums.Contains(x.OrderHeader.OrderNumber)).ToList() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
             SetIncomingOrdersIntoBufferTable(ex);
             return Orders;
         }

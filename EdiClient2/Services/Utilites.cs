@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 
 namespace EdiClient.Services
@@ -7,10 +8,12 @@ namespace EdiClient.Services
     {
         internal static void Error(Exception ex)
         {            
-            MessageBox.Show($@"[ERROR] {GetInnerExceptionMessage(ex)}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+            MessageBox.Show($"[ERROR] {GetInnerExceptionMessage(ex)}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
         }
         private static string GetInnerExceptionMessage(Exception ex)
-            => ex.InnerException != null ? ex.Message + GetInnerExceptionMessage(ex.InnerException) : "\ninner: " +ex.Message;
+            => ex.InnerException != null ? ex.Message + GetInnerExceptionMessage(ex.InnerException) : $"\ninner: {ex.Message}";
+
+        public static string Time { get; set; }
         
     }
 }

@@ -33,11 +33,21 @@ namespace EdiClient.ViewModel.Common
             }
         }
 
+        private string time;
         private DateTime dateTo;
         private DateTime dateFrom;
         private TModel selectedItem;
         private List<TModel> documents;
 
+        public string Time
+        {
+            get { return time; }
+            set
+            {
+                time = value;
+                NotifyPropertyChanged("Time");
+            }
+        }
         public List<TModel> Documents
         {
             get { return documents; }
