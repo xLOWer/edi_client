@@ -21,9 +21,16 @@ namespace EdiClient.ViewModel.Common
 
         public ListViewModel()
         {
-            DateFrom = DateTime.Today.AddDays(-40);
-            DateTo = DateTime.Today;
-            //Refresh();
+            try
+            {
+                DateFrom = DateTime.Parse("01.01.2019");
+                DateTo = DateTime.Today;
+                //Refresh();
+            }
+            catch (Exception ex)
+            {
+                Utilites.Error(ex);
+            }
         }
 
         private DateTime dateTo;

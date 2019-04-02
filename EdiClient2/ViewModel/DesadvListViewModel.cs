@@ -25,10 +25,11 @@ namespace EdiClient.ViewModel.Desadv
                 base.Refresh();
                 DespatchAdviceRepository.UpdateData(DateFrom, DateTo);
                 Documents = DespatchAdviceRepository.GetDesadv(DateFrom, DateTo);
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[ERROR] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}\n\n{ex?.Message}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+                Utilites.Error(ex);
             }
         }
 
@@ -45,7 +46,7 @@ namespace EdiClient.ViewModel.Desadv
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[ERROR] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}\n\n{ex?.Message}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+                Utilites.Error(ex);
             }
         }
 
@@ -70,7 +71,7 @@ namespace EdiClient.ViewModel.Desadv
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[ERROR] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}\n\n{ex?.Message}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+                Utilites.Error(ex);
             }
         }
 

@@ -152,6 +152,7 @@
     <Compile Include="Services\Repository\OrdersRepository.cs" />
     <Compile Include="Services\SqlConfiguratorService.cs" />
     <Compile Include="Services\TabService.cs" />
+    <Compile Include="Services\Utilites.cs" />
     <Compile Include="Services\XmlService.cs" />
     <Compile Include="ViewModel\Common\TabViewModel.cs" />
     <Compile Include="ViewModel\Common\MainViewModel.cs" />

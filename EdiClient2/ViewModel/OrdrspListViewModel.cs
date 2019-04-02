@@ -27,7 +27,7 @@ namespace EdiClient.ViewModel.Ordrsp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[ERROR] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}\n\n{ex?.Message}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+                Utilites.Error(ex);
             }
         }
 
@@ -44,7 +44,7 @@ namespace EdiClient.ViewModel.Ordrsp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[ERROR] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}\n\n{ex?.Message}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+                Utilites.Error(ex);
             }
         }
         
@@ -69,7 +69,7 @@ namespace EdiClient.ViewModel.Ordrsp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[ERROR] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}\n\n{ex?.Message}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}");
+                Utilites.Error(ex);
             }
         }
 
