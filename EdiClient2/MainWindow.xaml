@@ -26,6 +26,10 @@
                     <!--<MenuItem x:Name="Logger" Header="Logger" Command="{Binding OpenEdiSettingsCommand}"/>-->
                 </MenuItem.Items>
             </MenuItem>
+            <MenuItem Header="About">
+                <MenuItem x:Name="License" Header="Лицензия" Click="License_Click" />
+                <MenuItem x:Name="About" Header="О программе" Click="About_Click"/>
+            </MenuItem>
         </Menu>
 
         <TabControl Name="MainTabControl" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Transparent" BorderThickness="0"
