@@ -66,9 +66,17 @@ namespace EdiClient.Services.Repository
             var docNums = GetAllOrderIds() ?? throw new Exception("Не были загружены данные из базы, повторите попытку");
             var ex = Orders.Where(x => !docNums.Contains(x.OrderHeader.OrderNumber)).ToList();
             SetIncomingOrdersIntoBufferTable(ex);
-
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return Orders;
+        }
+
+        public static void UpdateFailedDetails(string number)
+        {
+            DbService.ExecuteCommand(new OracleCommand()
+            {
+                Parameters = { new OracleParameter("P_EDI_DOC_NUMBER", OracleDbType.NVarChar, number, ParameterDirection.Input) },
+                CommandType = CommandType.StoredProcedure,
+                CommandText = "EDI_REFRESH_DOC_DETAILS"
+            });
         }
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace EdiClient.Services.Repository
                                 new OracleParameter("p_id_edi_doc", OracleDbType.VarChar, orderNumber, ParameterDirection.Input)
                             },
                             CommandType = CommandType.StoredProcedure,
-                            CommandText = "MOVE_EDI_ORDER"
+                            CommandText = "EDI_MOVE_ORDER"
                         }
                 };
             DbService.ExecuteCommand(commands);

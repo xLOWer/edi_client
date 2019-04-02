@@ -58,6 +58,8 @@ namespace EdiClient.ViewModel.Orders
                         {
                             doc.IsInDatabase = true;
                         }
+                        if (doc.IsFailed && doc.IsInDatabase)
+                            OrdersRepository.UpdateFailedDetails(doc.OrderHeader.OrderNumber);
                         foreach (var line in doc.OrderLines.Lines)
                         {
                             if (detailsFailed.Contains(line.LineItem.BuyerItemCode))
