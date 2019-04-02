@@ -21,7 +21,10 @@ namespace EdiClient
             {
                 OracleConnectionService.Configure();
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message+"\n\n"+ex.Source + "\n\n" + ex.StackTrace + "\n\n" + ex.TargetSite); }
+            catch (Exception ex)
+            {
+                Utilites.Error(ex);
+            }
 
         }
 

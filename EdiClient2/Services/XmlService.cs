@@ -36,8 +36,15 @@ namespace EdiClient.Services
         internal static bool Serialize(TModel order, string OutPath)
         {
             XmlSerializer ser = new XmlSerializer(typeof(TModel));
-            try { using (XmlWriter writer = XmlWriter.Create(OutPath)) ser.Serialize(writer, order); }
-            catch (Exception ex) { MessageBox.Show(ex.Message + "\n\n" + ex.InnerException); return false; }
+            try
+            {
+                using (XmlWriter writer = XmlWriter.Create(OutPath)) ser.Serialize(writer, order);
+            }
+            catch (Exception ex)
+            {
+                Utilites.Error(ex);
+                return false;
+            }
             return true;
         }
 
