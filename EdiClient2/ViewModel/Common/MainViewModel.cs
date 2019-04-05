@@ -6,17 +6,18 @@ namespace EdiClient.ViewModel.Common
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        public CommandService OpenCommonSettingsCommand => new CommandService(OpenCommonSettings);
-        public CommandService OpenConnectionSettingsCommand => new CommandService(OpenConnectionSettings);
-        public CommandService OpenEdiSettingsCommand => new CommandService(OpenEdiSettings);
+        public CommandService OpenCommonSettingsCommand => new CommandService( OpenCommonSettings );
+        public CommandService OpenConnectionSettingsCommand => new CommandService( OpenConnectionSettings );
+        public CommandService OpenEdiSettingsCommand => new CommandService( OpenEdiSettings );
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainViewModel()
         {
-            TabService.NewTab(typeof(OrdersListView), "Заказы поставщика (ORDERS)");
-            TabService.NewTab(typeof(OrdrspListView), "Ответы на заказы поставщика (ORDRSP)");
-            TabService.NewTab(typeof(DesadvListView), "Уведомление об отгрузке (DESADV)");
-            TabService.NewTab(typeof(RecadvListView), "Уведомление о приёмке (RECADV)");
+            TabService.NewTab( typeof( OrdersListView ), "Заказы поставщика (ORDERS)" );
+            TabService.NewTab( typeof( OrdrspListView ), "Ответы на заказы поставщика (ORDRSP)" );
+            TabService.NewTab( typeof( DesadvListView ), "Уведомление об отгрузке (DESADV)" );
+            TabService.NewTab( typeof( RecadvListView ), "Уведомление о приёмке (RECADV)" );
+            TabService.NewTab( typeof( MatchMakerView ), "Связи товаров" );
         }
 
         public void OpenCommonSettings(object o)
@@ -39,11 +40,12 @@ namespace EdiClient.ViewModel.Common
             setWin.Show();
             setWin.UpdateLayout();
         }
-        
+
         public void OnPropertyChanged(string prop = "")
         {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            if (PropertyChanged == null)
+                return;
+            PropertyChanged( this, new PropertyChangedEventArgs( prop ) );
         }
     }
 }

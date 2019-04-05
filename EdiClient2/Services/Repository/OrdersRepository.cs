@@ -201,19 +201,20 @@ namespace EdiClient.Services.Repository
         /// <returns>Список сформированных команд</returns>
         private static List<OracleCommand> GenerateOrderCreatingCommands(DocumentOrder order)
         {
+            if (order == null) return new List<OracleCommand>();
             List<OracleCommand> commands = new List<OracleCommand>();
 
             commands.Add(new OracleCommand()
             {
                 Parameters =
                     {
-                        new OracleParameter("P_SENDER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Sender.ILN ?? "", ParameterDirection.Input),
+                        new OracleParameter("P_SENDER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Sender?.ILN ?? "", ParameterDirection.Input),
                         new OracleParameter("P_PROMOTION_REFERENCE", OracleDbType.NVarChar, order?.OrderHeader?.PromotionReference ?? "", ParameterDirection.Input),
                         new OracleParameter("P_EXPECTED_DELIVERY_DATE", OracleDbType.NVarChar, (order?.OrderHeader?.ExpectedDeliveryDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),
                         new OracleParameter("P_PAYMENT_DUE_DATE", OracleDbType.NVarChar, (order?.OrderHeader?.OrderPaymentDueDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),
-                        new OracleParameter("P_DELIVERY_POINT_ILN", OracleDbType.NVarChar, order?.OrderParties.DeliveryPoint.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_BUYER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Sender.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_CUSTOMER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Sender.ILN ?? "", ParameterDirection.Input),
+                        new OracleParameter("P_DELIVERY_POINT_ILN", OracleDbType.NVarChar, order?.OrderParties.DeliveryPoint?.ILN ?? "", ParameterDirection.Input),
+                        new OracleParameter("P_BUYER_ILN", OracleDbType.NVarChar, order?.OrderParties?.Buyer?.ILN ?? "", ParameterDirection.Input),
+                        new OracleParameter("P_CUSTOMER_ILN", OracleDbType.NVarChar, order?.OrderParties?.UltimateCustomer?.ILN ?? "", ParameterDirection.Input),
                         new OracleParameter("P_SELLER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Receiver.ILN ?? "", ParameterDirection.Input),
                         new OracleParameter("P_ORDER_CURRENCY", OracleDbType.NVarChar, order?.OrderHeader?.OrderCurrency ?? "", ParameterDirection.Input),
                         new OracleParameter("P_ORDER_DATE", OracleDbType.NVarChar, (order?.OrderHeader?.OrderDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),

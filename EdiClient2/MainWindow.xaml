@@ -29,6 +29,7 @@
             <MenuItem Header="About">
                 <MenuItem x:Name="License" Header="Лицензия" Click="License_Click" />
                 <MenuItem x:Name="About" Header="О программе" Click="About_Click"/>
+                <MenuItem x:Name="Update" Header="Выполнить обновление" Click="Update_Click"/>
             </MenuItem>
         </Menu>
 
