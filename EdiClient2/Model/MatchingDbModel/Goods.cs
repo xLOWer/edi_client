@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace EdiClient.Model.MatchingDbModel
+﻿namespace EdiClient.Model.MatchingDbModel
 {
-    class Goods
+    public class Goods
     {
         public string Id { get; set; }
         public string Code { get; set; }

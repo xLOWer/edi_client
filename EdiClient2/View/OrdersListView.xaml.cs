@@ -1,9 +1,5 @@
 ﻿using EdiClient.ViewModel.Orders;
-using System;
-using System.ComponentModel;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace EdiClient.View
 {

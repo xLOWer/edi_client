@@ -1,7 +1,5 @@
 ﻿using EdiClient.ViewModel.Ordrsp;
-using System;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace EdiClient.View
 {

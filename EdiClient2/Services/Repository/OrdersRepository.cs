@@ -1,14 +1,12 @@
 ﻿using EdiClient.Model;
-using Devart.Data.Oracle;
 //using System.Data.OracleClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Threading;
+using Devart.Data.Oracle;
 
 namespace EdiClient.Services.Repository
 {
@@ -225,7 +223,7 @@ namespace EdiClient.Services.Repository
                     },
                 CommandType = CommandType.StoredProcedure,
                 CommandText = "EDI_ADD_ORDER"
-            });
+            } );
 
             if (order.OrderLines.Lines.Count > 0)
                 foreach (var line in order.OrderLines.Lines)
@@ -255,7 +253,7 @@ namespace EdiClient.Services.Repository
                             new OracleParameter("P_UNIT_OF_MEASURE", OracleDbType.NVarChar, line?.LineItem?.UnitOfMeasure ?? "", ParameterDirection.Input),
                             new OracleParameter("P_VOLUME", OracleDbType.NVarChar, line?.LineItem?.Volume ?? "", ParameterDirection.Input),
                             new OracleParameter("P_ORDERED_BOXES", OracleDbType.NVarChar, line?.LineItem?.OrderedBoxes ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
+                            new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.NVarChar, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
                         },
                         CommandType = CommandType.StoredProcedure,
                         CommandText = "EDI_ADD_ORDER_DETAIL"

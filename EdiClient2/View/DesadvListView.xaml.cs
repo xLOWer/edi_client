@@ -1,5 +1,4 @@
 ﻿using EdiClient.ViewModel.Desadv;
-using System;
 using System.Windows.Controls;
 
 namespace EdiClient.View

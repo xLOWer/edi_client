@@ -5,8 +5,6 @@ using Microsoft.Win32;
 using System.ComponentModel;
 using EdiClient.Services.Repository;
 using System;
-using System.Reflection;
-using System.Windows;
 
 namespace EdiClient.ViewModel.Ordrsp
 {

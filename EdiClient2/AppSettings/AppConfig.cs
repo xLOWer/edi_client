@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Reflection;
 using System;
 
 namespace EdiClient.AppSettings

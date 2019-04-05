@@ -4,9 +4,7 @@ using EdiClient.Services;
 using Microsoft.Win32;
 using System.ComponentModel;
 using EdiClient.Services.Repository;
-using System.Reflection;
 using System;
-using System.Windows;
 
 namespace EdiClient.ViewModel.Recadv
 {

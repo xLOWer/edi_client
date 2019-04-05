@@ -1,9 +1,6 @@
-﻿using EdiClient.Model;
-using System;
+﻿using System;
 using System.IO;
 using System.Xml;
-using System.Windows;
-using System.Reflection;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Text;

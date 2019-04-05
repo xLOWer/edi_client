@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using System.Windows;
 using System.Reflection;
 //using Oracle.DataAccess.Client;
-using Devart.Data.Oracle;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Devart.Data.Oracle;
 
 namespace EdiClient.Services
 {
@@ -25,18 +24,24 @@ namespace EdiClient.Services
             {
                 ExecuteCommand(commands[i - 1]);
             }
-
         }
 
 
         internal static void ExecuteCommand(OracleCommand command)
         {
-            using (command)
+            try
             {
-                command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.OpenDatabaseConnect();
-                command.ExecuteNonQuery();
-                OracleConnectionService.CloseDatabaseConnect();
+
+                using (command)
+                {
+                    command.Connection = OracleConnectionService.conn;
+                    OracleConnectionService.OpenDatabaseConnect();
+                    command.ExecuteNonQuery();
+                    OracleConnectionService.CloseDatabaseConnect();
+                }
+            }
+            catch (Exception ex)
+            {
             }
         }
         /// <summary>

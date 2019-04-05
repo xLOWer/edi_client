@@ -5,9 +5,6 @@ using EdiClient.ViewModel.Common;
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace EdiClient.ViewModel.Orders
 {

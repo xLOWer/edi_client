@@ -8,7 +8,6 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.ServiceModel.Description;
 using static EdiClient.Model.WebModel.RelationResponse;
-using System.Reflection;
 
 namespace EdiClient.Services
 {
