@@ -11,103 +11,139 @@ d:DesignHeight="1080" d:DesignWidth="1920"
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.02*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.02*"/>
+            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="0.02*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        
-        
-        
-        <DataGrid Name="GoodsDataGrid" 
-                  ItemsSource="{Binding Path=Documents,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                  SelectionMode="Single"
-                  Grid.Column="0"    
-                  Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False" 
-                  SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.DeliveryPoint.ILN}" Width="*" Header="ID"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.Buyer.ILN}" Width="3*" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.UltimateCustomer.ILN}" Width="*" Header="Код"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.Seller.ILN}" Width="*" Header="Штрих-код"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        
-        
-        
-        
-        
-        <DataGrid Name="FailerDataGrid" 
-                  ItemsSource="{Binding Path=Documents,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                  SelectionMode="Single"
-                  Grid.Column="2"    
-                  Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False" 
-                  SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.DeliveryPoint.ILN}" Width="*" Header="ID"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.Buyer.ILN}" Width="3*" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.UltimateCustomer.ILN}" Width="*" Header="Код"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.Seller.ILN}" Width="*" Header="Штрих-код"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        
-        
-        
-        
-        
-        <Grid Grid.Column="4">
+
+
+
+
+        <Grid Grid.Column="0" Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="0.2*"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="0.2*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Row="0" Grid.Column="0" 
+                     Margin="2" Text="{Binding GoodSearchText}"/>
+            <Button Grid.Row="0"  Grid.Column="1" Content="искать"
+                    Margin="2"  Command="{Binding FailedGoodSearchCommand}"/>
+
+            <DataGrid Name="GoodsDataGrid" 
+                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                      SelectionMode="Single"
+                      Grid.Row="1"    
+                      Grid.ColumnSpan="2"
+                      Margin="5"
+                      Grid.IsSharedSizeScope="True" 
+                      AutoGenerateColumns="False" 
+                      SelectionUnit="FullRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Id}" Width="*" Header="Id"/>
+                    <DataGridTextColumn Binding="{Binding Code}" Width="*" Header="Code"/>
+                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Name"/>
+                    <DataGridTextColumn Binding="{Binding BarCode}" Width="*" Header="BarCode"/>
+                    <DataGridTextColumn Binding="{Binding GoodSize}" Width="*" Header="GoodSize"/>
+                    <DataGridTextColumn Binding="{Binding Manufacturer}" Width="*" Header="Manufacturer"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+
+
+
+        <Grid Grid.Column="0" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="0.2*"/>
-                <RowDefinition Height="10*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" 
+                     Margin="2"  Text="{Binding FailedGoodSearchText}"/>
+            <Button Grid.Row="0"  Grid.Column="1" Content="искать"
+                    Margin="2" Command="{Binding FailedGoodSearchCommand}"/>
+
+            <DataGrid Name="FailedGoodDataGrid" 
+                      ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                      SelectionMode="Single"
+                      Grid.Column="0"  
+                      Grid.Row="1"
+                      Grid.ColumnSpan="2"
+                      Margin="5"
+                      Grid.IsSharedSizeScope="True" 
+                      AutoGenerateColumns="False" 
+                      SelectionUnit="FullRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding ItemDescription}" Width="*" Header="ItemDescription"/>
+                    <DataGridTextColumn Binding="{Binding Ean}" Width="*" Header="Ean"/>
+                    <DataGridTextColumn Binding="{Binding BuyerItemCode}" Width="*" Header="BuyerItemCode"/>
+                    <DataGridTextColumn Binding="{Binding OrderName}" Width="*" Header="OrderName"/>
+                    <DataGridTextColumn Binding="{Binding GoodId}" Width="*" Header="GoodId"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="90"/>
+                <RowDefinition Height="90"/>
+                <RowDefinition Height="90"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
-            
+
+            <Button Content="Загрузить данные" Grid.Row="1" Grid.Column="1"
+                    Margin="2,30"
+                    Command="{Binding LoadDataCommand}"/>
+
             <Button Content="Связать" Grid.Row="2" Grid.Column="1"
+                    Margin="2,30"
                     Command="{Binding MakeMatchingCommand}"/>
-            
-            <Button Content="Отвязать" Grid.Row="4" Grid.Column="1"
+
+            <Button Content="Отвязать" Grid.Row="3" Grid.Column="1"
+                    Margin="2,30"
                      Command="{Binding DisposeMatchingCommand}"/>
-            
+
         </Grid>
 
-
-        
-        
-
-
-        <DataGrid Name="MatchedDataGrid" 
-                  ItemsSource="{Binding Path=Documents,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+        <DataGrid Name="MatchesDataGrid" 
+                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                   SelectionMode="Single"
-                  Grid.Column="6"    
+                  Grid.Row="0"  
+                  Grid.RowSpan="3"
+                  Grid.Column="2"
+                  Margin="5"
                   Grid.IsSharedSizeScope="True" 
                   AutoGenerateColumns="False" 
                   SelectionUnit="FullRow">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.DeliveryPoint.ILN}" Width="*" Header="ID"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.Buyer.ILN}" Width="3*" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.UltimateCustomer.ILN}" Width="*" Header="Код"/>
-                <DataGridTextColumn Binding="{Binding DespatchAdviceParties.Seller.ILN}" Width="*" Header="Штрих-код"/>
+                <DataGridTextColumn Binding="{Binding CustomerGln}" Width="*" Header="CustomerGln"/>
+                <DataGridTextColumn Binding="{Binding CustomerGoodId}" Width="*" Header="CustomerGoodId"/>
+                <DataGridTextColumn Binding="{Binding GoodId}" Width="*" Header="GoodId"/>
+                <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Name"/>
             </DataGrid.Columns>
         </DataGrid>
+
 
     </Grid>
 </Page>
