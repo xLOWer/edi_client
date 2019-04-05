@@ -19,7 +19,9 @@ namespace EdiClient.Services.Repository
         /// <param name="order">отправляемый заказ</param>
         internal static void SendOrdrsp(DocumentOrderResponse order)
         {
-            EdiService.Send(order.OrderResponseParties.Buyer.ILN, "ORDRSP", "", "", "T", "", XmlService<DocumentOrderResponse>.Serialize(order), 20);
+            var sendOrder = XmlService<DocumentOrderResponse>.Serialize(order);
+            EdiService.Send(order.DocumentParties?.Sender?.ILN ?? throw new Exception("Ошибка при отправке документа"),
+                "ORDRSP", "", "", "T", "", sendOrder, 20);
             DbService.Insert(SqlConfiguratorService.Sql_UpdateEdiDocSetIsInEdiAsORDRSP(order.OrderResponseHeader.OrderResponseNumber));
             ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
@@ -45,8 +47,8 @@ namespace EdiClient.Services.Repository
                     {
                         var details = DbService<DbDocDetail>.DocumentSelect(SqlConfiguratorService.Sql_SelectOrdrspDetails(header?.ID_TRADER));
 
-                        lines.Clear();
-                        orderLines = new DocumentOrderResponseLine();
+                    lines = new List<Line>();
+                    orderLines = new DocumentOrderResponseLine();
                         if (details.Count > 0)
                             foreach (var detail in details)
                             {
@@ -75,7 +77,18 @@ namespace EdiClient.Services.Repository
                         orderLines.Lines = lines ?? new List<Line>();
 
                         ordrsp.Add(new DocumentOrderResponse()
-                        {                            
+                        {               
+                            DocumentParties = new DocumentOrderResponseDocumentParties()
+                            {
+                                Sender = new DocumentOrderResponseDocumentPartiesSender()
+                                {
+                                    ILN = header?.SellerIln
+                                },
+                                Receiver = new DocumentOrderResponseDocumentPartiesReceiver()
+                                {
+                                    ILN = header?.SenderILN
+                                }
+                            },
                             OrderResponseHeader = new DocumentOrderResponseOrderResponseHeader()
                             {
                                 DocumentFunctionCode = "9",
@@ -100,7 +113,7 @@ namespace EdiClient.Services.Repository
                                 DeliveryPoint = new DocumentOrderResponseOrderResponsePartiesDeliveryPoint()
                                 {
                                     ILN = header?.DeliveryPointIln ?? ""
-                                },
+                                }
                             },
                             OrderResponseLines = orderLines ?? new DocumentOrderResponseLine(),
                             OrderResponseSummary = new DocumentOrderResponseOrderResponseSummary()
@@ -115,7 +128,7 @@ namespace EdiClient.Services.Repository
                             IsInEdiAsOrdrsp = bool.Parse((header?.IS_IN_EDI_AS_ORDRSP != null ? "true" : "false") ?? "false")
 
                         });
-                    }
+                }
 
             ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return ordrsp ?? new List<DocumentOrderResponse>();

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Net;
+using System.Windows;
 using EdiClient.Services;
 using EdiClient.ViewModel.Common;
 
@@ -65,20 +67,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
 2019", "О программе", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        //private void treeView1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-        //    Context.NewTab();            
-        //}
+        private void Update_Click(object sender, RoutedEventArgs e)
+        {//https://github.com/xLOWer/edi_client/raw/master/EdiClient2/bin/x86/Release/EdiClient.zip
+            /*
+            using (WebClient wc = new WebClient())
+            {                
+                wc.DownloadFile( new System.Uri( "http://github.com/xLOWer/edi_client/raw/master/EdiClient2/bin/x86/Release/EdiClient.zip" ),
+                "EdiClient.zip");                
+            }*/
 
-        //private void LeftMenu_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        //{
-        //    MenuItemViewModel selectedMenuItem = (MenuItemViewModel)(sender as TreeView).SelectedItem;
+            Process.Start( "updater.exe" );
 
-        //    if (String.IsNullOrEmpty(selectedMenuItem.Title) || selectedMenuItem.View == null) return;
-
-        //    Context.SelectedMenuItem = (MenuItemViewModel)(sender as TreeView).SelectedItem;
-        //    this.MainTabControl.UpdateLayout();
-        //}
-
+        }
     }
 }

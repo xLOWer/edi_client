@@ -27,7 +27,7 @@ namespace EdiClient.Services.Repository
         /// <param name="advice">отправляемый заказ</param>
         internal static void SendDesadv(DocumentDespatchAdvice advice)
         {
-            EdiService.Send(advice.DespatchAdviceParties.Buyer.ILN, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
+            EdiService.Send(advice.DocumentParties?.Sender?.ILN, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
             DbService.Insert($@"UPDATE EDI_DOC SET IS_IN_EDI_AS_DESADV = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
 = (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
 = (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{advice.DespatchAdviceHeader.DespatchAdviceNumber}' and rownum = 1) and rownum = 1)");
@@ -55,7 +55,7 @@ namespace EdiClient.Services.Repository
                 {
                     var details = DbService<DbDocDetail>.DocumentSelect(SqlConfiguratorService.Sql_SelectOrdrspDetails(header?.ID_TRADER));
 
-                    PackingSequence.Clear();
+                    PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
                     Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
                     if (details.Count > 0)
                         foreach (var detail in details)
@@ -95,6 +95,18 @@ namespace EdiClient.Services.Repository
                             BuyerOrderNumber = header?.OrderNumber,
                             UTDnumber = header?.CODE,
                             UTDDate = DateTime.Parse(header?.DOC_DATETIME)
+                        },
+                        DocumentParties = new DocumentDespatchAdviceDocumentParties()
+                        {
+
+                            Sender = new DocumentDespatchAdviceDocumentPartiesSender()
+                            {
+                                ILN = header?.SellerIln
+                            },
+                            Receiver = new DocumentDespatchAdviceDocumentPartiesReceiver()
+                            {
+                                ILN = header?.SenderILN
+                            }
                         },
                         DespatchAdviceParties = new DocumentDespatchAdviceDespatchAdviceParties()
                         {

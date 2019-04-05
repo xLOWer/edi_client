@@ -137,6 +137,9 @@
     <Compile Include="Model\DbDocumentModel\DbDocHeader.cs" />
     <Compile Include="Model\DocumentDespatchAdvice.cs" />
     <Compile Include="Model\DocumentReceivingAdvice.cs" />
+    <Compile Include="Model\MatchingDbModel\FailedGoods.cs" />
+    <Compile Include="Model\MatchingDbModel\Goods.cs" />
+    <Compile Include="Model\MatchingDbModel\Matches.cs" />
     <Compile Include="Model\WebModel\DocumentInfo.cs" />
     <Compile Include="Model\WebModel\OrganizationInfo.cs" />
     <Compile Include="Model\WebModel\RelationResponse.cs" />
@@ -146,6 +149,7 @@
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\OracleConnectionService.cs" />
     <Compile Include="Services\CommandService.cs" />
+    <Compile Include="Services\Repository\MacthingRepository.cs" />
     <Compile Include="Services\Repository\ReceivingAdviceRepository.cs" />
     <Compile Include="Services\Repository\DespatchAdviceRepository.cs" />
     <Compile Include="Services\Repository\OrderResponseRepository.cs" />
@@ -158,10 +162,14 @@
     <Compile Include="ViewModel\Common\MainViewModel.cs" />
     <Compile Include="ViewModel\Common\ListViewModel.cs" />
     <Compile Include="Model\DocumentOrder.cs" />
+    <Compile Include="ViewModel\MatchMakerViewModel.cs" />
     <Compile Include="ViewModel\RecadvListViewModel.cs" />
     <Compile Include="ViewModel\DesadvListViewModel.cs" />
     <Compile Include="ViewModel\OrdrspListViewModel.cs" />
     <Compile Include="ViewModel\OrdersListViewModel.cs" />
+    <Compile Include="View\MatchMakerView.xaml.cs">
+      <DependentUpon>MatchMakerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\RecadvListView.xaml.cs">
       <DependentUpon>RecadvListView.xaml</DependentUpon>
     </Compile>
@@ -198,6 +206,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\MatchMakerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\RecadvListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -260,6 +272,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConsoleApp1\updater.csproj">
+      <Project>{12f0d865-0f14-49fd-afe6-d0cbfc725266}</Project>
+      <Name>updater</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Edisoft.WebService\Edisoft.WebService.csproj">
       <Project>{11d0bb4d-8f64-4ba8-bb4e-e30e37310bba}</Project>
       <Name>Edisoft.WebService</Name>
