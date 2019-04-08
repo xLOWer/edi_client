@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EdiClient.Model.MatchingDbModel
 {
-    class Goods
+    public class Goods
     {
         public string Id { get; set; }
         public string Code { get; set; }

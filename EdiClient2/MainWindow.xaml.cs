@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using System.Windows;
+using System.Windows.Media.Animation;
 using EdiClient.Services;
 using EdiClient.ViewModel.Common;
 

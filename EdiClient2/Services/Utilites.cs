@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Windows;
 
 namespace EdiClient.Services
@@ -14,6 +13,6 @@ namespace EdiClient.Services
             => ex.InnerException != null ? ex.Message + GetInnerExceptionMessage(ex.InnerException) : $"\ninner: {ex.Message}";
 
         public static string Time { get; set; }
-        
+
     }
 }

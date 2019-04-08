@@ -12,19 +12,19 @@ namespace EdiClient.ViewModel.Common
     {
         public virtual bool IsButtonEnabled { get; }
 
-        public string ImageBack => @"~\..\..\img_back.png";
-        public string ImageForward => @"~\..\..\img_forward.png";
-        public string ImageRefresh => @"~\..\..\img_refresh.png";
-        public string ImageSendToDb => @"~\..\..\img_create_doc.png";
-        public string ImageSendToEdi => @"~\..\..\img_to_edi.png";
-        public string ImageSaveXml => @"~\..\..\img_save_xml.png";
+        public string ImageBack => @"~\..\..\Images\img_back.png"; // путь, относительно текущего файла
+        public string ImageForward => @"~\..\..\Images\img_forward.png";
+        public string ImageRefresh => @"~\..\..\Images\img_refresh.png";
+        public string ImageSendToDb => @"~\..\..\Images\img_create_doc.png";
+        public string ImageSendToEdi => @"~\..\..\Images\img_to_edi.png";
+        public string ImageSaveXml => @"~\..\..\Images\img_save_xml.png";
 
         public ListViewModel()
         {
             try
             {
                 DateFrom = DateTime.Parse("01.01.2019");
-                DateTo = DateTime.Today;
+                DateTo = DateTime.Today.AddDays(1);
                 //Refresh();
             }
             catch (Exception ex)

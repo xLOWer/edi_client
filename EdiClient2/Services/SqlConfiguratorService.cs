@@ -244,5 +244,41 @@ WHERE 1 = 1
             return $"{day}.{mouth}. {Date.Year} {Date.Hour}:{Date.Minute}:{Date.Second}";
         }
 
+        internal static string Sql_SelectGoods()
+            => $@"  SELECT rg.id ""Id""
+        , rg.code ""Code""
+        , rg.name ""Name""
+        , rg.bar_code ""BarCode""
+        , rg.GOOD_SIZE ""GoodSize""
+        , (SELECT name FROM REF_CONTRACTORS WHERE ID = rg.id_manufacturer) ""Manufacturer""
+            , rg.ID_MANUFACTURER ""ManufacturerId""
+        , rg.EXPIRING_DATE ""ExpiringDate""
+        , rg.REG_NUM ""RegNum""
+        , rg.SERT_NUM ""SertNum""
+        , rg.ID_SUBDIVISION ""SubdivisionId""
+        FROM abt.ref_goods rg";
+
+
+        internal static string Sql_SelectFailedGoods()
+            => $@"  SELECT id_good ""GoodId""
+    , EDD.ID_EDI_DOC ""EdiDocId""
+    , EDD.LINE_NUMBER ""LineNumber""
+    ,EDD.ITEM_DESCRIPTION ""ItemDescription""
+    ,EDD.EAN ""Ean""
+    ,EDD.BUYER_ITEM_CODE ""BuyerItemCode""
+    ,(SELECT ORDER_NUMBER||' от '||ORDER_DATE FROM HPCSERVICE.EDI_DOC WHERE id = edd.ID_EDI_DOC) ""OrderName""
+    FROM HPCSERVICE.EDI_DOC_DETAILS EDD
+    WHERE EDD.FAILED = 1";
+
+
+        internal static string Sql_SelectMatches()
+            => $@"SELECT rgm.CUSTOMER_GLN ""CustomerGln""
+        ,rgm.CUSTOMER_ARTICLE ""CustomerGoodId""
+        ,rgm.ID_GOOD ""GoodId""
+        ,(SELECT NAME FROM ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
+        FROM abt.REF_GOODS_MATCHING rgm
+            WHERE DISABLED in (0,7)";
+
+
     }
 }
