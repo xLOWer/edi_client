@@ -21,8 +21,8 @@ d:DesignHeight="1080" d:DesignWidth="1920"
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        
-        <ComboBox Grid.Column="0" Grid.Row="0"/>
+
+        <ComboBox Grid.Column="0" Grid.Row="0" ItemsSource="{Binding IsAsync=True}"/>
 
 
         <Grid Grid.Column="0" Grid.Row="1">
@@ -33,19 +33,26 @@ d:DesignHeight="1080" d:DesignWidth="1920"
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2" Text="{Binding GoodSearchText}"/>
+                     Margin="2" Text="{Binding GoodSearchText, IsAsync=True}"/>
+
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    Margin="2"  Command="{Binding GoodSearchCommand}"/>
+                    ToolTip="Поиск по введённым словам. Через запятую по одному слову или цифре. Например: зубная,ПАСТА, кОлГЕйт"
+                    Margin="2"  Command="{Binding GoodSearchCommand, IsAsync=True}"/>
+
+            <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
+                    ToolTip="Сбросить поиск не стирая введённое"
+                    Margin="2"  Command="{Binding GoodResetInputCommand, IsAsync=True}"/>
 
             <DataGrid Name="GoodsDataGrid" 
-                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                       SelectionMode="Single"
                       Grid.Row="1"    
-                      Grid.ColumnSpan="2"
+                      Grid.ColumnSpan="3"
                       Margin="5"
                       Grid.IsSharedSizeScope="True" 
                       AutoGenerateColumns="False" 
@@ -70,19 +77,28 @@ d:DesignHeight="1080" d:DesignWidth="1920"
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
+            
             <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2"  Text="{Binding FailedGoodSearchText}"/>
+                     Margin="2"  Text="{Binding FailedGoodSearchText, IsAsync=True}"/>
+
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    Margin="2" Command="{Binding FailedGoodSearchCommand}"/>
+                    ToolTip="Поиск по введённым словам. Через запятую по одному слову или цифре. Например: зубная,ПАСТА, кОлГЕйт"                  
+                    Margin="2" Command="{Binding FailedGoodSearchCommand, IsAsync=True}"/>
+            
+
+            <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
+                    ToolTip="Сбросить поиск не стирая введённое"
+                    Margin="2"  Command="{Binding  FailedGoodResetInputCommand, IsAsync=True}"/>
 
             <DataGrid Name="FailedGoodDataGrid" 
-                      ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                      ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                       SelectionMode="Single"
                       Grid.Column="0"  
                       Grid.Row="1"
-                      Grid.ColumnSpan="2"
+                      Grid.ColumnSpan="3"
                       Margin="5"
                       Grid.IsSharedSizeScope="True" 
                       AutoGenerateColumns="False" 
@@ -98,7 +114,7 @@ d:DesignHeight="1080" d:DesignWidth="1920"
         </Grid>
 
 
-        <Grid Grid.Column="1" Grid.RowSpan="3">
+        <Grid Grid.Column="1" Grid.RowSpan="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="90"/>
@@ -114,23 +130,24 @@ d:DesignHeight="1080" d:DesignWidth="1920"
             </Grid.ColumnDefinitions>
 
             <Button Name="LoadDataButton" Content="Загрузить данные" Grid.Row="1" Grid.Column="1"
-                    Margin="2,30"
-                    Command="{Binding LoadDataCommand}"/>
+                    Margin="2,30" IsEnabled="{Binding IsAsync=True}"
+                    Command="{Binding LoadDataCommand, IsAsync=True}"/>
 
             <Button Content="Связать" Grid.Row="2" Grid.Column="1"
                     Margin="2,30"
-                    Command="{Binding MakeMatchingCommand}"/>
+                    Command="{Binding MakeMatchingCommand, IsAsync=True}"/>
 
             <Button Content="Отвязать" Grid.Row="3" Grid.Column="1"
                     Margin="2,30" 
-                    Command="{Binding DisposeMatchingCommand}"/>
+                    Command="{Binding DisposeMatchingCommand, IsAsync=True}"/>
             <!--IsEnabled="{Binding DisposeEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"-->
 
 
             <TextBox Name="NewCustomerItemCodeTextBox" Grid.Row="5" Grid.Column="1" Margin="2,30"
-                     Text="{Binding NewCustomerItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     ToolTip="Код товара покупателя. Более 4х символов и не пустой"
+                     Text="{Binding NewCustomerItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" />
 
-            <Button Name="NewMatchingButton" Content="Добавить новый" Grid.Row="6" Grid.Column="1"
+            <Button Name="NewMatchingButton" Content="Добавить новый" Grid.Row="6" Grid.Column="0"
                     Margin="2,30"
                     Command="{Binding NewMatchingCommand}"/>
             
@@ -145,17 +162,24 @@ d:DesignHeight="1080" d:DesignWidth="1920"
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
             
             
             <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2" Text="{Binding MatchesSearchText}"/>
+                     Margin="2" Text="{Binding MatchesSearchText, IsAsync=True}"/>
+            
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    Margin="2"  Command="{Binding MatchesSearchCommand}"/>
+                    ToolTip="Поиск по введённым словам. Через запятую по одному слову или цифре. Например: зубная,ПАСТА, кОлГЕйт"                    
+                    Margin="2"  Command="{Binding MatchesSearchCommand, IsAsync=True}"/>
+
+            <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
+                    ToolTip="Сбросить поиск не стирая введённое"
+                    Margin="2"  Command="{Binding  MatchesResetInputCommand, IsAsync=True}"/>
 
             <DataGrid Name="MatchesDataGrid" 
-                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                   SelectionMode="Single"
                   Grid.Row="1"  
                   Grid.RowSpan="3"

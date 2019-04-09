@@ -6,7 +6,9 @@ using System.Reflection;
 //using Oracle.DataAccess.Client;
 using Devart.Data.Oracle;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace EdiClient.Services
 {
@@ -147,35 +149,38 @@ namespace EdiClient.Services
             //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             return Documents;
         }
+        
+        internal static List<TModel> ToListof(DataTable dt)
+        {
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+            var columnNames = dt.Columns.Cast<DataColumn>()
+                .Select( c => c.ColumnName )
+                .ToList();
+            var objectProperties = typeof( TModel ).GetProperties( flags );
+            var targetList = dt.AsEnumerable().Select( dataRow =>
+            {
+                var instanceOfT = Activator.CreateInstance<TModel>();
+
+                foreach (var properties in objectProperties.Where( properties => columnNames.Contains( properties.Name ) && dataRow[properties.Name] != DBNull.Value ))
+                {
+                    properties.SetValue( instanceOfT, dataRow[properties.Name], null );
+                }
+                return instanceOfT;
+            } ).ToList();
+
+            return targetList;
+        }
+
 
         internal static DataTable ObjToDataTable(Type type)
         {
             var dt = new DataTable();
             foreach (var info in type.GetProperties())
-                dt.Columns.Add(info.Name);
+                dt.Columns.Add( info.Name );
             dt.AcceptChanges();
             return dt;
         }
-        internal static List<TModel> ToListof(DataTable dt)
-        {
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-            var columnNames = dt.Columns.Cast<DataColumn>()
-                .Select(c => c.ColumnName)
-                .ToList();
-            var objectProperties = typeof(TModel).GetProperties(flags);
-            var targetList = dt.AsEnumerable().Select(dataRow =>
-            {
-                var instanceOfT = Activator.CreateInstance<TModel>();
-
-                foreach (var properties in objectProperties.Where(properties => columnNames.Contains(properties.Name) && dataRow[properties.Name] != DBNull.Value))
-                {
-                    properties.SetValue(instanceOfT, dataRow[properties.Name], null);
-                }
-                return instanceOfT;
-            }).ToList();
-
-            return targetList;
-        }
+        
 
     }
 }
