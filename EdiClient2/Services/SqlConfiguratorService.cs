@@ -279,6 +279,15 @@ WHERE 1 = 1
         FROM abt.REF_GOODS_MATCHING rgm
             WHERE DISABLED = 0";
 
-
+        internal static string Sql_SelectTriceTypes()
+           => @"SELECT
+      RPTM.Customer_gln ""CustomerGln""
+      , RPTM.id_price_type ""IdPriceType""
+       , RPTM.DISABLED ""Disabled""
+       , RPT.NAME ""PriceTypeName""
+     FROM
+     REF_PRICE_TYPES_MATCHING RPTM,
+     REF_PRICE_TYPES RPT
+     WHERE RPTM.ID_PRICE_TYPE = RPT.ID";
     }
 }

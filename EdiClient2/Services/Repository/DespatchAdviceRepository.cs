@@ -66,19 +66,19 @@ namespace EdiClient.Services.Repository
                                 {
                                     LineNumber = detail?.LineNumber ?? "",
                                     EAN = detail?.EAN ?? "",
-                                    BuyerItemCode = detail?.BuyerItemCode ?? "", // Неверный формат кода товара Реми:  <BuyerItemCode>
+                                    BuyerItemCode = detail?.BuyerItemCode ?? "", 
                                     SupplierItemCode = detail?.ID_GOOD ?? "",
                                     ItemDescription = detail?.ItemDescription ?? "",
                                     OrderedQuantity = detail?.OrderedQuantity,
-                                    QuantityDespatched =  detail?.QUANTITY, // Указано нулевое количество к отгрузке: <QuantityDespatched>
+                                    QuantityDespatched =  detail?.QUANTITY, 
                                     //ItemSize = detail?.GOOD_SIZE ?? "", 
-                                    UnitOfMeasure =  detail?.UnitOfMeasure, // Не указана единица измерения: <UnitOfMeasure>
+                                    UnitOfMeasure =  detail?.UnitOfMeasure,
                                     UnitNetPrice =  detail?.PRICE,
                                     TaxRate =  detail?.TAX, // ставка НДС
-                                    UnitGrossPrice = (double.Parse( detail?.PRICE) / 100 * (100 + double.Parse( detail?.TAX))).ToString(),
-                                    NetAmount = (double.Parse( detail?.PRICE) * double.Parse( detail?.QUANTITY)).ToString(),
-                                    GrossAmount = ((double.Parse( detail?.PRICE) / 100 * (100 + double.Parse( detail?.TAX))) * double.Parse( detail?.QUANTITY)).ToString(),
-                                    TaxAmount = (((double.Parse( detail?.PRICE) / 100 * (100 + double.Parse( detail?.TAX))) - double.Parse( detail?.PRICE)) * double.Parse( detail?.QUANTITY)).ToString()
+                                    UnitGrossPrice = Math.Round(double.Parse( detail?.PRICE) / 100 * (100 + double.Parse( detail?.TAX)), 4).ToString(),
+                                    NetAmount = Math.Round(double.Parse( detail?.PRICE) * double.Parse( detail?.QUANTITY), 4).ToString(),
+                                    GrossAmount = Math.Round((double.Parse( detail?.PRICE) / 100 * (100 + double.Parse( detail?.TAX))) * double.Parse( detail?.QUANTITY), 4).ToString(),
+                                    TaxAmount = Math.Round(((double.Parse( detail?.PRICE) / 100 * (100 + double.Parse( detail?.TAX))) - double.Parse( detail?.PRICE)) * double.Parse( detail?.QUANTITY),4).ToString()
                                 }
                             }
                             );

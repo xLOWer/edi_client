@@ -322,7 +322,7 @@ values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.I
 
             var sql = $"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_GOOD, DISABLED)"+
                 $"values(4650093209994, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0)";
-            MessageBox.Show(sql);
+
             DbService.Insert( sql  );
 
             string failed = "";

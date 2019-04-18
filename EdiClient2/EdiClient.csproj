@@ -149,6 +149,8 @@
     <Compile Include="Model\MatchingDbModel\FailedGoods.cs" />
     <Compile Include="Model\MatchingDbModel\Goods.cs" />
     <Compile Include="Model\MatchingDbModel\Matches.cs" />
+    <Compile Include="Model\MatchingDbModel\MatchingPriceTypes.cs" />
+    <Compile Include="Model\MatchingDbModel\PriceType.cs" />
     <Compile Include="Model\WebModel\DocumentInfo.cs" />
     <Compile Include="Model\WebModel\OrganizationInfo.cs" />
     <Compile Include="Model\WebModel\RelationResponse.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="ViewModel\Common\MainViewModel.cs" />
     <Compile Include="ViewModel\Common\ListViewModel.cs" />
     <Compile Include="Model\DocumentOrder.cs" />
+    <Compile Include="ViewModel\PriceTypesViewModel.cs" />
     <Compile Include="ViewModel\MatchMakerViewModel.cs" />
     <Compile Include="ViewModel\RecadvListViewModel.cs" />
     <Compile Include="ViewModel\DesadvListViewModel.cs" />
@@ -178,6 +181,9 @@
     <Compile Include="ViewModel\OrdersListViewModel.cs" />
     <Compile Include="View\MatchMakerView.xaml.cs">
       <DependentUpon>MatchMakerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PriceTypesView.xaml.cs">
+      <DependentUpon>PriceTypesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\RecadvListView.xaml.cs">
       <DependentUpon>RecadvListView.xaml</DependentUpon>
@@ -216,6 +222,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\MatchMakerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PriceTypesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

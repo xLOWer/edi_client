@@ -23,7 +23,6 @@ namespace EdiClient.Services.Repository
             EdiService.Send(order.DocumentParties?.Sender?.ILN ?? throw new Exception("Ошибка при отправке документа"),
                 "ORDRSP", "", "", "T", "", sendOrder, 20);
             DbService.Insert(SqlConfiguratorService.Sql_UpdateEdiDocSetIsInEdiAsORDRSP(order.OrderResponseHeader.OrderResponseNumber));
-            ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -61,16 +60,16 @@ namespace EdiClient.Services.Repository
                                         BuyerItemCode = detail?.BuyerItemCode ?? "",
                                         SupplierItemCode = detail?.ID_GOOD ?? "",
                                         ItemDescription = detail?.ItemDescription ?? "",
-                                        OrderedQuantity = detail?.OrderedQuantity,
+                                        OrderedQuantity = detail?.QUANTITY,
                                         QuantityToBeDelivered = detail?.QUANTITY,
-                                        QuantityDifference = (double.Parse(detail?.OrderedQuantity) - double.Parse(detail?.QUANTITY)).ToString(),
+                                        QuantityDifference = Math.Round(double.Parse(detail?.OrderedQuantity) - double.Parse(detail?.QUANTITY),4).ToString(),
                                         UnitOfMeasure = detail.UnitOfMeasure ?? "",
                                         OrderedUnitNetPrice = detail?.PRICE ?? "",
                                         TaxRate = detail?.TAX,
                                         OrderedUnitGrossPrice = (double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX))).ToString(),
-                                        NetAmount = (double.Parse(detail.PRICE) * double.Parse(detail.QUANTITY)).ToString(),
-                                        GrossAmount = (( double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX)) ) * double.Parse(detail.QUANTITY)).ToString(),
-                                        TaxAmount = (((double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX))) - double.Parse(detail.PRICE)) * double.Parse(detail.QUANTITY)).ToString()
+                                        NetAmount = Math.Round(double.Parse(detail.PRICE) * double.Parse(detail.QUANTITY),4).ToString(),
+                                        GrossAmount = Math.Round(( double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX)) ) * double.Parse(detail.QUANTITY), 4).ToString(),
+                                        TaxAmount = Math.Round(((double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX))) - double.Parse(detail.PRICE)) * double.Parse(detail.QUANTITY),4).ToString()
                                     }
                                 });
                             }
