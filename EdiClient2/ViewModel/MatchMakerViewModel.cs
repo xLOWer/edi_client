@@ -9,12 +9,50 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 using EdiClient.View;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace EdiClient.ViewModel
 {
     public class MatchMakerViewModel : INotifyPropertyChanged
     {
+        public MatchMakerViewModel(MatchMakerView page)
+        {
+            try
+            {
+                _page = page;
+                UpdateRelationships();
+            } catch (Exception ex) { err( ex ); }
+        }
+
         #region fields
+
+        delegate void Message(string ex);
+        Message msg = Utilites.Error;
+        delegate void Error(Exception ex);
+        Error err = Utilites.Error;
+
+        private List<Model.WebModel.RelationResponse.Relation> relationships { get; set; }
+        public List<Model.WebModel.RelationResponse.Relation> Relationships
+        {
+            get { return relationships; }
+            set
+            {
+                relationships = value;
+                RaiseNotifyPropertyChanged( "Relationships" );
+            }
+        }
+
+        private Model.WebModel.RelationResponse.Relation selectedRelationship { get; set; }
+        public Model.WebModel.RelationResponse.Relation SelectedRelationship
+        {
+            get { return selectedRelationship; }
+            set
+            {
+                selectedRelationship = value;
+                RaiseNotifyPropertyChanged( "SelectedRelationship" );
+            }
+        }
 
         private MatchMakerView _page { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -170,7 +208,8 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged( "MatchesList" );
             }
         }
-        
+
+        private bool HelpMode { get; set; } = false;
 
         public CommandService NewMatchingCommand => new CommandService( NewMatching );
         public CommandService FailedGoodSearchCommand => new CommandService( FailedGoodSearch );
@@ -185,15 +224,20 @@ namespace EdiClient.ViewModel
 
         #endregion
 
+        private void UpdateRelationships()
+        {
+            Relationships = EdiService.Relationships().Where( x => x.documentType == "ORDER" ).ToList() ?? throw new Exception( "При загрузке списка покупателей" );
+            SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception( "Не выбран покупатель" ));
+        }
+
         protected void RaiseNotifyPropertyChanged(string info)
         {
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( info ) );
         }
-
-
-        
+            
         public void NewMatching(object obj = null)
         {
+
 
             if (NewCustomerItemCode.Length < 4 || NewCustomerItemCode == null)
             {
@@ -201,7 +245,19 @@ namespace EdiClient.ViewModel
                 return;
             }
 
-            if(SelectedGood == null)
+            if (SelectedRelationship == null)
+            {
+                Utilites.Error( "Необходимо выбрать покупателя" );
+                return;
+            }
+
+            if (String.IsNullOrEmpty( SelectedRelationship.partnerIln))
+            {
+                Utilites.Error( "У выбранного покупателя нет кода ГЛН" );
+                return;
+            }
+
+            if (SelectedGood == null)
             {
                 Utilites.Error( "Необходимо выбрать товар для сопоставления" );
                 return;
@@ -213,8 +269,8 @@ namespace EdiClient.ViewModel
                 return;
             }
 
-            DbService.Insert( $@"insert abt.REF_GOODS_MATCHING(CUSTOMER_GLN,CUSTOMER_ARTICLE,ID_GOOD,DISABLED)
-values('4650093209994',{NewCustomerItemCode},{SelectedGood.Id},7)" );
+            DbService.Insert( $@"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN,CUSTOMER_ARTICLE,ID_GOOD)
+values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.Id})" );
 
             NewCustomerItemCode = "";
 
@@ -247,23 +303,25 @@ values('4650093209994',{NewCustomerItemCode},{SelectedGood.Id},7)" );
         {
             if (SelectedFailedGood == null)
             {
-                Utilites.Error( "Не выбран пункт с не сопоставленным товаром" );
+                msg( "Не выбран пункт с не сопоставленным товаром" );
                 return;
             }
 
             if (SelectedGood == null)
             {
-                Utilites.Error( "Не выбран пункт с товаром" );
+                msg( "Не выбран пункт с товаром" );
                 return;
             }
 
             if (String.IsNullOrEmpty( SelectedFailedGood.BuyerItemCode ) || String.IsNullOrEmpty( SelectedGood.Id ))
             {
-                Utilites.Error( "Код покупателя или идентификатор товара отсутствует" );
+                msg( "Код покупателя или идентификатор товара отсутствует" );
                 return;
             }
-            var sql = $@"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_GOOD, DISABLED)
-values(4650093209994, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0)";
+
+
+            var sql = $"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_GOOD, DISABLED)"+
+                $"values(4650093209994, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0)";
             MessageBox.Show(sql);
             DbService.Insert( sql  );
 
@@ -278,60 +336,67 @@ values(4650093209994, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0
                     break;
                 }
 
-                if (!String.IsNullOrEmpty( item.EdiDocId ))
+                if (String.IsNullOrEmpty( item.EdiDocId ))
                 {
                     failed += $"\n{item.GetType().ToString()}.EdiDocId is null of empty in {nameof( FailedGoodsList )}";
                     break;
                 }
+
+                var doc_number = DbService.SelectSingleValue( "select ORDER_NUMBER FROM hpcservice.EDI_DOC WHERE id=" + item.EdiDocId );
 
                 commands.Add( new OracleCommand()
                 {
                     CommandText = "EDI_REFRESH_DOC_DETAILS",
                     CommandType = CommandType.StoredProcedure,
                     Parameters =
-                            {
-                                new OracleParameter("P_EDI_DOC_NUMBER", OracleDbType.NVarChar, item.EdiDocId, ParameterDirection.Input)
-                            }
+                    {
+                        new OracleParameter("P_EDI_DOC_NUMBER", OracleDbType.NVarChar, doc_number, ParameterDirection.Input)
+                    }
                 } );
             }
             if (commands.Count <= 0)
             {
-                Utilites.Error( "Нет команд для выполнения т.к. возможно имеются отшибки в выделяемых товарах: "+failed );
+                msg( "Нет команд для выполнения т.к. возможно имеются отшибки в выделяемых товарах: "+failed );
                 return;
             }
+
             try
             {
                 DbService.ExecuteCommand( commands );
                 FailedGoodsList = GetFailedGoods();
+                RaiseNotifyPropertyChanged( "FailedGoodsList" );
                 MatchesList = GetMatchesList();
+                RaiseNotifyPropertyChanged( "MatchesList" );
+                MatchesSearchText = SelectedMatch.CustomerGoodId;
+                RaiseNotifyPropertyChanged( "MatchesSearchText" );
+                MatchesSearch();
+                RaiseNotifyPropertyChanged( "MatchesSearchText" );
+                RaiseNotifyPropertyChanged( "MatchesList" );
             }
-            catch (Exception ex) { Utilites.Error( ex ); }
+            catch (Exception ex) { err( ex ); }
         }
+
+
         
         public void DisposeMatching(object obj = null)
         {
-            if (SelectedFailedGood == null)
+            if (SelectedMatch == null)
             {
-                Utilites.Error( "Не выбран пункт с несопоставленным товаром" );
-
+                msg( "Не выбран пункт с сопоставлением" );
             }
 
-            if (String.IsNullOrEmpty( SelectedFailedGood.BuyerItemCode ))
+            if (String.IsNullOrEmpty( SelectedMatch.CustomerGoodId ))
             {
-                Utilites.Error( "У выбранного товара отсутствует код покупателя" );
+                msg( "У выбранного товара отсутствует код покупателя" );
             }
 
             try
             {
                 DbService.Insert( $@"update abt.REF_GOODS_MATCHING set DISABLED=1
-where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.BuyerItemCode}')" );
+where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.BuyerItemCode}'" );
 
-                DbService.ExecuteCommand( new OracleCommand()
-                {
-                    CommandText = "EDI_REFRESH_DOC_DETAILS",
-                    CommandType = CommandType.StoredProcedure
-                } );
                 FailedGoodsList = GetFailedGoods();
+                FailedGoodResetInput();
                 MatchesList = GetMatchesList();
             }
             catch (Exception ex) { Utilites.Error( ex ); }
@@ -368,17 +433,18 @@ where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.B
                 FailedGoodsList = GetFailedGoods();
                 if (!String.IsNullOrEmpty( FailedGoodSearchText ))
                 {
-                    var searchList = FailedGoodSearchText.Split( ',' );
+                    var searchList = FailedGoodSearchText.Split( ' ' );
                     if (searchList.Count() > 0)
                     {
                         foreach (var item in searchList)
                         {
+                            var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
                             if (!String.IsNullOrEmpty( item ))
                             {
                                 FailedGoodsList = FailedGoodsList.Where(
-                                    x => (x.ItemDescription?.ToUpper()?.Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.OrderName?.ToUpper()?.Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.BuyerItemCode?.ToUpper()?.Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
+                                    x => (x.ItemDescription?.ToUpper()?.Contains( text ) ?? false)
+                                      || (x.OrderName?.ToUpper()?.Contains( text ) ?? false)
+                                      || (x.BuyerItemCode?.ToUpper()?.Contains( text ) ?? false)
                                 ).ToList();
                             }
                         }
@@ -400,17 +466,18 @@ where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.B
                 MatchesList = GetMatchesList();
                 if (!String.IsNullOrEmpty( MatchesSearchText ))
                 {
-                    var searchList = MatchesSearchText.Split( ',' );
+                    var searchList = MatchesSearchText.Split( ' ' );
                     if (searchList.Count() > 0)
                     {
                         foreach (var item in searchList)
                         {
                             if (!String.IsNullOrEmpty( item ))
                             {
+                                var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
                                 MatchesList = MatchesList.Where(
-                                    x => (x.Name?.ToUpper()?.Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.GoodId?.ToUpper()?.Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.CustomerGoodId?.ToUpper()?.Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
+                                    x => (x.Name?.ToUpper()?.Contains( text ) ?? false)
+                                      || (x.GoodId?.ToUpper()?.Contains( text ) ?? false)
+                                      || (x.CustomerGoodId?.ToUpper()?.Contains( text ) ?? false)
                                 ).ToList();
                             }
                         }
@@ -432,18 +499,19 @@ where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.B
                 GoodsList = fullGoodsList;
                 if (!String.IsNullOrEmpty( GoodSearchText ))
                 {
-                    var searchList = GoodSearchText.Split( ',' );
+                    var searchList = GoodSearchText.Split( ' ' );
                     if (searchList.Count() > 0)
                     {
                         foreach (var item in searchList)
                         {
                             if (!String.IsNullOrEmpty( item ))
                             {
+                                var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
                                 GoodsList = GoodsList.Where(
-                                    x => (x.Name?.ToUpper().Trim( ' ' ).Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.Id?.ToUpper().Trim( ' ' ).Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.Manufacturer?.ToUpper().Trim( ' ' ).Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
-                                      || (x.Code?.ToUpper().Trim( ' ' ).Contains( item?.ToUpper().Trim( ' ' ) ) ?? false)
+                                    x => (x.Name?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
+                                      || (x.Id?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
+                                      || (x.Manufacturer?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
+                                      || (x.Code?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
                                 ).ToList();
                             }
                         }
@@ -483,11 +551,6 @@ where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.B
 
 
         
-        public MatchMakerViewModel(MatchMakerView page)
-        {
-            _page = page;
-        }
-
 
     }
 }

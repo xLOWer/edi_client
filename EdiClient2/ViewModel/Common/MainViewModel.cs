@@ -14,9 +14,9 @@ namespace EdiClient.ViewModel.Common
         public MainViewModel()
         {
             TabService.NewTab( typeof( OrdersListView ), "Заказы поставщика (ORDERS)" );
-            //TabService.NewTab( typeof( OrdrspListView ), "Ответы на заказы поставщика (ORDRSP)" );
-            //TabService.NewTab( typeof( DesadvListView ), "Уведомление об отгрузке (DESADV)" );
-            //TabService.NewTab( typeof( RecadvListView ), "Уведомление о приёмке (RECADV)" );
+            TabService.NewTab( typeof( OrdrspListView ), "Ответы на заказы поставщика (ORDRSP)" );
+            TabService.NewTab( typeof( DesadvListView ), "Уведомление об отгрузке (DESADV)" );
+            TabService.NewTab( typeof( RecadvListView ), "Уведомление о приёмке (RECADV)" );
             TabService.NewTab( typeof( MatchMakerView ), "Связи товаров" );
         }
 

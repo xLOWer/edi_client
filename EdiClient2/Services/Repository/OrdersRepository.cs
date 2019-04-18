@@ -71,11 +71,11 @@ namespace EdiClient.Services.Repository
             return Orders;
         }
 
-        public static void UpdateFailedDetails(string number)
+        public static void UpdateFailedDetails(string P_EDI_DOC_NUMBER)
         {
             DbService.ExecuteCommand(new OracleCommand()
             {
-                Parameters = { new OracleParameter("P_EDI_DOC_NUMBER", OracleDbType.NVarChar, number, ParameterDirection.Input) },
+                Parameters = { new OracleParameter("P_EDI_DOC_NUMBER", OracleDbType.NVarChar, P_EDI_DOC_NUMBER, ParameterDirection.Input) },
                 CommandType = CommandType.StoredProcedure,
                 CommandText = "EDI_REFRESH_DOC_DETAILS"
             });

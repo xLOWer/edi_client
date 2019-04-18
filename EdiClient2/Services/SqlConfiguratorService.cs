@@ -273,11 +273,11 @@ WHERE 1 = 1
 
         internal static string Sql_SelectMatches()
             => $@"SELECT rgm.CUSTOMER_GLN ""CustomerGln""
-        ,rgm.CUSTOMER_ARTICLE ""CustomerGoodId""
+        ,to_char(rgm.CUSTOMER_ARTICLE) ""CustomerGoodId""
         ,rgm.ID_GOOD ""GoodId""
         ,(SELECT NAME FROM ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
         FROM abt.REF_GOODS_MATCHING rgm
-            WHERE DISABLED in (0,7)";
+            WHERE DISABLED = 0";
 
 
     }

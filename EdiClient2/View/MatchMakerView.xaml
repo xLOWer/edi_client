@@ -7,22 +7,26 @@
       mc:Ignorable="d" 
 d:DesignHeight="1080" d:DesignWidth="1920"
       Title="MatchMaker">
-    <Grid>
-        
+    <Grid x:Name="mainMatchesGrid">
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="7*"/>
             <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
 
-
-        <ComboBox Grid.Column="0" Grid.Row="0" ItemsSource="{Binding IsAsync=True}"/>
+        <ComboBox x:Name="RelComboBox" Grid.Column="0" ItemsSource="{Binding Relationships, Mode=TwoWay}" 
+                        SelectedIndex="0" BorderThickness="0" Background="Transparent"
+                        SelectedItem="{Binding  SelectedRelationship, Mode=TwoWay}"
+                        DisplayMemberPath="Name"
+                        IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValuePath="Name"/>
 
 
         <Grid Grid.Column="0" Grid.Row="1">
@@ -40,7 +44,7 @@ d:DesignHeight="1080" d:DesignWidth="1920"
                      Margin="2" Text="{Binding GoodSearchText, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    ToolTip="Поиск по введённым словам. Через запятую по одному слову или цифре. Например: зубная,ПАСТА, кОлГЕйт"
+                    ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: зубная ПАСТА   кОлГЕйт"
                     Margin="2"  Command="{Binding GoodSearchCommand, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
@@ -58,12 +62,12 @@ d:DesignHeight="1080" d:DesignWidth="1920"
                       AutoGenerateColumns="False" 
                       SelectionUnit="FullRow">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Id}" Width="*" Header="Id"/>
-                    <DataGridTextColumn Binding="{Binding Code}" Width="*" Header="Code"/>
-                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Name"/>
-                    <DataGridTextColumn Binding="{Binding BarCode}" Width="*" Header="BarCode"/>
-                    <DataGridTextColumn Binding="{Binding GoodSize}" Width="*" Header="GoodSize"/>
-                    <DataGridTextColumn Binding="{Binding Manufacturer}" Width="*" Header="Manufacturer"/>
+                    <DataGridTextColumn Binding="{Binding Id}" Width="SizeToCells" Header="Id"/>
+                    <DataGridTextColumn Binding="{Binding Code}" Width="SizeToCells" Header="Код"/>
+                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Наименование"/>
+                    <!--<DataGridTextColumn Binding="{Binding BarCode}" Width="*" Header="BarCode"/>-->
+                    <DataGridTextColumn Binding="{Binding GoodSize}" Width="SizeToCells" Header="Размерность"/>
+                    <DataGridTextColumn Binding="{Binding Manufacturer}" Width="SizeToCells" Header="Производитель"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -79,14 +83,14 @@ d:DesignHeight="1080" d:DesignWidth="1920"
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
-            
+
             <TextBox Grid.Row="0" Grid.Column="0" 
                      Margin="2"  Text="{Binding FailedGoodSearchText, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    ToolTip="Поиск по введённым словам. Через запятую по одному слову или цифре. Например: зубная,ПАСТА, кОлГЕйт"                  
+                    ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: зубная ПАСТА   кОлГЕйт"                  
                     Margin="2" Command="{Binding FailedGoodSearchCommand, IsAsync=True}"/>
-            
+
 
             <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
                     ToolTip="Сбросить поиск не стирая введённое"
@@ -104,11 +108,11 @@ d:DesignHeight="1080" d:DesignWidth="1920"
                       AutoGenerateColumns="False" 
                       SelectionUnit="FullRow">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding ItemDescription}" Width="*" Header="ItemDescription"/>
-                    <DataGridTextColumn Binding="{Binding Ean}" Width="*" Header="Ean"/>
-                    <DataGridTextColumn Binding="{Binding BuyerItemCode}" Width="*" Header="BuyerItemCode"/>
-                    <DataGridTextColumn Binding="{Binding OrderName}" Width="*" Header="OrderName"/>
-                    <DataGridTextColumn Binding="{Binding GoodId}" Width="*" Header="GoodId"/>
+                    <DataGridTextColumn Binding="{Binding ItemDescription}" Width="*" Header="Наименование"/>
+                    <DataGridTextColumn Binding="{Binding Ean}" Width="SizeToCells" Header="Ean"/>
+                    <DataGridTextColumn Binding="{Binding BuyerItemCode}" Width="SizeToCells" Header="Код покупателя"/>
+                    <DataGridTextColumn Binding="{Binding OrderName}" Width="SizeToCells" Header="Заказ"/>
+                    <DataGridTextColumn Binding="{Binding GoodId}" Width="SizeToCells" Header="GoodId"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -150,7 +154,7 @@ d:DesignHeight="1080" d:DesignWidth="1920"
             <Button Name="NewMatchingButton" Content="Добавить новый" Grid.Row="6" Grid.Column="0"
                     Margin="2,30"
                     Command="{Binding NewMatchingCommand}"/>
-            
+
         </Grid>
 
 
@@ -164,13 +168,13 @@ d:DesignHeight="1080" d:DesignWidth="1920"
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
-            
-            
+
+
             <TextBox Grid.Row="0" Grid.Column="0" 
                      Margin="2" Text="{Binding MatchesSearchText, IsAsync=True}"/>
-            
+
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    ToolTip="Поиск по введённым словам. Через запятую по одному слову или цифре. Например: зубная,ПАСТА, кОлГЕйт"                    
+                    ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: зубная ПАСТА   кОлГЕйт"                    
                     Margin="2"  Command="{Binding MatchesSearchCommand, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
@@ -190,15 +194,15 @@ d:DesignHeight="1080" d:DesignWidth="1920"
                   AutoGenerateColumns="False" 
                   SelectionUnit="FullRow">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding CustomerGln}" Width="*" Header="CustomerGln"/>
-                    <DataGridTextColumn Binding="{Binding CustomerGoodId}" Width="*" Header="CustomerGoodId"/>
-                    <DataGridTextColumn Binding="{Binding GoodId}" Width="*" Header="GoodId"/>
-                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Name"/>
+                    <DataGridTextColumn Binding="{Binding CustomerGln}" Width="SizeToCells" Header="ГЛН"/>
+                    <DataGridTextColumn Binding="{Binding CustomerGoodId}" Width="SizeToCells" Header="Код покупателя"/>
+                    <DataGridTextColumn Binding="{Binding GoodId}" Width="SizeToCells" Header="Код товара"/>
+                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Наименование"/>
                 </DataGrid.Columns>
             </DataGrid>
-            
+
         </Grid>
 
-        
+
     </Grid>
 </Page>

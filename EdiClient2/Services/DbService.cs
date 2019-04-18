@@ -94,6 +94,27 @@ namespace EdiClient.Services
 
         }
 
+        internal static string SelectSingleValue(string Sql)
+        {
+            OracleDataReader reader;
+            string retVal = "";
+            using (OracleCommand command = new OracleCommand())
+            {
+                command.Connection = OracleConnectionService.conn;
+                command.CommandType = CommandType.Text;
+                command.CommandText = Sql;
+                OracleConnectionService.conn.Open();
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    retVal = reader[0].ToString();
+                }
+                OracleConnectionService.conn.Close();
+            }
+            return retVal;
+        }
+
         internal static DataTable ObjToDataTable(Type type)
         {
             var dt = new DataTable();
