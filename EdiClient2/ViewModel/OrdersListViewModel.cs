@@ -53,7 +53,8 @@ namespace EdiClient.ViewModel.Orders
                         if (doc == null) continue;
                         if (doc.OrderHeader == null) continue;
                         if (doc.OrderHeader.OrderNumber == null) continue;
-                        docNums += "," + doc.OrderHeader.OrderNumber;
+
+                            docNums += $",'{doc.OrderHeader.OrderNumber}'";
                     }
                     docNums = docNums?.Trim(',');
 

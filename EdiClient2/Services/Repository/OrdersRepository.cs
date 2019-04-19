@@ -105,13 +105,12 @@ namespace EdiClient.Services.Repository
 
         internal static List<string> GetAllOrderIds()
         {
-            var list = new List<string>();
+            var list = new List<string>() { };
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectAllOrderIds());
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
             return list;
         }
@@ -122,15 +121,14 @@ namespace EdiClient.Services.Repository
         /// <returns>Список номеров заказов со статусом HAS_FAILED_DETAIL</returns>
         internal static List<string> GetDetailsFailed(string numbers)
         {
-            var list = new List<string>();
-            var dt = DbService.Select(SqlConfiguratorService.Sql_SelectDetailsFailed(numbers));            
+            var dt = DbService.Select(SqlConfiguratorService.Sql_SelectDetailsFailed(numbers));
+            List<string> list = new List<string>() { };            
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
 
-            return list;
+            return list.ToList();
         }
 
         /// <summary>
@@ -139,7 +137,7 @@ namespace EdiClient.Services.Repository
         /// <returns>Список номеров заказов со статусом HAS_FAILED_DETAIL</returns>
         internal static List<string> GetOrdersFailed()
         {
-            var list = new List<string>();
+            var list = new List<string>() { };
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectOrdersFailed());
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
@@ -156,7 +154,7 @@ namespace EdiClient.Services.Repository
         /// <returns>Список номеров заказов уже находящихся в буферной таблице</returns>
         internal static List<string> GetOrdersLocatedInBufferTable()
         {
-            var list = new List<string>();
+            var list = new List<string>() { };
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectOrdersLocaterInBase());
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)

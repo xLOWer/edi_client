@@ -46,7 +46,7 @@ namespace EdiClient.Services.Repository
             var sql = SqlConfiguratorService.Sql_SelectDesadvHeader(dateFrom, dateTo);
             var headers = DbService<DbDocHeader>.DocumentSelect(sql);
 
-            var advice = new List<DocumentDespatchAdvice>();
+            var adviceList = new List<DocumentDespatchAdvice>();
 
             var Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
             var PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
@@ -86,7 +86,7 @@ namespace EdiClient.Services.Repository
                         }
                     Consignment.PackingSequence = PackingSequence ?? new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
 
-                    advice.Add(new DocumentDespatchAdvice()
+                    adviceList.Add(new DocumentDespatchAdvice()
                     {
                         DespatchAdviceHeader = new DocumentDespatchAdviceDespatchAdviceHeader()
                         {
@@ -130,7 +130,9 @@ namespace EdiClient.Services.Repository
 
                     });
                 }
-            return advice.Where(x=>x.DocumentParties.Receiver.ILN == SelectedRelationship.partnerIln).ToList() ?? new List<DocumentDespatchAdvice>();
+            return adviceList
+                .Where(x=>x.DocumentParties.Receiver.ILN == SelectedRelationship.partnerIln)
+                .ToList() ?? new List<DocumentDespatchAdvice>();
         }
 
     }

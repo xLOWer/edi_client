@@ -449,11 +449,16 @@ where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.B
 
 
 
-        private List<Goods> GetGoods() => DbService<Goods>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectGoods() });
+        private List<Goods> GetGoods() 
+            => DbService<Goods>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectGoods() });
 
-        private List<FailedGoods> GetFailedGoods() => DbService<FailedGoods>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectFailedGoods() });
+        private List<FailedGoods> GetFailedGoods() 
+            => DbService<FailedGoods>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectFailedGoods() });
 
-        private List<Matches> GetMatchesList() => DbService<Matches>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectMatches() });
+        private List<Matches> GetMatchesList() 
+            => DbService<Matches>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectMatches() })
+            .Where(x => x.CustomerGln == SelectedRelationship.partnerIln)
+            .ToList();
 
     }
 }
