@@ -47,9 +47,13 @@ namespace EdiClient.ViewModel.Orders
                     var docsHasFailedDetails = OrdersRepository.GetOrdersFailed() ?? throw new Exception("Не были загружены данные из базы, повторите попытку");
 
                     var docNums = "";
+
                     foreach (var doc in Documents)
                     {
-                        docNums += ","+doc?.OrderHeader?.OrderNumber;
+                        if (doc == null) continue;
+                        if (doc.OrderHeader == null) continue;
+                        if (doc.OrderHeader.OrderNumber == null) continue;
+                        docNums += "," + doc.OrderHeader.OrderNumber;
                     }
                     docNums = docNums?.Trim(',');
 
@@ -71,16 +75,19 @@ namespace EdiClient.ViewModel.Orders
                             }
                         }
                     }
-                    
+
                 }
             }
             catch (Exception ex)
             {
                 Utilites.Error(ex);
             }
-            watch.Stop();
-            Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
-            IsCanRefresh = true;
+            finally
+            {
+                watch.Stop();
+                Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+                IsCanRefresh = true;
+            }
         }
 
         public override void SaveToXml(object o = null)

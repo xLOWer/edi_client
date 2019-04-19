@@ -234,9 +234,9 @@ WHERE 1 = 1
   AND DJ.ID IN (SELECT ID_TRADER FROM EDI_DOC WHERE ID_TRADER IS NOT NULL)
   AND ED.IS_IN_EDI_AS_ORDRSP IS NOT NULL
   AND DJ.ACT_STATUS >= 5
-  AND DJ.DOC_DATETIME {DatesBetween(date1, date2)}
-            ";
-        }        
+  AND DJ.DOC_DATETIME {DatesBetween(date1, date2)}";
+        }
+
         internal static string ToOracleDate(DateTime Date)
         {
             var day = Date.Day < 10 ? $"0{Date.Day}" : Date.Day.ToString();
@@ -246,48 +246,58 @@ WHERE 1 = 1
 
         internal static string Sql_SelectGoods()
             => $@"  SELECT rg.id ""Id""
-        , rg.code ""Code""
-        , rg.name ""Name""
-        , rg.bar_code ""BarCode""
-        , rg.GOOD_SIZE ""GoodSize""
-        , (SELECT name FROM REF_CONTRACTORS WHERE ID = rg.id_manufacturer) ""Manufacturer""
-            , rg.ID_MANUFACTURER ""ManufacturerId""
-        , rg.EXPIRING_DATE ""ExpiringDate""
-        , rg.REG_NUM ""RegNum""
-        , rg.SERT_NUM ""SertNum""
-        , rg.ID_SUBDIVISION ""SubdivisionId""
-        FROM abt.ref_goods rg";
+                    , rg.code ""Code""
+                    , rg.name ""Name""
+                    , rg.bar_code ""BarCode""
+                    , rg.GOOD_SIZE ""GoodSize""
+                    , (SELECT name FROM REF_CONTRACTORS WHERE ID = rg.id_manufacturer) ""Manufacturer""
+                        , rg.ID_MANUFACTURER ""ManufacturerId""
+                    , rg.EXPIRING_DATE ""ExpiringDate""
+                    , rg.REG_NUM ""RegNum""
+                    , rg.SERT_NUM ""SertNum""
+                    , rg.ID_SUBDIVISION ""SubdivisionId""
+                    FROM abt.ref_goods rg";
 
 
         internal static string Sql_SelectFailedGoods()
             => $@"  SELECT id_good ""GoodId""
-    , EDD.ID_EDI_DOC ""EdiDocId""
-    , EDD.LINE_NUMBER ""LineNumber""
-    ,EDD.ITEM_DESCRIPTION ""ItemDescription""
-    ,EDD.EAN ""Ean""
-    ,EDD.BUYER_ITEM_CODE ""BuyerItemCode""
-    ,(SELECT ORDER_NUMBER||' от '||ORDER_DATE FROM HPCSERVICE.EDI_DOC WHERE id = edd.ID_EDI_DOC) ""OrderName""
-    FROM HPCSERVICE.EDI_DOC_DETAILS EDD
-    WHERE EDD.FAILED = 1";
-
+                    , EDD.ID_EDI_DOC ""EdiDocId""
+                    , EDD.LINE_NUMBER ""LineNumber""
+                    ,EDD.ITEM_DESCRIPTION ""ItemDescription""
+                    ,EDD.EAN ""Ean""
+                    ,EDD.BUYER_ITEM_CODE ""BuyerItemCode""
+                    ,(SELECT ORDER_NUMBER||' от '||ORDER_DATE FROM HPCSERVICE.EDI_DOC WHERE id = edd.ID_EDI_DOC) ""OrderName""
+                    FROM HPCSERVICE.EDI_DOC_DETAILS EDD
+                    WHERE EDD.FAILED = 1";
 
         internal static string Sql_SelectMatches()
             => $@"SELECT rgm.CUSTOMER_GLN ""CustomerGln""
-        ,to_char(rgm.CUSTOMER_ARTICLE) ""CustomerGoodId""
-        ,rgm.ID_GOOD ""GoodId""
-        ,(SELECT NAME FROM ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
-        FROM abt.REF_GOODS_MATCHING rgm
-            WHERE DISABLED = 0";
+                    ,to_char(rgm.CUSTOMER_ARTICLE) ""CustomerGoodId""
+                    ,rgm.ID_GOOD ""GoodId""
+                    ,(SELECT NAME FROM ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
+                    FROM ABT.REF_GOODS_MATCHING rgm
+                        WHERE DISABLED = 0";
 
-        internal static string Sql_SelectTriceTypes()
-           => @"SELECT
-      RPTM.Customer_gln ""CustomerGln""
-      , RPTM.id_price_type ""IdPriceType""
-       , RPTM.DISABLED ""Disabled""
-       , RPT.NAME ""PriceTypeName""
-     FROM
-     REF_PRICE_TYPES_MATCHING RPTM,
-     REF_PRICE_TYPES RPT
-     WHERE RPTM.ID_PRICE_TYPE = RPT.ID";
+        internal static string Sql_SelectPriceType()
+           => @"SELECT RPT.ID ""PriceId""
+                ,RPT.NAME ""PriceName""
+                ,RPT.COEF ""PriceCoef""
+                ,RC.NAME  ""CurrencyName""
+                ,(SELECT NAME FROM ABT.REF_PRICE_TYPES WHERE id = RPT.ID_PARENT_PRICE_TYPE) ""ParentName""
+                FROM ABT.REF_PRICE_TYPES RPT, abt.REF_CURRENCIES RC
+                WHERE rpt.ID_DEFAULT_CURRENCY = rc.ID AND RPT.ID_PARENT_PRICE_TYPE = 120401
+                ";
+
+        internal static string Sql_SelectMatchingPriceTypes()
+            => $@"SELECT rptm.CUSTOMER_GLN ""CustomerGln""
+                  ,rptm.ID_PRICE_TYPE ""IdPriceType""
+                  ,rptm.DISABLED ""Disabled""
+                  ,rptm.DISABLED_DATETIME ""DisabledDatetime""
+                  ,rptm.INSERT_DATETIME ""InsertDatetime""
+                  ,rptm.INSERT_USER ""InsertUser""
+                  ,(SELECT name FROM abt.ref_price_types WHERE id = rptm.ID_PRICE_TYPE) ""PriceTypeName""
+                FROM ABT.REF_PRICE_TYPES_MATCHING rptm
+                WHERE DISABLED = 0";
+
     }
 }

@@ -9,8 +9,9 @@ namespace EdiClient.Services.Repository
 {
     internal static class OrderResponseRepository
     {
-        public static List<Model.WebModel.RelationResponse.Relation> Relationships { get; set; }
-        public static Model.WebModel.RelationResponse.Relation SelectedRelationship { get; set; }
+        public static List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;
+        public static Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
+        public static int RelationshipCount => EdiService.RelationshipCount;
         public static List<Model.WebModel.DocumentInfo> Orders { get; set; }
 
         /// <summary>
@@ -19,9 +20,16 @@ namespace EdiClient.Services.Repository
         /// <param name="order">отправляемый заказ</param>
         internal static void SendOrdrsp(DocumentOrderResponse order)
         {
+            if (order == null) { Utilites.Error("При отправке ответа на заказ: не выбран заказ"); return; }
+            if (order.DocumentParties == null) { Utilites.Error("При отправке ответа на заказ: отсутсвуют части документа(DocumentParties)"); return; }
+            if (order.DocumentParties?.Receiver == null) { Utilites.Error("При отправке ответа на заказ: отсутствует отправитель"); return; }
+            if (String.IsNullOrEmpty(order.DocumentParties.Receiver.ILN)) { Utilites.Error("При отправке ответа на заказ: у отправителя отсутствует GLN"); return; }
+            if (SelectedRelationship == null) { Utilites.Error("При отправке ответа на заказ: не выбран покупатель"); return; }
+            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
+            if (order.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Utilites.Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
+
             var sendOrder = XmlService<DocumentOrderResponse>.Serialize(order);
-            EdiService.Send(order.DocumentParties?.Sender?.ILN ?? throw new Exception("Ошибка при отправке документа"),
-                "ORDRSP", "", "", "T", "", sendOrder, 20);
+            EdiService.Send(SelectedRelationship.partnerIln, "ORDRSP", "", "", "T", "", sendOrder, 20);
             DbService.Insert(SqlConfiguratorService.Sql_UpdateEdiDocSetIsInEdiAsORDRSP(order.OrderResponseHeader.OrderResponseNumber));
         }
 
@@ -130,7 +138,7 @@ namespace EdiClient.Services.Repository
                 }
 
             ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
-            return ordrsp ?? new List<DocumentOrderResponse>();
+            return ordrsp.Where(x=>x.DocumentParties.Receiver.ILN == SelectedRelationship.partnerIln).ToList() ?? new List<DocumentOrderResponse>();
         }
 
     }

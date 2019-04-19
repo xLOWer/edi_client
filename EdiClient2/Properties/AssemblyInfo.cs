@@ -8,7 +8,7 @@ using System.Windows;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("Клиент EDI")]
-[assembly: AssemblyDescription("Программе для работы с Edisoft")]
+[assembly: AssemblyDescription("Программа для работы с Edisoft")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("WERA")]
 [assembly: AssemblyProduct("EdiClient2")]
@@ -51,7 +51,7 @@ using System.Windows;
 // Можно задать все значения или принять номер сборки и номер редакции по умолчанию.
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.1.0.3")]
+[assembly: AssemblyFileVersion("2.1.0.3")]
 [assembly: NeutralResourcesLanguage("ru-RU")]
 

@@ -9,17 +9,10 @@ namespace EdiClient.Services.Repository
 {
     internal static class DespatchAdviceRepository
     {
-        public static List<Model.WebModel.RelationResponse.Relation> Relationships { get; set; }
-        public static Model.WebModel.RelationResponse.Relation SelectedRelationship { get; set; }
+        public static List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;
+        public static Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
+        public static int RelationshipCount => EdiService.RelationshipCount;
         public static List<Model.WebModel.DocumentInfo> Advices { get; set; }
-
-        internal static void UpdateData(DateTime dateFrom, DateTime dateTo)
-        {
-            Relationships = EdiService.Relationships().Where(x => x.documentType == "DESADV").ToList() ?? throw new Exception("При загрузке связей возникла ошибка");
-            SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception("Не выбрана связь с покупателем"));
-
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
-        }
 
         /// <summary>
         /// Отправить извещение об отгрузке в систему EDI
@@ -27,11 +20,19 @@ namespace EdiClient.Services.Repository
         /// <param name="advice">отправляемый заказ</param>
         internal static void SendDesadv(DocumentDespatchAdvice advice)
         {
-            EdiService.Send(advice.DocumentParties?.Sender?.ILN, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
+            if (advice == null) { Utilites.Error("При отправке уведомления об отгрузке: не выбран заказ"); return; }
+            if (advice.DocumentParties == null) { Utilites.Error("При отправке уведомления об отгрузке: отсутсвуют части документа(DocumentParties)"); return; }
+            if (advice.DocumentParties?.Receiver == null) { Utilites.Error("При отправке уведомления об отгрузке: отсутствует отправитель"); return; }
+            if (String.IsNullOrEmpty(advice.DocumentParties.Receiver.ILN)) { Utilites.Error("При отправке уведомления об отгрузке: у отправителя отсутствует GLN"); return; }
+            if (SelectedRelationship == null) { Utilites.Error("При отправке уведомления об отгрузке: не выбран покупатель"); return; }
+            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
+            if (advice.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Utilites.Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
+
+
+            EdiService.Send(SelectedRelationship?.partnerIln, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
             DbService.Insert($@"UPDATE EDI_DOC SET IS_IN_EDI_AS_DESADV = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
 = (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
 = (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{advice.DespatchAdviceHeader.DespatchAdviceNumber}' and rownum = 1) and rownum = 1)");
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{advice}", 2);
         }
 
         /// <summary>
@@ -129,8 +130,7 @@ namespace EdiClient.Services.Repository
 
                     });
                 }
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
-            return advice ?? new List<DocumentDespatchAdvice>();
+            return advice.Where(x=>x.DocumentParties.Receiver.ILN == SelectedRelationship.partnerIln).ToList() ?? new List<DocumentDespatchAdvice>();
         }
 
     }

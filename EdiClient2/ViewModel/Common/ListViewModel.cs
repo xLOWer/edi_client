@@ -12,7 +12,7 @@ namespace EdiClient.ViewModel.Common
     {
         public virtual bool IsButtonEnabled { get; }
 
-        public string ImageBack => @"~\..\..\Images\img_back.png"; // путь, относительно текущего файла
+        public string ImageBack => @"~\..\..\Images\img_back.png"; // путь относительно текущего файла (в данном случае ListViewModel.cs)
         public string ImageForward => @"~\..\..\Images\img_forward.png";
         public string ImageRefresh => @"~\..\..\Images\img_refresh.png";
         public string ImageSendToDb => @"~\..\..\Images\img_create_doc.png";
@@ -23,9 +23,9 @@ namespace EdiClient.ViewModel.Common
         {
             try
             {
-                DateFrom = DateTime.Parse("01.01.2019");
+                DateFrom = DateTime.Today;
                 DateTo = DateTime.Today.AddDays(1);
-                //Refresh();
+                //Refresh(); // сделать обновление при загрузке всех вкладок. может сильно просаживать производительность при загрузке
             }
             catch (Exception ex)
             {
@@ -106,15 +106,15 @@ namespace EdiClient.ViewModel.Common
 
         public virtual void CreateTraderDocument(object o = null)
         {
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
+
         }
         public virtual void ToEdi(object o = null)
         {
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
+
         }
         public virtual void SaveToXml(object o = null)
         {
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().Name} {typeof(TModel).ToString()}", 2);
+
         }
 
         protected void NotifyPropertyChanged(string info)

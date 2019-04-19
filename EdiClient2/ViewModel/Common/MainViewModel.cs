@@ -18,6 +18,7 @@ namespace EdiClient.ViewModel.Common
             TabService.NewTab( typeof( DesadvListView ), "Уведомление об отгрузке (DESADV)" );
             TabService.NewTab( typeof( RecadvListView ), "Уведомление о приёмке (RECADV)" );
             TabService.NewTab( typeof( MatchMakerView ), "Связи товаров" );
+            TabService.NewTab(typeof(PriceTypesView), "Связи цен");
         }
 
         public void OpenCommonSettings(object o)

@@ -93,13 +93,6 @@
                 </Image>
             </Button>
 
-            <Label Grid.Column="8"  Content="Документы ритейлера: " Margin="50,0,0,0"   BorderThickness="0"/>
-
-            <ComboBox Grid.Column="9" ItemsSource="{Binding Path=(repo:DespatchAdviceRepository.Relationships), Mode=TwoWay}" 
-                        SelectedIndex="0" BorderThickness="0" Background="Transparent"
-                        SelectedItem="{Binding  Path=(repo:DespatchAdviceRepository.SelectedRelationship), Mode=TwoWay}"
-                        DisplayMemberPath="Name"
-                        SelectedValuePath="Name"/>
         </Grid>
 
         <DataGrid Name="XmlDesadvDataGrid" 

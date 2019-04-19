@@ -10,15 +10,17 @@
 
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="174"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="26"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
+        
 
         <Menu Name="TopMenu1" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0"  Grid.IsSharedSizeScope="True">
             <MenuItem Header="Настройки">
@@ -36,7 +38,16 @@
             </MenuItem>
         </Menu>
 
-        <TabControl Name="MainTabControl" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Transparent" BorderThickness="0"
+
+
+        <ComboBox Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
+                        SelectedIndex="0" BorderThickness="0" Background="Transparent"
+                        SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
+                        DisplayMemberPath="Name"
+                        IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValuePath="Name"/>
+
+        <TabControl Name="MainTabControl" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="Transparent" BorderThickness="0"
                     ItemsSource="{Binding Source={x:Static services:TabService.Tabs}}"
                         SelectedIndex="0">
             <TabControl.ItemTemplate>

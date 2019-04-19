@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ServiceModel.Description;
 using static EdiClient.Model.WebModel.RelationResponse;
 using System.Reflection;
+using System.Linq;
 
 namespace EdiClient.Services
 {
@@ -19,6 +20,17 @@ namespace EdiClient.Services
         internal static EndpointAddress address;
         private static string Name { get; set; }
         private static string Password { get; set; }
+
+        public static List<Relation> Relationships { get; set; }
+        public static Relation SelectedRelationship { get; set; }
+        public static int RelationshipCount { get; set; }
+
+        internal static void UpdateData()
+        {
+            Relationships = GetRelationships().Where(x => x.documentType == "ORDER").ToList() ?? throw new Exception("При загрузке связей возникла ошибка");
+            SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception("Не выбрана связь с покупателем"));
+            RelationshipCount = Relationships.Count;
+        }
 
         internal static EDIWebServicePortTypeClient Configure(EndpointAddress _address = null)
         {
@@ -31,6 +43,7 @@ namespace EdiClient.Services
             }
             Name = AppSettings.AppConfig.Edi_User;
             Password = AppSettings.AppConfig.Edi_Password;
+            UpdateData();
             return Client;
         }
 
@@ -87,7 +100,7 @@ namespace EdiClient.Services
             return null;
         }
 
-        internal static List<Relation> Relationships(int timeout = 5000)
+        internal static List<Relation> GetRelationships(int timeout = 5000)
         {
             //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             var ser = new XmlSerializer(typeof(RelationResponse));

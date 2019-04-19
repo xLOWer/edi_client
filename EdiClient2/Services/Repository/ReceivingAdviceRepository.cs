@@ -11,18 +11,18 @@ namespace EdiClient.Services.Repository
 {
     internal static class ReceivingAdviceRepository
     {
-        public static List<Model.WebModel.RelationResponse.Relation> Relationships { get; set; }
-        public static Model.WebModel.RelationResponse.Relation SelectedRelationship { get; set; }
+        public static List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;
+        public static Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
+        public static int RelationshipCount => EdiService.RelationshipCount;
+
         public static List<Model.WebModel.DocumentInfo> NewAdvices { get; set; }
         public static List<DocumentReceivingAdvice> Advices { get; set; }
         public static List<Task> NativeTaskList = new List<Task>();
 
         internal static void UpdateData(DateTime dateFrom, DateTime dateTo)
         {
-            Relationships = new List<Model.WebModel.RelationResponse.Relation>();
             NewAdvices = new List<Model.WebModel.DocumentInfo>();
-            Relationships = EdiService.Relationships().Where(x => x.documentType == "RECADV").ToList() ?? throw new Exception("При загрузке связей возникла ошибка");
-            SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception("Не выбрана связь с покупателем"));
+
             NewAdvices = EdiService.ListMBEx(
                                             SelectedRelationship?.partnerIln
                                             , SelectedRelationship?.documentType
@@ -40,7 +40,7 @@ namespace EdiClient.Services.Repository
         public static List<DocumentReceivingAdvice> GetRecadv(DateTime dateFrom, DateTime dateTo)
         {
             Advices = new List<DocumentReceivingAdvice>();
-            if (Relationships.Count > 0)
+            if (RelationshipCount > 0)
                 foreach (var rel in Relationships)
                     if (NewAdvices.Count > 0)
                         foreach (var order in NewAdvices)

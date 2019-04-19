@@ -8,14 +8,8 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PriceTypesView">
 
-    <Grid x:Name="mainMatchesGrid">
+    <Grid x:Name="mainPriceTypesMatchGrid">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="7*"/>
             <ColumnDefinition Width="120"/>
@@ -23,8 +17,7 @@
         </Grid.ColumnDefinitions>
 
 
-
-        <Grid Grid.Column="0" Grid.Row="1">
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
@@ -36,19 +29,19 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2" Text="{Binding GoodSearchText, IsAsync=True}"/>
+                     Margin="2" Text="{Binding PriceTypeSearchText, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
                     ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: РеМи"
-                    Margin="2"  Command="{Binding GoodSearchCommand, IsAsync=True}"/>
+                    Margin="2"  Command="{Binding PriceTypeSearchCommand, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
                     ToolTip="Сбросить поиск не стирая введённое"
-                    Margin="2"  Command="{Binding GoodResetInputCommand, IsAsync=True}"/>
+                    Margin="2"  Command="{Binding PriceTypeResetInputCommand, IsAsync=True}"/>
 
-            <DataGrid Name="GoodsDataGrid" 
-                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+            <DataGrid Name="PriceTypesDataGrid" 
+                      ItemsSource="{Binding Path=PriceTypeList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedPriceType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                       SelectionMode="Single"
                       Grid.Row="1"    
                       Grid.ColumnSpan="3"
@@ -57,57 +50,15 @@
                       AutoGenerateColumns="False" 
                       SelectionUnit="FullRow">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Id}" Width="SizeToCells" Header="Id"/>
-                    <DataGridTextColumn Binding="{Binding Code}" Width="SizeToCells" Header="Код"/>
-                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Наименование"/>
-                    <!--<DataGridTextColumn Binding="{Binding BarCode}" Width="*" Header="BarCode"/>-->
-                    <DataGridTextColumn Binding="{Binding GoodSize}" Width="SizeToCells" Header="Размерность"/>
-                    <DataGridTextColumn Binding="{Binding Manufacturer}" Width="SizeToCells" Header="Производитель"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-
-
-        <Grid Grid.Column="0" Grid.Row="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="70"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2"  Text="{Binding RelationshipSearchText, IsAsync=True}"/>
-
-            <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: зубная ПАСТА   кОлГЕйт"                  
-                    Margin="2" Command="{Binding RelationshipSearchCommand, IsAsync=True}"/>
-
-
-            <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
-                    ToolTip="Сбросить поиск не стирая введённое"
-                    Margin="2"  Command="{Binding  RelationshipResetInputCommand, IsAsync=True}"/>
-
-            <DataGrid x:Name="RelsDataGrid" 
-                      ItemsSource="{Binding Path=Relationships,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedRelationship, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                      SelectionMode="Single"
-                      Grid.Column="0"  
-                      Grid.Row="1"
-                      Grid.ColumnSpan="3"
-                      Margin="5"
-                      Grid.IsSharedSizeScope="True" 
-                      AutoGenerateColumns="False" 
-                      SelectionUnit="FullRow">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding partnerIln}" Width="SizeToCells" Header="GLN"/>
-                    <DataGridTextColumn Binding="{Binding partnerName}" Width="*" Header="Наименование"/>
+                    <DataGridTextColumn Binding="{Binding PriceId}" Width="SizeToCells" Header="Id"/>
+                    <DataGridTextColumn Binding="{Binding PriceName}" Width="SizeToCells" Header="Наименовение"/>
+                    <DataGridTextColumn Binding="{Binding PriceCoef}" Width="*" Header="Коэфф."/>
+                    <DataGridTextColumn Binding="{Binding CurrencyName}" Width="SizeToCells" Header="Валюта"/>
+                    <DataGridTextColumn Binding="{Binding ParentName}" Width="SizeToCells" Header="Родитель"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid> 
+
 
         <Grid Grid.Column="1" Grid.RowSpan="5">
             <Grid.RowDefinitions>
@@ -139,7 +90,7 @@
         </Grid>
 
 
-        <Grid Grid.Column="2" Grid.Row="1" Grid.RowSpan="3">
+        <Grid Grid.Column="2" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
@@ -152,18 +103,18 @@
 
 
             <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2" Text="{Binding MatchesSearchText, IsAsync=True}"/>
+                     Margin="2" Text="{Binding MatchSearchText, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="1" Content="искать"
                     ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: зубная ПАСТА   кОлГЕйт"                    
-                    Margin="2"  Command="{Binding MatchesSearchCommand, IsAsync=True}"/>
+                    Margin="2"  Command="{Binding MatchSearchCommand, IsAsync=True}"/>
 
             <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
                     ToolTip="Сбросить поиск не стирая введённое"
-                    Margin="2"  Command="{Binding  MatchesResetInputCommand, IsAsync=True}"/>
+                    Margin="2"  Command="{Binding  MatchResetInputCommand, IsAsync=True}"/>
 
-            <DataGrid Name="MatchesDataGrid" 
-                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+            <DataGrid Name="MatchDataGrid" 
+                  ItemsSource="{Binding Path=MatchList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
                   SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                   SelectionMode="Single"
                   Grid.Row="1"  
@@ -176,9 +127,9 @@
                   SelectionUnit="FullRow">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding CustomerGln}" Width="SizeToCells" Header="ГЛН"/>
-                    <DataGridTextColumn Binding="{Binding CustomerGoodId}" Width="SizeToCells" Header="Код покупателя"/>
-                    <DataGridTextColumn Binding="{Binding GoodId}" Width="SizeToCells" Header="Код товара"/>
-                    <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Наименование"/>
+                    <DataGridTextColumn Binding="{Binding IdPriceType}" Width="SizeToCells" Header="Id цены"/>
+                    <DataGridTextColumn Binding="{Binding InsertDatetime}" Width="SizeToCells" Header="Дата добавления"/>
+                    <DataGridTextColumn Binding="{Binding PriceTypeName}" Width="*" Header="Наименование"/>
                 </DataGrid.Columns>
             </DataGrid>
 

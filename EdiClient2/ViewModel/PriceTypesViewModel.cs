@@ -31,55 +31,22 @@ namespace EdiClient.ViewModel
         Message msg = Utilites.Error;
         delegate void Error(Exception ex);
         Error err = Utilites.Error;
-
-        private List<Relation> relationshipList { get; set; }
-        public List<Relation> RelationshipList
-        {
-            get { return relationshipList; }
-            set
-            {
-                relationshipList = value;
-                RaiseNotifyPropertyChanged("RelationshipList");
-            }
-        }
-
-        private Relation selectedRelationship { get; set; }
-        public Relation SelectedRelationship
-        {
-            get { return selectedRelationship; }
-            set
-            {
-                selectedRelationship = value;
-                RaiseNotifyPropertyChanged( "SelectedRelationship" );
-            }
-        }
+        
+        public List<Relation> Relationships => EdiService.Relationships;
+        public Relation SelectedRelationship => EdiService.SelectedRelationship;
+        public int RelationshipCount => EdiService.RelationshipCount;
 
         private PriceTypesView _page { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private bool isNewMatchingEnabled = true;
-        public virtual bool IsNewMatchingEnabled
+        private PriceType selectedPriceType = new PriceType();
+        public PriceType SelectedPriceType
         {
-            get
-            {
-                return !String.IsNullOrEmpty( NewCustomerItemCode );/* || (NewCustomerItemCode?.Length ?? 0) >= 4 ) && SelectedPriceTypes != null*/;
-            }
+            get { return selectedPriceType; }
             set
             {
-                isNewMatchingEnabled = value;
-                RaiseNotifyPropertyChanged( "IsNewMatchingEnabled" );
-            }
-        }
-
-
-        private PriceType selectedPriceTypes = new PriceType();
-        public PriceType SelectedPriceTypes
-        {
-            get { return selectedPriceTypes; }
-            set
-            {
-                selectedPriceTypes = value;
-                RaiseNotifyPropertyChanged( "SelectedPriceTypes" );
+                selectedPriceType = value;
+                RaiseNotifyPropertyChanged( "SelectedPriceType" );
             }
         }
         
@@ -93,18 +60,7 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged( "SelectedMatch" );
             }
         }
-                      
-
-        private string newCustomerItemCode = "";
-        public string NewCustomerItemCode
-        {
-            get { return newCustomerItemCode; }
-            set
-            {
-                newCustomerItemCode = value;
-                RaiseNotifyPropertyChanged( "NewCustomerItemCode" );
-            }
-        }
+          
 
         private string priceTypeSearchText = "";
         public string PriceTypeSearchText
@@ -116,26 +72,15 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged( "PriceTypeSearchText" );
             }
         }
-
-        private string relationshipSearchText = "";
-        public string RelationshipSearchText
+        
+        private string matchSearchText = "";
+        public string MatchSearchText
         {
-            get { return relationshipSearchText; }
+            get { return matchSearchText; }
             set
             {
-                relationshipSearchText = value;
-                RaiseNotifyPropertyChanged( "RelationshipSearchText" );
-            }
-        }
-
-        private string matchesSearchText = "";
-        public string MatchesSearchText
-        {
-            get { return matchesSearchText; }
-            set
-            {
-                matchesSearchText = value;
-                RaiseNotifyPropertyChanged( "MatchesSearchText" );
+                matchSearchText = value;
+                RaiseNotifyPropertyChanged( "MatchSearchText" );
             }
         }
         
@@ -150,27 +95,25 @@ namespace EdiClient.ViewModel
             }
         }
         
-        private List<MatchingPriceTypes> matchesList = new List<MatchingPriceTypes>();
-        public List<MatchingPriceTypes> MatchesList
+        private List<MatchingPriceTypes> matchList = new List<MatchingPriceTypes>();
+        public List<MatchingPriceTypes> MatchList
         {
-            get { return matchesList; }
+            get { return matchList; }
             set
             {
-                matchesList = value;
-                RaiseNotifyPropertyChanged( "MatchesList" );
+                matchList = value;
+                RaiseNotifyPropertyChanged( "MatchList" );
             }
         }
 
         private bool HelpMode { get; set; } = false;
         
-        public CommandService RelationshipSearchCommand => new CommandService( RelationshipSearch );
-        public CommandService MatchesSearchCommand => new CommandService( MatchesSearch );
+        public CommandService MatchSearchCommand => new CommandService( MatchSearch );
         public CommandService PriceTypeSearchCommand => new CommandService( PriceTypeSearch );
         public CommandService LoadDataCommand => new CommandService( LoadData );
         public CommandService MakeMatchingCommand => new CommandService( MakeMatching );
         public CommandService DisposeMatchingCommand => new CommandService( DisposeMatching );
-        public CommandService RelationshipResetInputCommand => new CommandService( RelationshipResetInput );
-        public CommandService MatchesResetInputCommand => new CommandService( MatchesResetInput );
+        public CommandService MatchResetInputCommand => new CommandService( MatchResetInput );
         public CommandService PriceTypesResetInputCommand => new CommandService( PriceTypesResetInput );
 
         #endregion
@@ -192,8 +135,7 @@ namespace EdiClient.ViewModel
             _page.LoadDataButton.Content = "ждите загрузки";
 
            PriceTypeList = GetPriceTypes();
-            RelationshipList = GetRelationships();
-            MatchesList = GetMatchesList();
+            MatchList = GetMatchList();
 
             _page.LoadDataButton.Content = "Загрузить данные";
             SetLayoutEnabled( true );
@@ -208,7 +150,7 @@ namespace EdiClient.ViewModel
                 return;
             }
 
-            if (SelectedPriceTypes == null)
+            if (SelectedPriceType == null)
             {
                 msg( "Не выбран тип цены" );
                 return;
@@ -216,128 +158,66 @@ namespace EdiClient.ViewModel
 
             try
             {
-                var sql = $"insert into abt.REF_PRICE_TYPES_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_PriceTypes, DISABLED)" +
-                $"values(4650093209994, '{SelectedRelationship.partnerIln}', {SelectedPriceTypes.PriceId}, 0)";
-                DbService.Insert(sql);            
-                RelationshipList = GetRelationships();
-                MatchesList = GetMatchesList();
+                var sql = $"INSERT INTO ABT.REF_PRICE_TYPES_MATCHING(  CUSTOMER_GLN, ID_PRICE_TYPE, DISABLED)" +
+                          $"VALUES('{SelectedRelationship.partnerIln}', { SelectedPriceType.PriceId}, 0)";
+                DbService.Insert(sql);
+                MatchList = GetMatchList();
             }
             catch (Exception ex) { err( ex ); }
         }
-
-
+        
         
         public void DisposeMatching(object obj = null)
         {
-            /*if (SelectedMatch == null)
+            if (SelectedMatch == null)
             {
                 msg( "Не выбран пункт с сопоставлением" );
-            }
-
-            if (String.IsNullOrEmpty( SelectedMatch.CustomerPriceTypesId ))
-            {
-                msg( "У выбранного товара отсутствует код покупателя" );
-            }
-
-            try
-            {
-                DbService.Insert( $@"update abt.REF_PriceType_MATCHING set DISABLED=1
-where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedRelationship.BuyerItemCode}'" );
-
-                RelationshipList = GetRelationships();
-                RelationshipResetInput();
-                MatchesList = GetMatchesList();
-            }
-            catch (Exception ex) { Utilites.Error( ex ); }*/
-
-        }
-
-
-
-        public void RelationshipResetInput(object obj = null)
-        {
-            RelationshipSearch( "" );
-        }
-
-        public void MatchesResetInput(object obj = null)
-        {
-            MatchesSearch( "" );
-        }
-
-        public void PriceTypesResetInput(object obj = null)
-        {
-            PriceTypeSearch( "" );
-        }
-
-        public void RelationshipSearch(object obj = null)
-        {
-            Task.Factory.StartNew( () =>
-            {
-                RelationshipList = GetRelationships();
-                if (!String.IsNullOrEmpty( RelationshipSearchText ))
-                {
-                    var searchList = RelationshipSearchText.Split( ' ' );
-                    if (searchList.Count() > 0)
-                    {
-                        foreach (var item in searchList)
-                        {
-                            var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
-                            if (!String.IsNullOrEmpty( item ))
-                            {
-                                RelationshipList = RelationshipList.Where(x => x.Name?.ToUpper()?.Contains( text ) ?? false).ToList();
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        public void MatchesSearch(object obj = null)
-        {
-            if (obj == "")
-            {
-                MatchesList = GetMatchesList();
                 return;
             }
+            
+            try
+            {
+                DbService.Insert( $@"update abt.REF_Price_Types_MATCHING set DISABLED = 1
+where CUSTOMER_GLN = '{SelectedMatch.CustomerGln}' and ID_PRICE_TYPE = {SelectedMatch.IdPriceType}" );
+                
+                MatchList = GetMatchList();
+            }
+            catch (Exception ex) { Utilites.Error( ex ); }
+        }
+                        
 
+        public void MatchSearch(object obj = null) =>
             Task.Factory.StartNew( () =>
             {
-                MatchesList = GetMatchesList();
-                if (!String.IsNullOrEmpty( MatchesSearchText ))
+                MatchResetInput();
+                if (!String.IsNullOrEmpty(MatchSearchText))
                 {
-                    var searchList = MatchesSearchText.Split( ' ' );
+                    var searchList = MatchSearchText.Split(' ');
                     if (searchList.Count() > 0)
-                    {
                         foreach (var item in searchList)
-                        {
-                            if (!String.IsNullOrEmpty( item ))
+                            if (!String.IsNullOrEmpty(item))
                             {
-                                var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
-                                MatchesList = MatchesList.Where(
-                                    x => (x.CUSTOMER_GLN?.ToUpper()?.Contains( text ) ?? false)
-                                      || (x.ID_PRICE_TYPE?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.CUSTOMER_GLN?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.CUSTOMER_GLN?.ToUpper()?.Contains(text) ?? false)
+                                var text = item?.ToUpper()?.Trim(' ') ?? "";
+                                MatchList = MatchList.Where(
+                                    x => (x.CustomerGln?.ToUpper()?.Contains(text) ?? false)
+                                      || (x.IdPriceType?.ToUpper()?.Contains(text) ?? false)
+                                      || (x.InsertDatetime?.ToUpper()?.Contains(text) ?? false)
+                                      || (x.PriceTypeName?.ToUpper()?.Contains(text) ?? false)
                                 ).ToList();
                             }
-                        }
-                    }
                 }
             } );
-        }
         
-        public void PriceTypeSearch(object obj = null)
-        {
+
+        public void PriceTypeSearch(object obj = null) =>        
             Task.Factory.StartNew( () =>
             {
-                PriceTypeList = GetPriceTypes();
+                PriceTypesResetInput();
                 if (!String.IsNullOrEmpty( PriceTypeSearchText ))
                 {
                     var searchList = PriceTypeSearchText.Split( ' ' );
-                    if (searchList.Count() > 0)
-                    {
-                        foreach (var item in searchList)
-                        {
+                    if (searchList.Count() > 0)                    
+                        foreach (var item in searchList)                        
                             if (!String.IsNullOrEmpty( item ))
                             {
                                 var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
@@ -346,38 +226,21 @@ where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedRelationship
                                       || (x.PriceId?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
                                 ).ToList();
                             }
-                        }
-                    }
                 }
             } );
-        }
-        
-
-
-        private List<PriceType> GetPriceTypes()
-        {
-            var list = new List<string>
-            {
-                SqlConfiguratorService.Sql_SelectPriceTypes()
-            };
-            return DbService<PriceType>.DocumentSelect( list );
-        }
-        
-        private List<Relation> GetRelationships()        
-            => EdiService.Relationships().Where(x => x.documentType == "ORDER").ToList() ?? throw new Exception("При загрузке списка покупателей");
-        
-        
-        private List<MatchingPriceTypes> GetMatchesList()
-        {
-            var list = new List<string>
-            {
-                SqlConfiguratorService.Sql_SelectMatches()
-            };
-            return DbService<Matches>.DocumentSelect( list );
-        }
-
 
         
+        public void MatchResetInput(object obj = null) => MatchList = GetMatchList();
+        public void PriceTypesResetInput(object obj = null) => PriceTypeList = GetPriceTypes();
 
+
+        private List<PriceType> GetPriceTypes()        
+            => DbService<PriceType>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectPriceType() });
+                
+        private List<MatchingPriceTypes> GetMatchList()        
+           => DbService<MatchingPriceTypes>.DocumentSelect(new List<string>{ SqlConfiguratorService.Sql_SelectMatchingPriceTypes() })
+            .Where(x=>x.CustomerGln == SelectedRelationship.partnerIln)
+            .ToList();
+        
     }
 }

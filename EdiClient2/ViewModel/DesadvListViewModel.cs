@@ -23,7 +23,6 @@ namespace EdiClient.ViewModel.Desadv
             try
             {
                 base.Refresh();
-                DespatchAdviceRepository.UpdateData(DateFrom, DateTo);
                 Documents = DespatchAdviceRepository.GetDesadv(DateFrom, DateTo);
 
             }

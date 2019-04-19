@@ -17,20 +17,19 @@ namespace EdiClient.Services.Repository
     /// </summary>
     public static class OrdersRepository
     {
-        public static List<Model.WebModel.RelationResponse.Relation> Relationships { get; set; }
-        public static Model.WebModel.RelationResponse.Relation SelectedRelationship { get; set; }
+        public static List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;
+        public static Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
+        public static int RelationshipCount => EdiService.RelationshipCount;
+
         public static List<DocumentOrder> Orders { get; set; }
         private static List<Model.WebModel.DocumentInfo> NewOrders { get; set; }
         private static List<Task> NativeTaskList = new List<Task>();
 
 
-
         internal static void UpdateData(DateTime dateFrom, DateTime dateTo)
         {
-            Relationships = EdiService.Relationships().Where(x => x.documentType == "ORDER").ToList() ?? throw new Exception("При загрузке связей возникла ошибка");
-            SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception("Не выбрана связь с покупателем"));
             NewOrders = EdiService.ListMBEx(
-                                            SelectedRelationship?.partnerIln
+                                              SelectedRelationship?.partnerIln
                                             , SelectedRelationship?.documentType
                                             , ""
                                             , ""
@@ -41,8 +40,6 @@ namespace EdiClient.Services.Repository
                                             , ""
                                             , "").Where(x => x.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList()
                                             ?? throw new Exception("При загрузке новых заказов возникла ошибка");
-
-            ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -55,7 +52,7 @@ namespace EdiClient.Services.Repository
         {
             Orders = new List<DocumentOrder>();
 
-            if (Relationships.Count() > 0 && NewOrders.Count() > 0)
+            if (RelationshipCount > 0 && NewOrders.Count() > 0)
                 foreach (var rel in Relationships)
                     foreach (var order in NewOrders)
                         NativeTaskList.Add(Task.Factory.StartNew(()
@@ -126,7 +123,7 @@ namespace EdiClient.Services.Repository
         internal static List<string> GetDetailsFailed(string numbers)
         {
             var list = new List<string>();
-            var dt = DbService.Select(SqlConfiguratorService.Sql_SelectDetailsFailed(numbers));
+            var dt = DbService.Select(SqlConfiguratorService.Sql_SelectDetailsFailed(numbers));            
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
@@ -179,7 +176,7 @@ namespace EdiClient.Services.Repository
         {
             List<OracleCommand> commands = new List<OracleCommand>();
             if (orders.Count > 0)
-                foreach (var order in orders)
+                foreach (var order in orders.Where(x=> x != null))
                 {
                     var coms = GenerateOrderCreatingCommands(order);
                     if (coms != null && coms.Count > 0)
