@@ -15,7 +15,7 @@ namespace EdiClient
         {
             LogService.Log($" START APP {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 5);
 
-            AppConfig.Load();
+            AppConfigHandler.Load();
             EdiService.Configure();
             try
             {

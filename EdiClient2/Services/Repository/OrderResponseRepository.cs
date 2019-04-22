@@ -70,6 +70,7 @@ namespace EdiClient.Services.Repository
                                         ItemDescription = detail?.ItemDescription ?? "",
                                         OrderedQuantity = detail?.QUANTITY,
                                         QuantityToBeDelivered = detail?.QUANTITY,
+                                        AllocatedDelivered = detail?.QUANTITY,
                                         QuantityDifference = Math.Round(double.Parse(detail?.OrderedQuantity) - double.Parse(detail?.QUANTITY),4).ToString(),
                                         UnitOfMeasure = detail.UnitOfMeasure ?? "",
                                         OrderedUnitNetPrice = detail?.PRICE ?? "",

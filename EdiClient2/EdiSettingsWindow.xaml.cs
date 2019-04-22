@@ -16,7 +16,7 @@ namespace EdiClient
 
         private void WindowClosed(object sender, EventArgs e)
         {
-            AppConfig.Save();
+            AppConfigHandler.Save();
         }
     }
 }

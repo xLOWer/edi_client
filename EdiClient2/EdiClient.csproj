@@ -132,6 +132,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppSettings\AppConfig.cs" />
+    <Compile Include="AppSettings\AppConfigHandler.cs" />
     <Compile Include="CommonSettingsWindow.xaml.cs">
       <DependentUpon>CommonSettingsWindow.xaml</DependentUpon>
     </Compile>
