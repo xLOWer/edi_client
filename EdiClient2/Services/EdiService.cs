@@ -22,7 +22,12 @@ namespace EdiClient.Services
         private static string Password { get; set; }
 
         public static List<Relation> Relationships { get; set; }
-        public static Relation SelectedRelationship { get; set; }
+
+        private static Relation selectedRelationship;
+        public static Relation SelectedRelationship {
+            get { return selectedRelationship ?? new Relation() { partnerIln="",partnerName="",relationId = "", documentTest = "", documentStandard = "", form = "", documentType = ""}; }
+            set { selectedRelationship = value; }
+        }
         public static int RelationshipCount { get; set; }
 
         internal static void UpdateData()
@@ -43,6 +48,7 @@ namespace EdiClient.Services
             }
             Name = AppSettings.AppConfig.Edi_User;
             Password = AppSettings.AppConfig.Edi_Password;
+
             UpdateData();
             return Client;
         }

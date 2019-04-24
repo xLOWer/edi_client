@@ -200,10 +200,18 @@
                 <DataGridTextColumn Binding="{Binding LineItem.ItemDescription}" Width="SizeToCells" Header="Наименование"/>
                 <DataGridTextColumn Binding="{Binding LineItem.UnitOfMeasure}" Width="*" Header="Единица измерения"/>
                 <DataGridTextColumn Binding="{Binding LineItem.OrderedQuantity}" Width="*" Header="Заказано"/>
+                <DataGridTextColumn Binding="{Binding LineItem.QuantityToBeDelivered}" Width="*" Header="Будет доставлено"/>
+                <DataGridTextColumn Binding="{Binding LineItem.AllocatedDelivered}" Width="*" Header="К доставке"/>
+                <DataGridTextColumn Binding="{Binding LineItem.QuantityDifference}" Width="*" Header="Разница"/>
                 <DataGridTextColumn Binding="{Binding LineItem.OrderedUnitNetPrice, Converter={StaticResource MoneyStringConverter}}" Width="*" Header="Цена без НДС"/>
                 <DataGridTextColumn Binding="{Binding LineItem.OrderedUnitGrossPrice, Converter={StaticResource MoneyStringConverter}}" Width="*" Header="Цена с НДС"/>
                 <DataGridTextColumn Binding="{Binding LineItem.TaxRate}" Width="*" Header="НДС"/>
+
+                <DataGridTextColumn Binding="{Binding LineItem.NetAmount}" Width="*" Header="NetAmount"/>
+                <DataGridTextColumn Binding="{Binding LineItem.GrossAmount}" Width="*" Header="GrossAmount"/>
+                <DataGridTextColumn Binding="{Binding LineItem.TaxAmount}" Width="*" Header="TaxAmount"/>
             </DataGrid.Columns>
+
         </DataGrid>
 
     </Grid>

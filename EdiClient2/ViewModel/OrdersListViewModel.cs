@@ -17,7 +17,11 @@ namespace EdiClient.ViewModel.Orders
 
         public OrdersListViewModel()
         {
-            OrdersRepository.UpdateData(DateFrom, DateTo);
+            try
+            {
+                OrdersRepository.UpdateData(DateFrom, DateTo);
+            }
+            catch (Exception ex) { Utilites.Error(ex); }
         }
         
         public override void Refresh()
@@ -50,6 +54,9 @@ namespace EdiClient.ViewModel.Orders
 
                     foreach (var doc in Documents)
                     {
+                        doc.EdiIdDoc = "";
+                        doc.EdiIdDoc = DbService.SelectSingleValue($"select ID from HPCSERVICE.EDI_DOC WHERE order_number = '{doc?.OrderHeader?.OrderNumber}'");
+                        OrdersRepository.UpdateFailedDetails(doc?.EdiIdDoc);
                         if (doc == null) continue;
                         if (doc.OrderHeader == null) continue;
                         if (doc.OrderHeader.OrderNumber == null) continue;
@@ -65,8 +72,6 @@ namespace EdiClient.ViewModel.Orders
                         {
                             doc.IsInDatabase = true;
                         }
-                        if (doc.IsFailed)
-                            OrdersRepository.UpdateFailedDetails(doc?.OrderHeader?.OrderNumber);
                         foreach (var line in doc.OrderLines.Lines)
                         {
                             if (detailsFailed.Contains(line?.LineItem?.BuyerItemCode))

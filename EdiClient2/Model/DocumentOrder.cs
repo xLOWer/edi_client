@@ -27,12 +27,10 @@ namespace EdiClient.Model
         [XmlElement("Document-Attachments")]
         public DocumentOrderDocumentAttachments DocumentAttachments { get; set; }
 
-        [XmlIgnore]
-        private string TraderNumber;
-        [XmlIgnore]
-        private bool isInDatabase;
-        [XmlIgnore]
-        public bool IsInDatabase
+        [XmlIgnore] public string EdiIdDoc;
+        [XmlIgnore] public string TraderNumber;
+        [XmlIgnore] private bool isInDatabase;
+        [XmlIgnore] public bool IsInDatabase
         {
             get { return isInDatabase; }
             set
@@ -41,10 +39,8 @@ namespace EdiClient.Model
                 NotifyPropertyChanged("IsInDatabase");
             }
         }
-        [XmlIgnore]
-        private bool isFailed;
-        [XmlIgnore]
-        public bool IsFailed
+        [XmlIgnore] private bool isFailed;
+        [XmlIgnore] public bool IsFailed
         {
             get { return isFailed; }
             set

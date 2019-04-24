@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Windows;
 using System.Windows.Media.Animation;
+using EdiClient.AppSettings;
 using EdiClient.Services;
 using EdiClient.ViewModel.Common;
 
@@ -16,7 +18,7 @@ namespace EdiClient
 
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
             TabService.Configure(ref mainWindow, ref MainTabControl);
             Context = new MainViewModel();
             DataContext = Context;

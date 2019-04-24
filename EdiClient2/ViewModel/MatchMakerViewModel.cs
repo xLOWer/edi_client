@@ -246,8 +246,8 @@ namespace EdiClient.ViewModel
                 return;
             }
 
-            DbService.Insert($@"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN,CUSTOMER_ARTICLE,ID_GOOD)
-values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.Id})");
+            DbService.Insert($@"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN,CUSTOMER_ARTICLE,ID_GOOD,DISABLED)
+values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.Id},0)");
 
             NewCustomerItemCode = "";
 
@@ -298,56 +298,32 @@ values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.I
 
 
             var sql = $"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_GOOD, DISABLED)" +
-                $"values(4650093209994, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0)";
+                $"values({SelectedRelationship.partnerIln}, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0)";
 
             DbService.Insert(sql);
 
-            string failed = "";
-            List<OracleCommand> commands = new List<OracleCommand>();
+            UpdateDocs(SelectedFailedGood.EdiDocId);
+        }
 
-            foreach (var item in FailedGoodsList)
+
+        public void UpdateDocs(string EdiDocId)
+        {
+            try
             {
-                if (item == null)
-                {
-                    failed += $"\n{item.GetType().ToString()} is null in {nameof(FailedGoodsList)}";
-                    break;
-                }
-
-                if (String.IsNullOrEmpty(item.EdiDocId))
-                {
-                    failed += $"\n{item.GetType().ToString()}.EdiDocId is null of empty in {nameof(FailedGoodsList)}";
-                    break;
-                }
-
-                var doc_number = DbService.SelectSingleValue("select ORDER_NUMBER FROM hpcservice.EDI_DOC WHERE id=" + item.EdiDocId);
-
-                commands.Add(new OracleCommand()
+                DbService.ExecuteCommand(new OracleCommand()
                 {
                     CommandText = "EDI_REFRESH_DOC_DETAILS",
                     CommandType = CommandType.StoredProcedure,
                     Parameters =
                     {
-                        new OracleParameter("P_EDI_DOC_NUMBER", OracleDbType.NVarChar, doc_number, ParameterDirection.Input)
+                        new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, EdiDocId, ParameterDirection.Input)
                     }
                 });
-            }
-            if (commands.Count <= 0)
-            {
-                msg("Нет команд для выполнения т.к. возможно имеются отшибки в выделяемых товарах: " + failed);
-                return;
-            }
-
-            try
-            {
-                DbService.ExecuteCommand(commands);
                 FailedGoodsList = GetFailedGoods();
                 MatchesList = GetMatchesList();
-                MatchesSearchText = SelectedMatch.CustomerGoodId;
-                MatchesSearch();
             }
             catch (Exception ex) { err(ex); }
         }
-
 
 
         public void DisposeMatching(object obj = null)
@@ -367,11 +343,13 @@ values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.I
             try
             {
                 DbService.Insert($@"update abt.REF_GOODS_MATCHING set DISABLED=1
-where CUSTOMER_GLN = 4650093209994 and CUSTOMER_ARTICLE = '{SelectedFailedGood.BuyerItemCode}'");
+where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{SelectedMatch.CustomerGoodId}'");
 
                 FailedGoodsList = GetFailedGoods();
-                FailedGoodResetInput();
                 MatchesList = GetMatchesList();
+
+                DbService.Insert($"DECLARE CURSOR v_cursor IS SELECT UNIQUE ID_EDI_DOC FROM HPCSERVICE.EDI_DOC_DETAILS WHERE ID_GOOD = {SelectedMatch.GoodId};" +
+                "BEGIN FOR DOC IN v_cursor LOOP HPCSERVICE.EDI_REFRESH_DOC_DETAILS(DOC.ID_EDI_DOC); END LOOP; EXCEPTION WHEN OTHERS THEN NULL; END;");
             }
             catch (Exception ex) { Utilites.Error(ex); }
 

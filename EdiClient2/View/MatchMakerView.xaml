@@ -138,7 +138,7 @@
 
 
             <TextBox Name="NewCustomerItemCodeTextBox" Grid.Row="5" Grid.Column="1" Margin="2,30"
-                     ToolTip="Код товара покупателя. Более 4х символов и не пустой"
+                     ToolTip="Код товара покупателя. Более 4х символов и не пустой" FlowDirection="LeftToRight"
                      Text="{Binding NewCustomerItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" />
 
             <Button Name="NewMatchingButton" Content="Добавить новый" Grid.Row="6" Grid.Column="0"
