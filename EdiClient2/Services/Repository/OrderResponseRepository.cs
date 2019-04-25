@@ -48,98 +48,115 @@ namespace EdiClient.Services.Repository
 
             var orderLines = new DocumentOrderResponseLine();
             var lines = new List<Line>();
-            
-                if (headers.Count > 0)
-                    foreach (var header in headers)
-                    {
-                        var details = DbService<DbDocDetail>.DocumentSelect(SqlConfiguratorService.Sql_SelectOrdrspDetails(header?.ID_TRADER));
+
+            if (headers.Count > 0)
+                foreach (var header in headers)
+                {
+                    var details = DbService<DbDocDetail>.DocumentSelect(SqlConfiguratorService.Sql_SelectOrdrspDetails(header?.ID_TRADER));
 
                     lines = new List<Line>();
                     orderLines = new DocumentOrderResponseLine();
-                        if (details.Count > 0)
-                            foreach (var detail in details)
-                            {
-                                lines.Add(new Line()
-                                {
-                                    LineItem = new DocumentOrderResponseLineLineItem()
-                                    {
-                                        LineNumber = detail?.LineNumber ?? "",
-                                        EAN = detail?.EAN ?? "",
-                                        BuyerItemCode = detail?.BuyerItemCode ?? "",
-                                        SupplierItemCode = detail?.ID_GOOD ?? "",
-                                        ItemDescription = detail?.ItemDescription ?? "",
-                                        OrderedQuantity = detail?.QUANTITY,
-                                        QuantityToBeDelivered = detail?.QUANTITY,
-                                        AllocatedDelivered = detail?.QUANTITY,
-                                        QuantityDifference = Math.Round(double.Parse(detail?.OrderedQuantity) - double.Parse(detail?.QUANTITY),4).ToString(),
-                                        UnitOfMeasure = detail.UnitOfMeasure ?? "",
-                                        OrderedUnitNetPrice = detail?.PRICE ?? "",
-                                        TaxRate = detail?.TAX,
-                                        OrderedUnitGrossPrice = (double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX))).ToString(),
-                                        NetAmount = Math.Round(double.Parse(detail.PRICE) * double.Parse(detail.QUANTITY),4).ToString(),
-                                        GrossAmount = Math.Round(( double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX)) ) * double.Parse(detail.QUANTITY), 4).ToString(),
-                                        TaxAmount = Math.Round(((double.Parse(detail.PRICE) / 100 * (100 + double.Parse(detail.TAX))) - double.Parse(detail.PRICE)) * double.Parse(detail.QUANTITY),4).ToString()
-                                    }
-                                });
-                            }
-                        orderLines.Lines = lines ?? new List<Line>();
+                    if (details.Count > 0)
+                        foreach (var detail in details)
+                        {
 
-                        ordrsp.Add(new DocumentOrderResponse()
-                        {               
-                            DocumentParties = new DocumentOrderResponseDocumentParties()
-                            {
-                                Sender = new DocumentOrderResponseDocumentPartiesSender()
-                                {
-                                    ILN = header?.SellerIln
-                                },
-                                Receiver = new DocumentOrderResponseDocumentPartiesReceiver()
-                                {
-                                    ILN = header?.SenderILN
-                                }
-                            },
-                            OrderResponseHeader = new DocumentOrderResponseOrderResponseHeader()
-                            {
-                                DocumentFunctionCode = "9",
-                                OrderResponseNumber = header?.CODE ?? "",
-                                OrderResponseDate = DateTime.Parse(header?.DOC_DATETIME),
-                                OrderResponseCurrency = header?.OrderCurrency ?? "",
-                                Order = new DocumentOrderResponseOrderResponseHeaderOrder()
-                                {
-                                    BuyerOrderNumber = header.OrderNumber,                                    
-                                }
-                            },
-                            OrderResponseParties = new DocumentOrderResponseOrderResponseParties()
-                            {
-                                Buyer = new DocumentOrderResponseOrderResponsePartiesBuyer()
-                                {
-                                    ILN = header?.BuyerIln ?? ""
-                                },
-                                Seller = new DocumentOrderResponseOrderResponsePartiesSeller()
-                                {
-                                    ILN = header?.SellerIln ?? ""
-                                },
-                                DeliveryPoint = new DocumentOrderResponseOrderResponsePartiesDeliveryPoint()
-                                {
-                                    ILN = header?.DeliveryPointIln ?? ""
-                                }
-                            },
-                            OrderResponseLines = orderLines ?? new DocumentOrderResponseLine(),
-                            OrderResponseSummary = new DocumentOrderResponseOrderResponseSummary()
-                            {
-                                TotalLines = header?.TOTAL_LINES ?? "",
-                                TotalAmount = orderLines.Lines.Count.ToString(),
-                                TotalNetAmount = orderLines.Lines.Sum(x => double.Parse(x.LineItem.NetAmount)).ToString(),
-                                TotalGrossAmount = orderLines.Lines.Sum(x => double.Parse(x.LineItem.GrossAmount)).ToString(),
-                                TotalTaxAmount = orderLines.Lines.Sum(x => double.Parse(x.LineItem.TaxAmount)).ToString(),
-                            }
-                            ,
-                            IsInEdiAsOrdrsp = bool.Parse((header?.IS_IN_EDI_AS_ORDRSP != null ? "true" : "false") ?? "false")
+                            /******************************************************/
+                            /*********************** РАСЧЁТЫ **********************/
 
-                        });
+                            var TaxRate = double.Parse(detail.TAX);
+                            var UnitNetPrice = double.Parse(detail.PRICE);
+                            var UnitsCount = double.Parse(detail?.QUANTITY);
+                            var UnitsDifference = double.Parse(detail?.OrderedQuantity) - UnitsCount;
+
+                            var UnitGrossPrice = Math.Round(  UnitNetPrice / 100 * (100 + TaxRate) ,2  );
+                            var GrossAmount = Math.Round(  UnitGrossPrice * UnitsCount ,2  );
+                            var TaxAmount = Math.Round(GrossAmount * TaxRate / (100 + TaxRate), 2);
+                            var NetAmount = GrossAmount - TaxAmount;
+
+                            /*********************** РАСЧЁТЫ **********************/
+                            /******************************************************/
+
+                            lines.Add(new Line()
+                            {
+                                LineItem = new DocumentOrderResponseLineLineItem()
+                                {
+                                    LineNumber = detail?.LineNumber ?? "",
+                                    EAN = detail?.EAN ?? "",
+                                    BuyerItemCode = detail?.BuyerItemCode ?? "",
+                                    SupplierItemCode = detail?.ID_GOOD ?? "",
+                                    ItemDescription = detail?.ItemDescription ?? "",
+                                    OrderedQuantity = detail?.QUANTITY,
+                                    QuantityToBeDelivered = detail?.QUANTITY,
+                                    AllocatedDelivered = detail?.QUANTITY,
+                                    QuantityDifference = UnitsDifference.ToString(),
+                                    UnitOfMeasure = detail.UnitOfMeasure ?? "",
+                                    OrderedUnitNetPrice = UnitNetPrice.ToString() ?? "",
+                                    TaxRate = TaxRate.ToString(),
+                                    OrderedUnitGrossPrice = UnitGrossPrice.ToString(),
+                                    NetAmount = NetAmount.ToString(),
+                                    GrossAmount = GrossAmount.ToString(),
+                                    TaxAmount = TaxAmount.ToString()
+                                }
+                            });
+                        }
+                    orderLines.Lines = lines ?? new List<Line>();
+
+                    ordrsp.Add(new DocumentOrderResponse()
+                    {
+                        DocumentParties = new DocumentOrderResponseDocumentParties()
+                        {
+                            Sender = new DocumentOrderResponseDocumentPartiesSender()
+                            {
+                                ILN = header?.SellerIln
+                            },
+                            Receiver = new DocumentOrderResponseDocumentPartiesReceiver()
+                            {
+                                ILN = header?.SenderILN
+                            }
+                        },
+                        OrderResponseHeader = new DocumentOrderResponseOrderResponseHeader()
+                        {
+                            DocumentFunctionCode = "9",
+                            OrderResponseNumber = header?.CODE ?? "",
+                            OrderResponseDate = DateTime.Parse(header?.DOC_DATETIME),
+                            OrderResponseCurrency = header?.OrderCurrency ?? "",
+                            Order = new DocumentOrderResponseOrderResponseHeaderOrder()
+                            {
+                                BuyerOrderNumber = header.OrderNumber,
+                            }
+                        },
+                        OrderResponseParties = new DocumentOrderResponseOrderResponseParties()
+                        {
+                            Buyer = new DocumentOrderResponseOrderResponsePartiesBuyer()
+                            {
+                                ILN = header?.BuyerIln ?? ""
+                            },
+                            Seller = new DocumentOrderResponseOrderResponsePartiesSeller()
+                            {
+                                ILN = header?.SellerIln ?? ""
+                            },
+                            DeliveryPoint = new DocumentOrderResponseOrderResponsePartiesDeliveryPoint()
+                            {
+                                ILN = header?.DeliveryPointIln ?? ""
+                            }
+                        },
+                        OrderResponseLines = orderLines ?? new DocumentOrderResponseLine(),
+                        OrderResponseSummary = new DocumentOrderResponseOrderResponseSummary()
+                        {
+                            TotalLines = header?.TOTAL_LINES ?? "",
+                            TotalAmount = orderLines.Lines.Count.ToString(),
+                            TotalNetAmount = orderLines.Lines.Sum(x => double.Parse(x.LineItem.NetAmount)).ToString(),
+                            TotalGrossAmount = orderLines.Lines.Sum(x => double.Parse(x.LineItem.GrossAmount)).ToString(),
+                            TotalTaxAmount = orderLines.Lines.Sum(x => double.Parse(x.LineItem.TaxAmount)).ToString(),
+                        }
+                        ,
+                        IsInEdiAsOrdrsp = bool.Parse((header?.IS_IN_EDI_AS_ORDRSP != null ? "true" : "false") ?? "false")
+
+                    });
                 }
 
             ////LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
-            return ordrsp.Where(x=>x.DocumentParties.Receiver.ILN == SelectedRelationship.partnerIln).ToList() ?? new List<DocumentOrderResponse>();
+            return ordrsp.Where(x => x.DocumentParties.Receiver.ILN == SelectedRelationship.partnerIln).ToList() ?? new List<DocumentOrderResponse>();
         }
 
     }
