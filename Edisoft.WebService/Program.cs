@@ -10,6 +10,7 @@ namespace Edisoft.WebService
     {
         static void Main(string[] args)
         {
+            
         }        
     }
 }

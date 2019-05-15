@@ -4,15 +4,15 @@
     {
         public static string OracleDbConnection_UserName { get; set; } // имя пользователя
         public static string OracleDbConnection_UserPassword { get; set; } // пароль пользователя
-        public static string OracleDbConnection_Port { get; set; } // порт подключения  
+        public static string OracleDbConnection_Port { get; set; } = "1521"; // порт подключения  
         public static string OracleDbConnection_SID { get; set; } // имя сервиса 
         public static string OracleDbConnection_Host { get; set; } // ip/хост базы 
 
         public static string Edi_User { get; set; } // аккаунт EDI. без ЕС - обычный
         public static string Edi_Password { get; set; } // пароль edi
-        public static string Edi_GLN { get; set; } // GLN
+        public static string Edi_GLN { get; set; } = "4607971729990"; // GLN
         public static string Edi_Email { get; set; } // почта аккаунта EDI
-        public static string Edi_Url { get; set; } // путь до платформы
+        public static string Edi_Url { get; set; } = "https://soap.ediweb.ru:443/wsedi/services/platform"; // путь до платформы
 
         /// <summary>
         /// Уровень лога: 

@@ -134,12 +134,11 @@
             <Button Content="Отвязать" Grid.Row="3" Grid.Column="1"
                     Margin="2,30" 
                     Command="{Binding DisposeMatchingCommand, IsAsync=True}"/>
-            <!--IsEnabled="{Binding DisposeEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"-->
 
 
             <TextBox Name="NewCustomerItemCodeTextBox" Grid.Row="5" Grid.Column="1" Margin="2,30"
-                     ToolTip="Код товара покупателя. Более 4х символов и не пустой" FlowDirection="LeftToRight"
-                     Text="{Binding NewCustomerItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" />
+                     ToolTip="Код товара покупателя. Более 4х символов и не пустой"
+                     Text="{Binding NewCustomerItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <Button Name="NewMatchingButton" Content="Добавить новый" Grid.Row="6" Grid.Column="0"
                     Margin="2,30"

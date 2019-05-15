@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EdiClient.Services;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -11,6 +12,19 @@ namespace EdiClient.AppSettings
         private static string dirName = "EdiClient";
         private static string fileName = "EdiClientAppConfig.xml";
         private static string fullPath => Path.GetFullPath($"{directoryPath}\\{dirName}\\{fileName}");
+        
+        public static void ConfigureEdi()
+        {
+            try { EdiService.Configure(); }
+            catch (Exception ex) { Utilites.Error(ex); }            
+        }
+
+        public static void ConfigureOracle()
+        {
+            try { OracleConnectionService.Configure(); }
+            catch (Exception ex) { Utilites.Error(ex); }
+        }
+
 
 
         public static void Load()

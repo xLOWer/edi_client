@@ -57,9 +57,9 @@ namespace EdiClient.Services.Repository
                     foreach (var order in NewOrders)
                         NativeTaskList.Add(Task.Factory.StartNew(()
                             => AddOrders(rel.partnerIln, rel.documentType, order.trackingId, rel.documentStandard, order.partneriln)));
-
+            
             Task.WaitAll(NativeTaskList.ToArray());
-            Thread.Sleep(200);
+            
             NativeTaskList.Clear();
 
             var docNums = GetAllOrderIds() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");

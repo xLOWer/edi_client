@@ -1,5 +1,6 @@
 ﻿//using Oracle.DataAccess.Client;
 using Devart.Data.Oracle;
+using EdiClient.AppSettings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,15 @@ namespace EdiClient.Services
         internal static void Configure()
         {
             //MessageBox.Show($"{AppSettings.AppConfig.connString}\n\n{AppSettings.AppConfig.OracleDbConnection_UserName}\n\n{AppSettings.AppConfig.Edi_Email}");
-
-            if (!string.IsNullOrEmpty(AppSettings.AppConfig.connString))
-                conn = new OracleConnection(AppSettings.AppConfig.connString);
+            if (!string.IsNullOrEmpty(AppConfig.connString)/* || 
+                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_UserName) ||
+                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_UserPassword) ||
+                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_SID) ||
+                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_Port) ||
+                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_Host)*/)
+                conn = new OracleConnection(AppConfig.connString);
             else
-                MessageBox.Show("Соединение с базой не создано. Не определена строка соединения");
+                MessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");
 
             
             //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);

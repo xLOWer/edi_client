@@ -7,11 +7,11 @@ using System.Windows;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("Клиент EDI")]
+[assembly: AssemblyTitle("Клиент EDI 2.1.0.3")]
 [assembly: AssemblyDescription("Программа для работы с Edisoft")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("WERA")]
-[assembly: AssemblyProduct("EdiClient2")]
+[assembly: AssemblyProduct("EdiClient2.1.0.3")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

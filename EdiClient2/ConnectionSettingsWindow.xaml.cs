@@ -18,6 +18,8 @@ namespace EdiClient
         private void WindowClosed(object sender, EventArgs e)
         {
             AppConfigHandler.Save();
+            AppConfigHandler.Load();
+            AppConfigHandler.ConfigureEdi();
             OracleConnectionService.Configure();
         }
     }

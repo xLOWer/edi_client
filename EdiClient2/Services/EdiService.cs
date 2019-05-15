@@ -10,6 +10,7 @@ using System.ServiceModel.Description;
 using static EdiClient.Model.WebModel.RelationResponse;
 using System.Reflection;
 using System.Linq;
+using EdiClient.AppSettings;
 
 namespace EdiClient.Services
 {
@@ -32,13 +33,14 @@ namespace EdiClient.Services
 
         internal static void UpdateData()
         {
-            Relationships = GetRelationships().Where(x => x.documentType == "ORDER").ToList() ?? throw new Exception("При загрузке связей возникла ошибка");
-            SelectedRelationship = SelectedRelationship ?? (Relationships[0] ?? throw new Exception("Не выбрана связь с покупателем"));
+            Relationships = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
+            SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
             RelationshipCount = Relationships.Count;
         }
 
         internal static EDIWebServicePortTypeClient Configure(EndpointAddress _address = null)
         {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             Client = new EDIWebServicePortTypeClient();
             endPoint = Client.Endpoint;
             if (_address != null)
@@ -48,8 +50,10 @@ namespace EdiClient.Services
             }
             Name = AppSettings.AppConfig.Edi_User;
             Password = AppSettings.AppConfig.Edi_Password;
-
-            UpdateData();
+            if (!String.IsNullOrEmpty(AppConfig.Edi_Password) && !String.IsNullOrEmpty(AppConfig.Edi_GLN) && !String.IsNullOrEmpty(AppConfig.Edi_User))            
+                UpdateData();            
+            else
+                return null; 
             return Client;
         }
 
@@ -110,6 +114,7 @@ namespace EdiClient.Services
         {
             //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             var ser = new XmlSerializer(typeof(RelationResponse));
+
             retRes returnedResult = null;
             //var s = Client?.State;
             returnedResult = Client?.relationships(Name, Password, timeout);
@@ -117,7 +122,10 @@ namespace EdiClient.Services
             if (returnedResult == null) throw new Exception("Запрос связей не дал результатов");
 
             if (returnedResult?.res == "00000000")
-                return ((RelationResponse)ser.Deserialize(new StringReader(returnedResult.cnt))).Relations;
+            {
+                var reader = new StringReader(returnedResult.cnt);
+                return ((RelationResponse)ser.Deserialize(reader)).Relations;
+            }
             else
                 MessageBox.Show(ResponseErrorHandler(returnedResult));
 

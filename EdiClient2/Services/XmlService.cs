@@ -18,9 +18,9 @@ namespace EdiClient.Services
             List<TModel> Documents = new List<TModel>();
             XmlSerializer ser = new XmlSerializer(typeof(TModel));
             var stream = new StringReader(rawDocument);
-
+            
             using (XmlReader reader = XmlReader.Create(stream))
-            {
+            {                
                 Documents.Add((TModel)ser.Deserialize(reader));
             }
 
