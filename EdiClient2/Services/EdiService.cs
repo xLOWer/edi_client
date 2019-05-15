@@ -26,7 +26,7 @@ namespace EdiClient.Services
 
         private static Relation selectedRelationship;
         public static Relation SelectedRelationship {
-            get { return selectedRelationship ?? new Relation() { partnerIln="",partnerName="",relationId = "", documentTest = "", documentStandard = "", form = "", documentType = ""}; }
+            get { return selectedRelationship ?? Relationships[0]; }
             set { selectedRelationship = value; }
         }
         public static int RelationshipCount { get; set; }

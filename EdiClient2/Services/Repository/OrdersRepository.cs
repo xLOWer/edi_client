@@ -38,7 +38,7 @@ namespace EdiClient.Services.Repository
                                             , $"{dateTo.Year}-{dateTo.Month}-{dateTo.Day}"
                                             , ""
                                             , ""
-                                            , "").Where(x => x.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList()
+                                            , "").Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList()
                                             ?? throw new Exception("При загрузке новых заказов возникла ошибка");
         }
 
