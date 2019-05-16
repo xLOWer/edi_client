@@ -10,6 +10,7 @@ namespace EdiClient.Model.MatchingDbModel
         public string CustomerGln { get; set; }
         public string CustomerGoodId { get; set; }
         public string GoodId { get; set; }
+        public string BarCode { get; set; }
         public string Name { get; set; }
     }
 }

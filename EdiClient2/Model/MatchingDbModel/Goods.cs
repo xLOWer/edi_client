@@ -14,10 +14,6 @@ namespace EdiClient.Model.MatchingDbModel
         public string GoodSize { get; set; }
         public string Manufacturer { get; set; }
         public string ManufacturerId { get; set; }
-        public string ExpiringDate { get; set; }
-        public string RegNum { get; set; }
-        public string SertNum { get; set; }
-        public string SubdivisionId { get; set; }
     }
 }
 /*

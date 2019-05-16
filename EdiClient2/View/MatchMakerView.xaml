@@ -53,9 +53,8 @@
                       SelectionUnit="FullRow">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Id}" Width="SizeToCells" Header="Id"/>
-                    <DataGridTextColumn Binding="{Binding Code}" Width="SizeToCells" Header="Код"/>
                     <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Наименование"/>
-                    <!--<DataGridTextColumn Binding="{Binding BarCode}" Width="*" Header="BarCode"/>-->
+                    <DataGridTextColumn Binding="{Binding BarCode}" Width="*" Header="Штрих-код"/>
                     <DataGridTextColumn Binding="{Binding GoodSize}" Width="SizeToCells" Header="Размерность"/>
                     <DataGridTextColumn Binding="{Binding Manufacturer}" Width="SizeToCells" Header="Производитель"/>
                 </DataGrid.Columns>
@@ -99,10 +98,9 @@
                       SelectionUnit="FullRow">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding ItemDescription}" Width="*" Header="Наименование"/>
-                    <DataGridTextColumn Binding="{Binding Ean}" Width="SizeToCells" Header="Ean"/>
+                    <DataGridTextColumn Binding="{Binding Ean}" Width="SizeToCells" Header="Штрих-код"/>
                     <DataGridTextColumn Binding="{Binding BuyerItemCode}" Width="SizeToCells" Header="Код покупателя"/>
                     <DataGridTextColumn Binding="{Binding OrderName}" Width="SizeToCells" Header="Заказ"/>
-                    <DataGridTextColumn Binding="{Binding GoodId}" Width="SizeToCells" Header="GoodId"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -186,6 +184,7 @@
                     <DataGridTextColumn Binding="{Binding CustomerGln}" Width="SizeToCells" Header="ГЛН"/>
                     <DataGridTextColumn Binding="{Binding CustomerGoodId}" Width="SizeToCells" Header="Код покупателя"/>
                     <DataGridTextColumn Binding="{Binding GoodId}" Width="SizeToCells" Header="Код товара"/>
+                    <DataGridTextColumn Binding="{Binding BarCode}" Width="SizeToCells" Header="Штрх-код"/>
                     <DataGridTextColumn Binding="{Binding Name}" Width="*" Header="Наименование"/>
                 </DataGrid.Columns>
             </DataGrid>

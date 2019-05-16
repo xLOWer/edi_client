@@ -248,15 +248,13 @@ WHERE 1 = 1
             => $@"  SELECT rg.id ""Id""
                     , rg.code ""Code""
                     , rg.name ""Name""
-                    , rg.bar_code ""BarCode""
+                    , rbc.bar_code ""BarCode""
                     , rg.GOOD_SIZE ""GoodSize""
                     , (SELECT name FROM REF_CONTRACTORS WHERE ID = rg.id_manufacturer) ""Manufacturer""
                         , rg.ID_MANUFACTURER ""ManufacturerId""
-                    , rg.EXPIRING_DATE ""ExpiringDate""
-                    , rg.REG_NUM ""RegNum""
                     , rg.SERT_NUM ""SertNum""
-                    , rg.ID_SUBDIVISION ""SubdivisionId""
-                    FROM abt.ref_goods rg";
+                    FROM abt.ref_goods rg, REF_BAR_CODES RBC
+  WHERE RBC.id_good = rg.id";
 
 
         internal static string Sql_SelectFailedGoods()
@@ -274,9 +272,10 @@ WHERE 1 = 1
             => $@"SELECT rgm.CUSTOMER_GLN ""CustomerGln""
                     ,to_char(rgm.CUSTOMER_ARTICLE) ""CustomerGoodId""
                     ,rgm.ID_GOOD ""GoodId""
+                    ,rbc.BAR_CODE ""BarCode""
                     ,(SELECT NAME FROM ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
-                    FROM ABT.REF_GOODS_MATCHING rgm
-                        WHERE DISABLED = 0";
+                    FROM ABT.REF_GOODS_MATCHING rgm, ref_bar_codes rbc
+                        WHERE DISABLED = 0 AND rgm.ID_GOOD = rbc.ID_GOOD";
 
         internal static string Sql_SelectPriceType()
            => @"SELECT RPT.ID ""PriceId""

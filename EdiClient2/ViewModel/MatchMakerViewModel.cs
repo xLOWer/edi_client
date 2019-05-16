@@ -377,6 +377,7 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
                                    x => (x.ItemDescription?.ToUpper()?.Contains(text) ?? false)
                                      || (x.OrderName?.ToUpper()?.Contains(text) ?? false)
                                      || (x.BuyerItemCode?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.Ean?.ToUpper()?.Contains(text) ?? false)
                                ).ToList();
                        }
                }
@@ -398,6 +399,7 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
                                    x => (x.Name?.ToUpper()?.Contains(text) ?? false)
                                      || (x.GoodId?.ToUpper()?.Contains(text) ?? false)
                                      || (x.CustomerGoodId?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.BarCode?.ToUpper()?.Contains(text) ?? false)
                                ).ToList();
                            }
                }
@@ -420,6 +422,7 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
                                      || (x.Id?.ToUpper().Trim(' ').Contains(text) ?? false)
                                      || (x.Manufacturer?.ToUpper().Trim(' ').Contains(text) ?? false)
                                      || (x.Code?.ToUpper().Trim(' ').Contains(text) ?? false)
+                                     || (x.BarCode?.ToUpper().Trim(' ').Contains(text) ?? false)
                                ).ToList();
                            }
                }
