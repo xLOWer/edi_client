@@ -28,9 +28,12 @@ namespace EdiClient.Services.Repository
 
         internal static void UpdateData(DateTime dateFrom, DateTime dateTo)
         {
+            if (SelectedRelationship == null) return;
+            if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
+
             NewOrders = EdiService.ListMBEx(
-                                              SelectedRelationship?.partnerIln
-                                            , SelectedRelationship?.documentType
+                                              SelectedRelationship.partnerIln
+                                            , SelectedRelationship.documentType
                                             , ""
                                             , ""
                                             , ""
@@ -38,8 +41,7 @@ namespace EdiClient.Services.Repository
                                             , $"{dateTo.Year}-{dateTo.Month}-{dateTo.Day}"
                                             , ""
                                             , ""
-                                            , "").Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList()
-                                            ?? throw new Exception("При загрузке новых заказов возникла ошибка");
+                                            , "").Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList();
         }
 
         /// <summary>
@@ -265,7 +267,11 @@ namespace EdiClient.Services.Repository
         private static void AddOrders(string relPartnerIln, string relDocumentType, string newOrderTrackingId, string relDocumentStandard, string orderPartnerIln)
         {
             if (relPartnerIln == orderPartnerIln)
-                Orders.AddRange(EdiService.Receive<DocumentOrder>(relPartnerIln, relDocumentType, newOrderTrackingId, relDocumentStandard, ""));
+            {
+                var doc = EdiService.Receive<DocumentOrder>(relPartnerIln, relDocumentType, newOrderTrackingId, relDocumentStandard, "").First();
+                Orders.Add(doc);
+            }
+                
         }
     }
 }

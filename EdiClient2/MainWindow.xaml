@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:EdiClient"
         xmlns:services="clr-namespace:EdiClient.Services"
         mc:Ignorable="d" Name="mainWindow"
-        Title="Клиент EDI" Height="Auto" Width="Auto" WindowState="Maximized">
+        Height="Auto" Width="Auto" WindowState="Maximized">
 
 
     <Grid>
@@ -34,18 +34,30 @@
             <MenuItem Header="About">
                 <MenuItem x:Name="License" Header="Лицензия" Click="License_Click" />
                 <MenuItem x:Name="About" Header="О программе" Click="About_Click"/>
-                <MenuItem x:Name="Update" Header="Выполнить обновление" Click="Update_Click"/>
             </MenuItem>
         </Menu>
 
-
-
-        <ComboBox Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="26"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="28"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
-                        DisplayMemberPath="Name"
-                        IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        DisplayMemberPath="Name" x:Name="RelationshipsComboBox"
                         SelectedValuePath="Name"/>
+            
+            <Button ToolTip="Обновить список контрагентов" Grid.Column="1" Margin="2,2" BorderBrush="Transparent" Background="Transparent" BorderThickness="0"
+                    Command="{Binding RefreshRelationshipsCommand}" CommandParameter="{Binding ElementName=RelationshipsComboBox}">
+                <Image Source="{Binding ImageRefresh}" Margin="-1"/>
+            </Button>
+        </Grid>
+
+        
 
         <TabControl Name="MainTabControl" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="Transparent" BorderThickness="0"
                     ItemsSource="{Binding Source={x:Static services:TabService.Tabs}}"

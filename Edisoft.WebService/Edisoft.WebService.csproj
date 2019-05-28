@@ -38,6 +38,10 @@
   <PropertyGroup>
     <ApplicationIcon>icons8-service-96.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="app.manifest" />
     <None Include="Connected Services\EdiWebService\Edisoft.WebService.EdiWebService.ediFileData.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

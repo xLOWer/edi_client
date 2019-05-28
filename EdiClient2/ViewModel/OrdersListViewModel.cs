@@ -44,11 +44,12 @@ namespace EdiClient.ViewModel.Orders
             try
             {
                 base.UpdateView();
-                Documents = OrdersRepository.GetOrders(DateFrom, DateTo) ?? throw new Exception("Ни один документ не был загружен");
-                if (Documents.Count > 0)
+                Documents = OrdersRepository.GetOrders(DateFrom, DateTo);
+                if (Documents == null) return;
+                if (Documents?.Count > 0)
                 {
-                    var docsAlredyInBufferTable = OrdersRepository.GetOrdersLocatedInBufferTable() ?? throw new Exception("Не были загружены данные из базы, повторите попытку");
-                    var docsHasFailedDetails = OrdersRepository.GetOrdersFailed() ?? throw new Exception("Не были загружены данные из базы, повторите попытку");
+                    var docsAlredyInBufferTable = OrdersRepository.GetOrdersLocatedInBufferTable();
+                    //var docsHasFailedDetails = OrdersRepository.GetOrdersFailed();
 
                     var docNums = "";
 
@@ -56,31 +57,35 @@ namespace EdiClient.ViewModel.Orders
                     {
                         doc.EdiIdDoc = "";
                         doc.EdiIdDoc = DbService.SelectSingleValue($"select ID from HPCSERVICE.EDI_DOC WHERE order_number = '{doc?.OrderHeader?.OrderNumber}'");
+                        doc.TraderNumber = DbService.SelectSingleValue($"select CODE from ABT.DOC_JOURNAL WHERE id in (select id_trader from hpcservice.edi_doc where id = '{doc?.EdiIdDoc}')");
                         OrdersRepository.UpdateFailedDetails(doc?.EdiIdDoc);
                         if (doc == null) continue;
                         if (doc.OrderHeader == null) continue;
                         if (doc.OrderHeader.OrderNumber == null) continue;
 
-                            docNums += $",'{doc.OrderHeader.OrderNumber}'";
+                        docNums += $",'{doc.OrderHeader.OrderNumber}'";
                     }
                     docNums = docNums?.Trim(',');
 
                     var detailsFailed = OrdersRepository.GetDetailsFailed(docNums);
-                    foreach (var doc in Documents)
-                    {
-                        if (docsAlredyInBufferTable.Contains(doc?.OrderHeader?.OrderNumber))
+
+                    if (docsAlredyInBufferTable != null)
+                        foreach (var doc in Documents)
                         {
-                            doc.IsInDatabase = true;
-                        }
-                        foreach (var line in doc.OrderLines.Lines)
-                        {
-                            if (detailsFailed.Contains(line?.LineItem?.BuyerItemCode))
+                            if (docsAlredyInBufferTable.Contains(doc?.OrderHeader?.OrderNumber))
                             {
-                                line.IsFailed = true;
-                                doc.IsFailed = true;
+                                doc.IsInDatabase = true;
                             }
+                            if (detailsFailed != null)
+                                foreach (var line in doc.OrderLines.Lines)
+                                {
+                                    if (detailsFailed.Contains(line?.LineItem?.BuyerItemCode))
+                                    {
+                                        line.IsFailed = true;
+                                        doc.IsFailed = true;
+                                    }
+                                }
                         }
-                    }
 
                 }
             }

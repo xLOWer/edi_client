@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Animation;
 using EdiClient.AppSettings;
@@ -23,6 +24,7 @@ namespace EdiClient
             Context = new MainViewModel();
             DataContext = Context;
             UpdateLayout();
+            Title = $"Клиент EDI (версия {Assembly.GetEntryAssembly().GetName().Version})";
         }
 
         private void License_Click(object sender, RoutedEventArgs e)
@@ -63,24 +65,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(@"EDI клиент 1.0
+            MessageBox.Show($@"EDI клиент {Assembly.GetExecutingAssembly().GetName().Version.ToString()}
 Разработана Шишло Дмитрием
 Программист ООО ""ВИРЭЙ""
 Владивосток
 2019", "О программе", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void Update_Click(object sender, RoutedEventArgs e)
-        {//https://github.com/xLOWer/edi_client/raw/master/EdiClient2/bin/x86/Release/EdiClient.zip
-            /*
-            using (WebClient wc = new WebClient())
-            {                
-                wc.DownloadFile( new System.Uri( "http://github.com/xLOWer/edi_client/raw/master/EdiClient2/bin/x86/Release/EdiClient.zip" ),
-                "EdiClient.zip");                
-            }*/
-
-            Process.Start( "updater.exe" );
-
-        }
     }
 }

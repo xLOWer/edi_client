@@ -11,6 +11,8 @@ using static EdiClient.Model.WebModel.RelationResponse;
 using System.Reflection;
 using System.Linq;
 using EdiClient.AppSettings;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace EdiClient.Services
 {
@@ -25,11 +27,18 @@ namespace EdiClient.Services
         public static List<Relation> Relationships { get; set; }
 
         private static Relation selectedRelationship;
-        public static Relation SelectedRelationship {
-            get { return selectedRelationship ?? Relationships[0]; }
+        
+        public static Relation SelectedRelationship
+        {
+            get
+            {
+                if (Relationships == null || selectedRelationship == null) return null;
+                else return Relationships[0] ?? new Relation();
+            }
             set { selectedRelationship = value; }
         }
-        public static int RelationshipCount { get; set; }
+
+        public static int RelationshipCount { get; set; } = 0;
 
         internal static void UpdateData()
         {
@@ -50,10 +59,6 @@ namespace EdiClient.Services
             }
             Name = AppSettings.AppConfig.Edi_User;
             Password = AppSettings.AppConfig.Edi_Password;
-            if (!String.IsNullOrEmpty(AppConfig.Edi_Password) && !String.IsNullOrEmpty(AppConfig.Edi_GLN) && !String.IsNullOrEmpty(AppConfig.Edi_User))            
-                UpdateData();            
-            else
-                return null; 
             return Client;
         }
 
