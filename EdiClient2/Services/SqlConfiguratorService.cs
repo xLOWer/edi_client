@@ -16,15 +16,19 @@ namespace EdiClient.Services
         internal static string Sql_SelectOrdersLocaterInBase() 
             => "SELECT ORDER_NUMBER FROM HPCSERVICE.EDI_DOC WHERE ID_TRADER IS NOT NULL AND ORDER_NUMBER IS NOT NULL";
         internal static string Sql_SelectDetailsFailed(string numbers) 
-            => $"SELECT BUYER_ITEM_CODE FROM HPCSERVICE.EDI_DOC_DETAILS WHERE FAILED = 1 AND ID_EDI_DOC IN (SELECT ID FROM EDI_DOC ED WHERE ED.ORDER_NUMBER IN({numbers}) AND ED.HAS_FAILED_DETAILS = 1)";
+            => $"SELECT BUYER_ITEM_CODE FROM HPCSERVICE.EDI_DOC_DETAILS WHERE FAILED = 1 AND ID_EDI_DOC IN (SELECT ID FROM HPCSERVICE.EDI_DOC ED WHERE ED.ORDER_NUMBER IN({numbers}) AND ED.HAS_FAILED_DETAILS = 1)";
         internal static string Sql_SelectOrdersFailed()
-            => "SELECT ID FROM edi_doc WHERE HAS_FAILED_DETAILS = 1";
+            => "SELECT ID FROM HPCSERVICE.edi_doc WHERE HAS_FAILED_DETAILS = 1";
         internal static string Sql_SelectAllOrderIds() 
             => "SELECT ORDER_NUMBER FROM HPCSERVICE.EDI_DOC";
         internal static string Sql_UpdateEdiDocSetIsInEdiAsORDRSP(string code) =>
-            $@"UPDATE EDI_DOC SET IS_IN_EDI_AS_ORDRSP = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
-            = (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
-            = (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{code}' and rownum = 1) and rownum = 1)";
+            $@"UPDATE hpcservice.EDI_DOC SET IS_IN_EDI_AS_ORDRSP = {OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
+            in (SELECT ORDER_NUMBER FROM hpcservice.edi_doc WHERE ID_TRADER
+            in (SELECT ID FROM abt.DOC_JOURNAL DJ WHERE CODE = '{code}'))";
+        internal static string Sql_UpdateEdiDocSetIsInEdiAsDESADV(string code) =>
+            $@"UPDATE HPCSERVICE.EDI_DOC SET IS_IN_EDI_AS_DESADV = {OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
+            in (SELECT ORDER_NUMBER FROM HPCSERVICE.edi_doc WHERE ID_TRADER
+            in (SELECT ID FROM ABT.DOC_JOURNAL DJ WHERE CODE = '{code}'))";
         internal static string Sql_SelectOrdrspDetails(string traderDocId)
         {
             return $@"SELECT 
@@ -88,7 +92,7 @@ FROM
   , HPCSERVICE.EDI_DOC_DETAILS EDD
 WHERE DGD.ID_GOOD = RG.ID
 AND EDD.ID_GOOD = RG.ID
-AND edd.ID_EDI_DOC = (SELECT id FROM EDI_DOC WHERE ID_TRADER = {traderDocId} and rownum = 1)
+AND edd.ID_EDI_DOC = (SELECT id FROM HPCSERVICE.EDI_DOC WHERE ID_TRADER = {traderDocId} and rownum = 1)
 AND DGD.ID_DOC = {traderDocId}";
         }
         internal static string Sql_SelectOrdrspHeader(DateTime date1, DateTime date2)
@@ -150,7 +154,7 @@ AND DGD.ID_DOC = {traderDocId}";
   , DG.LOCK_STATUS
   , DG.DOC_PRECISION
   , DG.TOTAL_PRIME
-  ,(SELECT COUNT(*) FROM DOC_GOODS_DETAILS DGD WHERE DGD.ID_DOC = DJ.ID) TOTAL_LINES
+  ,(SELECT COUNT(*) FROM ABT.DOC_GOODS_DETAILS DGD WHERE DGD.ID_DOC = DJ.ID) TOTAL_LINES
 FROM 
   ABT.DOC_GOODS DG
   , ABT.DOC_JOURNAL DJ
@@ -158,7 +162,7 @@ FROM
 WHERE 1 = 1
   AND DG.ID_DOC = DJ.ID
   AND ED.ID_TRADER = DJ.ID
-  AND DJ.ID IN (SELECT ID_TRADER FROM EDI_DOC WHERE ID_TRADER IS NOT NULL)
+  AND DJ.ID IN (SELECT ID_TRADER FROM HPCSERVICE.EDI_DOC WHERE ID_TRADER IS NOT NULL)
   AND ED.IS_IN_EDI_AS_DESADV IS NULL
   AND DJ.ACT_STATUS >= 3
   AND DJ.DOC_DATETIME {DatesBetween(date1, date2)}
@@ -223,7 +227,7 @@ WHERE 1 = 1
   , DG.LOCK_STATUS
   , DG.DOC_PRECISION
   , DG.TOTAL_PRIME
-  ,(SELECT COUNT(*) FROM DOC_GOODS_DETAILS DGD WHERE DGD.ID_DOC = DJ.ID) TOTAL_LINES
+  ,(SELECT COUNT(*) FROM ABT.DOC_GOODS_DETAILS DGD WHERE DGD.ID_DOC = DJ.ID) TOTAL_LINES
 FROM 
   ABT.DOC_GOODS DG
   , ABT.DOC_JOURNAL DJ
@@ -231,9 +235,9 @@ FROM
 WHERE 1 = 1
   AND DG.ID_DOC = DJ.ID
   AND ED.ID_TRADER = DJ.ID
-  AND DJ.ID IN (SELECT ID_TRADER FROM EDI_DOC WHERE ID_TRADER IS NOT NULL)
+  AND DJ.ID IN (SELECT ID_TRADER FROM HPCSERVICE.EDI_DOC WHERE ID_TRADER IS NOT NULL)
   AND ED.IS_IN_EDI_AS_ORDRSP IS NOT NULL
-  AND DJ.ACT_STATUS >= 5
+  AND DJ.ACT_STATUS >= 4
   AND DJ.DOC_DATETIME {DatesBetween(date1, date2)}";
         }
 
@@ -250,10 +254,10 @@ WHERE 1 = 1
                     , rg.name ""Name""
                     , rbc.bar_code ""BarCode""
                     , rg.GOOD_SIZE ""GoodSize""
-                    , (SELECT name FROM REF_CONTRACTORS WHERE ID = rg.id_manufacturer) ""Manufacturer""
+                    , (SELECT name FROM ABT.REF_CONTRACTORS WHERE ID = rg.id_manufacturer) ""Manufacturer""
                         , rg.ID_MANUFACTURER ""ManufacturerId""
                     , rg.SERT_NUM ""SertNum""
-                    FROM abt.ref_goods rg, REF_BAR_CODES RBC
+                    FROM abt.ref_goods rg, ABT.REF_BAR_CODES RBC
   WHERE RBC.id_good = rg.id";
 
 
@@ -273,8 +277,8 @@ WHERE 1 = 1
                     ,to_char(rgm.CUSTOMER_ARTICLE) ""CustomerGoodId""
                     ,rgm.ID_GOOD ""GoodId""
                     ,rbc.BAR_CODE ""BarCode""
-                    ,(SELECT NAME FROM ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
-                    FROM ABT.REF_GOODS_MATCHING rgm, ref_bar_codes rbc
+                    ,(SELECT NAME FROM ABT.ref_goods WHERE ID = rgm.ID_GOOD) ""Name""
+                    FROM ABT.REF_GOODS_MATCHING rgm, ABT.ref_bar_codes rbc
                         WHERE DISABLED = 0 AND rgm.ID_GOOD = rbc.ID_GOOD";
 
         internal static string Sql_SelectPriceType()

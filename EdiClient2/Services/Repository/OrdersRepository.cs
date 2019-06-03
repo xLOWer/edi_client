@@ -25,7 +25,6 @@ namespace EdiClient.Services.Repository
         private static List<Model.WebModel.DocumentInfo> NewOrders { get; set; }
         private static List<Task> NativeTaskList = new List<Task>();
 
-
         internal static void UpdateData(DateTime dateFrom, DateTime dateTo)
         {
             if (SelectedRelationship == null) return;
@@ -64,7 +63,8 @@ namespace EdiClient.Services.Repository
             
             NativeTaskList.Clear();
 
-            var docNums = GetAllOrderIds() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
+            var docNums = GetAllOrderIds();
+            if (docNums == null) return Orders;
             var ex = Orders?.Where(x => !docNums.Contains(x?.OrderHeader?.OrderNumber))?.ToList() ?? throw new Exception("Ошибка при загрузке заказов. Повторите попытку");
             SetIncomingOrdersIntoBufferTable(ex);
             return Orders;
@@ -76,7 +76,7 @@ namespace EdiClient.Services.Repository
             {
                 Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, P_EDI_DOC_ID, ParameterDirection.Input) },
                 CommandType = CommandType.StoredProcedure,
-                CommandText = "EDI_REFRESH_DOC_DETAILS"
+                CommandText = "HPCSERVICE.EDI_REFRESH_DOC_DETAILS"
             });
         }
 
@@ -95,7 +95,7 @@ namespace EdiClient.Services.Repository
                                 new OracleParameter("p_id_edi_doc", OracleDbType.VarChar, orderNumber, ParameterDirection.Input)
                             },
                             CommandType = CommandType.StoredProcedure,
-                            CommandText = "EDI_MOVE_ORDER"
+                            CommandText = "HPCSERVICE.EDI_MOVE_ORDER"
                         }
                 };
             DbService.ExecuteCommand(commands);
@@ -109,12 +109,13 @@ namespace EdiClient.Services.Repository
         {
             var list = new List<string>() { };
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectAllOrderIds());
-            if (dt.Rows.Count > 0)
-                foreach (DataRow r in dt.Rows)
-                    list.Add((string)r.ItemArray[2] ?? "");
+            if (dt != null)
+                if (dt.Rows.Count > 0)
+                    foreach (DataRow r in dt.Rows)
+                        list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
 
-            return list;
+            return list.Count > 0 ? list : null;
         }
 
         /// <summary>
@@ -124,12 +125,12 @@ namespace EdiClient.Services.Repository
         internal static List<string> GetDetailsFailed(string numbers)
         {
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectDetailsFailed(numbers));
+            if (dt == null) return null;
             List<string> list = new List<string>() { };            
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-
             return list.ToList();
         }
 
@@ -141,12 +142,11 @@ namespace EdiClient.Services.Repository
         {
             var list = new List<string>() { };
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectOrdersFailed());
+            if (dt == null) return null;
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
                     list.Add(r.ItemArray[2].ToString() ?? "");
             dt.Clear();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
-
             return list;
         }
 
@@ -158,12 +158,11 @@ namespace EdiClient.Services.Repository
         {
             var list = new List<string>() { };
             var dt = DbService.Select(SqlConfiguratorService.Sql_SelectOrdersLocaterInBase());
+            if (dt == null) return null;
             if (dt.Rows.Count > 0)
                 foreach (DataRow r in dt.Rows)
                     list.Add((string)r.ItemArray[2] ?? "");
             dt.Clear();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
-
             return list;
 
         }
@@ -176,19 +175,20 @@ namespace EdiClient.Services.Repository
         {
             List<OracleCommand> commands = new List<OracleCommand>();
             if (orders.Count > 0)
-                foreach (var order in orders.Where(x=> x != null))
+                foreach (var order in orders.Where(x => x != null))
                 {
                     var coms = GenerateOrderCreatingCommands(order);
-                    if (coms != null && coms.Count > 0)
-                        commands.AddRange(coms);
-                    else
-                        throw new Exception("Не поступили команды, повторите загрузку");
+                    if (coms != null)
+                    {
+                        if (coms.Count > 0)
+                            commands.AddRange(coms);
+                        else throw new Exception("Не поступили команды, повторите загрузку");
+                    }
+                    else throw new Exception("Не поступили команды, повторите загрузку");
                 }
 
             DbService.ExecuteCommand(commands);
             commands.Clear();
-
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace EdiClient.Services.Repository
         /// <returns>Список сформированных команд</returns>
         private static List<OracleCommand> GenerateOrderCreatingCommands(DocumentOrder order)
         {
-            if (order == null) return new List<OracleCommand>();
+            if (order == null) return null;
             List<OracleCommand> commands = new List<OracleCommand>();
 
             commands.Add(new OracleCommand()
@@ -221,7 +221,7 @@ namespace EdiClient.Services.Repository
                         new OracleParameter("P_TOTAL_GROSS_AMOUNT", OracleDbType.NVarChar, order?.OrderSummary?.TotalGrossAmount ?? "", ParameterDirection.Input)
                     },
                 CommandType = CommandType.StoredProcedure,
-                CommandText = "EDI_ADD_ORDER"
+                CommandText = "HPCSERVICE.EDI_ADD_ORDER"
             });
 
             if (order.OrderLines.Lines.Count > 0)
@@ -255,11 +255,10 @@ namespace EdiClient.Services.Repository
                             new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
                         },
                         CommandType = CommandType.StoredProcedure,
-                        CommandText = "EDI_ADD_ORDER_DETAIL"
+                        CommandText = "HPCSERVICE.EDI_ADD_ORDER_DETAIL"
                     });
                 }
 
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} args:{LogService.FormatArgsArray(MethodBase.GetCurrentMethod().GetGenericArguments())}", 2);
             return commands;
 
         }

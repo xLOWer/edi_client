@@ -20,6 +20,7 @@ namespace EdiClient.ViewModel.Recadv
         {
             try
             {
+                if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
                 ReceivingAdviceRepository.UpdateData(DateFrom, DateTo);
                 base.Refresh();
                 Documents = ReceivingAdviceRepository.GetRecadv(DateFrom, DateTo);
@@ -34,6 +35,7 @@ namespace EdiClient.ViewModel.Recadv
         {
             try
             {
+                if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
                 base.SaveToXml();
                 if (SelectedItem != null)
                 {

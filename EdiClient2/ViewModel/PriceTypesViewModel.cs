@@ -131,6 +131,7 @@ namespace EdiClient.ViewModel
         
         public void LoadData(object obj = null)
         {
+            if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
             SetLayoutEnabled( false );
             _page.LoadDataButton.Content = "ждите загрузки";
 

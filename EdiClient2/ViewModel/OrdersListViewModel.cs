@@ -39,6 +39,7 @@ namespace EdiClient.ViewModel.Orders
 
         public override void UpdateView()
         {
+            if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
             IsCanRefresh = false;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try

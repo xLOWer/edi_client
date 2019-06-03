@@ -178,7 +178,6 @@ namespace EdiClient.Services
         /// <param name="timeout">Таймаут на выполнение вызова метода(мс)</param>
         internal static void Send(string partnerILN, string documentType, string documentVersion, string documentStandard, string documentTest, string controlNumber, string documentContent, int timeout = 5000)
         {
-            //LogService.Log($"[INFO] [EDI-METHOD] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             retRes returnedResult = null;
 
             returnedResult = Client.send(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);

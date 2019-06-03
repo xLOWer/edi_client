@@ -14,6 +14,7 @@
         public static string Edi_Email { get; set; } // почта аккаунта EDI
         public static string Edi_Url { get; set; } = "https://soap.ediweb.ru:443/wsedi/services/platform"; // путь до платформы
 
+        public const string Version = "2.1.3.0";
         /// <summary>
         /// Уровень лога: 
         /// 0 - откл.,

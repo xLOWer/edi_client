@@ -22,6 +22,7 @@ namespace EdiClient.ViewModel.Ordrsp
         {
             try
             {
+                if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
                 base.Refresh();
                 Documents = OrderResponseRepository.GetOrdrsp(DateFrom, DateTo);
             }
@@ -35,6 +36,7 @@ namespace EdiClient.ViewModel.Ordrsp
         {
             try
             {
+                if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
                 base.ToEdi();
                 if (SelectedItem != null)
                 {
@@ -52,6 +54,7 @@ namespace EdiClient.ViewModel.Ordrsp
         {
             try
             {
+                if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
                 base.SaveToXml();
                 if (SelectedItem != null)
                 {

@@ -28,11 +28,11 @@ namespace EdiClient.Services.Repository
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
             if (advice.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Utilites.Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
 
-
-            EdiService.Send(SelectedRelationship?.partnerIln, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
-            DbService.Insert($@"UPDATE EDI_DOC SET IS_IN_EDI_AS_DESADV = {SqlConfiguratorService.OracleDateFormat(DateTime.UtcNow)} WHERE ORDER_NUMBER 
-= (SELECT ORDER_NUMBER FROM edi_doc WHERE ID_TRADER
-= (SELECT ID FROM DOC_JOURNAL DJ WHERE CODE = '{advice.DespatchAdviceHeader.DespatchAdviceNumber}' and rownum = 1) and rownum = 1)");
+            var doc = XmlService<DocumentDespatchAdvice>.Serialize(advice);
+            EdiService.Send(SelectedRelationship?.partnerIln, "DESADV", "", "", "", "", doc, 200);
+            var sql = SqlConfiguratorService.Sql_UpdateEdiDocSetIsInEdiAsDESADV(advice.DespatchAdviceHeader.DespatchAdviceNumber);
+            DbService.Insert(sql);
+            
         }
 
         /// <summary>
@@ -43,6 +43,7 @@ namespace EdiClient.Services.Repository
         /// <returns>Список ответов на заказ из базы</returns>
         internal static List<DocumentDespatchAdvice> GetDesadv(DateTime dateFrom, DateTime dateTo)
         {
+            if (SelectedRelationship == null) return null;
             var sql = SqlConfiguratorService.Sql_SelectDesadvHeader(dateFrom, dateTo);
             var headers = DbService<DbDocHeader>.DocumentSelect(sql);
 

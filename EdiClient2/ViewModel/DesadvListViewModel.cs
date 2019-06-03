@@ -23,6 +23,7 @@ namespace EdiClient.ViewModel.Desadv
             try
             {
                 base.Refresh();
+                if (EdiService.SelectedRelationship == null) { Utilites.Error("Необходимо выбрать клиента"); return; }
                 Documents = DespatchAdviceRepository.GetDesadv(DateFrom, DateTo);
 
             }
