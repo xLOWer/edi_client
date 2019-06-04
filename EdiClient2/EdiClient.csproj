@@ -202,6 +202,9 @@
     <Compile Include="ViewModel\DesadvListViewModel.cs" />
     <Compile Include="ViewModel\OrdrspListViewModel.cs" />
     <Compile Include="ViewModel\OrdersListViewModel.cs" />
+    <Compile Include="View\DocumentPage.xaml.cs">
+      <DependentUpon>DocumentPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MatchMakerView.xaml.cs">
       <DependentUpon>MatchMakerView.xaml</DependentUpon>
     </Compile>
@@ -244,6 +247,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\DocumentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MatchMakerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
