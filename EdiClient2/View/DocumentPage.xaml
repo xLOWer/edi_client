@@ -4,19 +4,25 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EdiClient.View"
-xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
+      xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="OrdersListView">
     <Page.Resources>
         <!-- Converters -->
         <dblconv:ToMoneyString x:Key="MoneyStringConverter" />
+        <Style x:Key="ControlButtons">
+            <Setter Property="Control.BorderBrush" Value="Transparent" />
+            <Setter Property="Control.Background" Value="Transparent" />
+            <Setter Property="Control.Margin" Value="2,2" />
+            <Setter Property="Control.BorderThickness" Value="0" />
+        </Style>
+        
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="300"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -25,27 +31,30 @@ xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="140"/>
-                <ColumnDefinition Width="140"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="190"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <DatePicker Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"
-                        DisplayDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedDateFormat="Long" Grid.Column="0" Margin="2,2" />
+            <DatePicker Grid.Column="0" Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                         SelectedDateFormat="Long" DisplayDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        VerticalContentAlignment="Center" FontSize="17"/>
 
-            <DatePicker Name="DateToOrdersDatePicker" SelectedDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"
-                        DisplayDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  SelectedDateFormat="Long" Grid.Column="1" Margin="2,2" />
+            <DatePicker Grid.Column="1" Name="DateToOrdersDatePicker" SelectedDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                        SelectedDateFormat="Long" DisplayDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  
+                        VerticalContentAlignment="Center" FontSize="17" Style="{StaticResource ControlButtons}"/>
 
-            <Button ToolTip="Предыдущий день" Grid.Column="2" Margin="2,2" BorderBrush="Transparent" Background="Transparent"   BorderThickness="0"
-                    Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}"  
-                    IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-                <Image Source="{Binding ImageBack}" Margin="-1">
+            <Button Grid.Column="2" ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
+                    Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}">
+                <Image Source="{Binding ImageBack}" Margin="-1" >
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -61,9 +70,8 @@ xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
                 </Image>
             </Button>
 
-            <Button ToolTip="Следующий день" Grid.Column="3" Margin="2,2"  BorderBrush="Transparent" Background="Transparent"   BorderThickness="0"
-                    Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}" 
-                    IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+            <Button Grid.Column="3" ToolTip="Следующий день"  Style="{StaticResource ControlButtons}"
+                    Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}">
                 <Image Source="{Binding ImageForward}" Margin="-1" >
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
@@ -80,8 +88,8 @@ xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
                 </Image>
             </Button>
 
-            <Button ToolTip="Обновить" Margin="2,2" Command="{Binding RefreshCommand}" Grid.Column="5" BorderBrush="Transparent" Background="Transparent"   
-                    BorderThickness="0" IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+            <Button Grid.Column="4" ToolTip="Обновить" Style="{StaticResource ControlButtons}"
+                    IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Command="{Binding GetDocumentsCommand}">
                 <Image Source="{Binding ImageRefresh}" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
@@ -98,16 +106,16 @@ xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
                 </Image>
             </Button>
 
-            <Button ToolTip="Создать документ в трейдере" Margin="2,2" Command="{Binding CreateTraderDocumentCommand}" Grid.Column="6" 
-                    IsEnabled="{Binding IsButtonEnabled}"  BorderBrush="Transparent" Background="Transparent"   BorderThickness="0">
-                <Image Source="{Binding ImageSendToDb}" Margin="-1">
+            <Button Grid.Column="6" ToolTip="Создать документ в трейдере" Style="{StaticResource ControlButtons}"
+                    IsEnabled="{Binding SelectedDocument.IsReadyToTrader}" Command="{Binding ToTraderCommand}">
+                <Image Source="{Binding ImageToTrader}" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsButtonEnabled}" Value="False">
+                                <DataTrigger Binding="{Binding SelectedDocument.IsReadyToTrader}" Value="False">
                                     <Setter Property="Opacity" Value="0.3"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsButtonEnabled}" Value="True">
+                                <DataTrigger Binding="{Binding SelectedDocument.IsReadyToTrader}" Value="True">
                                     <Setter Property="Opacity" Value="1"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -116,101 +124,118 @@ xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
                 </Image>
             </Button>
 
+            <Button Grid.Column="7" ToolTip="Отправить ответ на заказ" Style="{StaticResource ControlButtons}"
+                    IsEnabled="{Binding SelectedDocument.IsReadyToOrdrsp}" Command="{Binding SendORDRSPCommand}">
+                <Image Source="{Binding ImageSendOrdrsp}" Margin="-1">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedDocument.IsReadyToOrdrsp}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedDocument.IsReadyToOrdrsp}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+
+            <Button Grid.Column="8" ToolTip="Отправить уведомление об отгрузке" Style="{StaticResource ControlButtons}"
+                    IsEnabled="{Binding SelectedDocument.IsReadyToDesadv}" Command="{Binding SendDESADVCommand}">
+                <Image Source="{Binding ImageSendDesadv}" Margin="-1">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedDocument.IsReadyToDesadv}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedDocument.IsReadyToDesadv}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+
+            <Button Grid.Column="10" ToolTip="Забарать документы с платформы EDISOFT" Style="{StaticResource ControlButtons}" Command="{Binding GetORDERSCommand}">
+                <Image Source="{Binding ImageGetOrders}" Margin="-1">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+
+            <Label Grid.Column="11" Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
         </Grid>
 
 
 
-        <DataGrid Name="XmlOrdrspDataGrid"  PresentationTraceSources.TraceLevel="High"
+        <DataGrid Name="DocumentsDataGrid"  PresentationTraceSources.TraceLevel="High"
                   ItemsSource="{Binding Path=Documents}"
-                  SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                  SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                   SelectionMode="Single"
                   Grid.Column="0"                   
                   Grid.Row="1" 
                   Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False"                   
-                  SelectionUnit="FullRow">
+                  AutoGenerateColumns="False"  >
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsInDatabase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                        <DataTrigger Binding="{Binding IsReadyToTrader}" Value="False">
                             <Setter Property="Background" Value="White"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding IsInDatabase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Setter Property="Background" Value="#b3e6ff"/>
+                        <DataTrigger Binding="{Binding IsInTrader}" Value="True">
+                            <Setter Property="Background" Value="#cbe0ef"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Setter Property="Background" Value="#ff9696"/>
+                        <DataTrigger Binding="{Binding IsReadyToOrdrsp}" Value="True">
+                            <Setter Property="Background" Value="#ede"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsOrdrsp}" Value="True">
+                            <Setter Property="Background" Value="#e7d7f7"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsReadyToDesadv}" Value="True">
+                            <Setter Property="Background" Value="#dec"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsDesadv}" Value="True">
+                            <Setter Property="Background" Value="#d2f7bb"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsFailed}" Value="True">
+                            <Setter Property="Background" Value="#f76767"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
-
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding OrderHeader.OrderNumber}" Width="*" Header="№" />
-                <DataGridTextColumn Binding="{Binding TraderNumber}" Width="*" Header="№ Трейдер" />
-                <DataGridTextColumn Binding="{Binding OrderParties.Buyer.Name}" Width="*" Header="Покуп."/>
-                <DataGridTextColumn Binding="{Binding OrderParties.Buyer.ILN}" Width="*" Header="GLN покуп."/>
-                <DataGridTextColumn Binding="{Binding OrderParties.Seller.Name}" Width="*" Header="Прод."/>
-                <DataGridTextColumn Binding="{Binding OrderParties.Seller.ILN}" Width="*" Header="GLN прод."/>
-                <DataGridTextColumn Binding="{Binding OrderParties.DeliveryPoint.Name}" Width="*" Header="Точка доставки"/>
-                <DataGridTextColumn Binding="{Binding OrderParties.DeliveryPoint.ILN}" Width="*" Header="GLN точки"/>
-                <DataGridTextColumn Binding="{Binding OrderHeader.OrderDate}" Width="*" Header="Дата"/>
-                <DataGridTextColumn Binding="{Binding OrderHeader.OrderPaymentDueDate}" Width="*" Header="Срок оплаты"/>
-                <DataGridTextColumn Binding="{Binding OrderHeader.ExpectedDeliveryDate}" Width="*" Header="Дата доставки"/>
-                <DataGridTextColumn Binding="{Binding OrderParties.DeliveryPoint.FullAddress}" Width="*" Header="Адрес доставки"/>
-                <DataGridTextColumn Binding="{Binding OrderHeader.Remarks}" Width="SizeToCells" Header="Примечания"/>
-                <DataGridTextColumn Binding="{Binding OrderSummary.TotalOrderedAmount}" Width="15" Header="Кол-во"/>
-                <DataGridTextColumn Binding="{Binding OrderSummary.TotalGrossAmount}" Width="SizeToCells" Header="Σобщ+ндс"/>
-                <DataGridTextColumn Binding="{Binding OrderSummary.TotalNetAmount}" Width="SizeToCells" Header="Σобщ"/>
-                <DataGridTextColumn Binding="{Binding OrderSummary.TotalTaxAmount}" Width="SizeToCells" Header="Σндс"/>
-
-                <!--                
-                <DataGridTextColumn Binding="{Binding DocumentHeader.DocumentID}" Width="SizeToHeader" Header="ID EDI-док-а"/>
-                <DataGridTextColumn Binding="{Binding OrderHeader.PromotionReference}" Width="*" Header="Код рекл. компании"/>
-                <DataGridTextColumn Binding="{Binding OrderHeader.OrderCurrency}" Width="*" Header="Валюта"/>
-                <DataGridTextColumn Binding="{Binding DocumentHeader.DocumentLink}" Width="*" Header="Ссылка"/>
-                -->
+                <DataGridTextColumn Binding="{Binding ID}" Header="ID док."/>
+                <DataGridTextColumn Binding="{Binding CODE}" Header="Код"/>
+                <DataGridTextColumn Binding="{Binding ACT_STATUS}" Header="Статус"/>
+                <DataGridTextColumn Binding="{Binding ORDER_NUMBER}" Header="Заказ"/>
+                <DataGridTextColumn Binding="{Binding ORDER_DATE}" Header="Дата заказа"/>
+                <DataGridTextColumn Binding="{Binding DOC_DATETIME}" Header="Дата создания в трейдере"/>
+                <DataGridTextColumn Binding="{Binding EXPECTED_DELIVERY_DATE}" Header="Дата доставки"/>
+                <!--<DataGridTextColumn Binding="{Binding ORDER}" Header="Дата заказа"/>-->
+                <DataGridTextColumn Binding="{Binding ORDRSP}" Header=" Дата ответа на заказ"/>
+                <DataGridTextColumn Binding="{Binding DESADV}" Header="Дата увед. об отгрузке"/>
+                <DataGridTextColumn Binding="{Binding TOTAL_GROSS_AMOUNT, Converter={StaticResource MoneyStringConverter}}" Header="Сумма заказа"/>
+                <DataGridTextColumn Binding="{Binding REMARKS}" Width="*" Header="Пометки"/>
             </DataGrid.Columns>
 
         </DataGrid>
 
-        <Grid Grid.Row="2" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="*"/>
-
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Column="0" Content="Позиций:" HorizontalContentAlignment="Right"/>
-            <Label Grid.Column="1" Content="{Binding Path=SelectedItem.OrderSummary.TotalLines}" HorizontalContentAlignment="Left" FontWeight="Bold"/>
-            <Label Grid.Column="2" Content="Количество:" HorizontalContentAlignment="Right"/>
-            <Label Grid.Column="3" Content="{Binding Path=SelectedItem.OrderSummary.TotalOrderedAmount}" 
-                   HorizontalContentAlignment="Left" FontWeight="Bold"/>
-            <Label Grid.Column="4" Content="Σобщ:" HorizontalContentAlignment="Right"/>
-            <Label Grid.Column="5" Content="{Binding Path=SelectedItem.OrderSummary.TotalNetAmount, Converter={StaticResource MoneyStringConverter}}" 
-                   HorizontalContentAlignment="Left" FontWeight="Bold"/>
-            <Label Grid.Column="6" Content="Σндс:" HorizontalContentAlignment="Right"/>
-            <Label Grid.Column="7" Content="{Binding Path=SelectedItem.OrderSummary.TotalTaxAmount, Converter={StaticResource MoneyStringConverter}}" 
-                   HorizontalContentAlignment="Left" FontWeight="Bold"/>
-            <Label Grid.Column="8" Content="Σобщ + Σндс:"/>
-            <Label Grid.Column="9" Content="{Binding Path=SelectedItem.OrderSummary.TotalGrossAmount, Converter={StaticResource MoneyStringConverter}}" 
-                   HorizontalContentAlignment="Left" FontWeight="Bold"/>
-
-            <Label Grid.Column="10" Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
-        </Grid>
-
-        <DataGrid Name="OrdrspDataGrid"  PresentationTraceSources.TraceLevel="High"     
-                              ItemsSource="{Binding Path=SelectedItem.OrderLines.Lines}"
-                              SelectedItem="{Binding Path=SelectedLineItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+        <DataGrid Name="DocumentDetailsDataGrid"  PresentationTraceSources.TraceLevel="High"     
+                              ItemsSource="{Binding Path=SelectedDocument.Details}"
                               SelectionMode="Single"
                               Grid.Column="0"                   
                               Grid.Row="3" 
@@ -220,29 +245,26 @@ xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                            <Setter Property="Background" Value="White"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsFailed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Setter Property="Background" Value="#ff9696"/>
-                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsFailed}" Value="True"> <Setter Property="Background" Value="#ff9696"/> </DataTrigger>
+                        <DataTrigger Binding="{Binding HasDiffrence}" Value="True"> <Setter Property="Background" Value="#ff8"/> </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding LineItem.LineNumber}" Width="SizeToCells" Header="№"/>
-                <DataGridTextColumn Binding="{Binding LineItem.EAN}" Width="SizeToCells" Header="Штрих-код"/>
-                <DataGridTextColumn Binding="{Binding LineItem.BuyerItemCode}" Width="SizeToCells" Header="Код покупателя"/>
-                <DataGridTextColumn Binding="{Binding LineItem.SupplierItemCode}" Width="SizeToCells" Header="Код поставщика"/>
-                <DataGridTextColumn Binding="{Binding LineItem.ItemDescription}" Width="SizeToCells" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding LineItem.UnitOfMeasure}" Width="*" Header="Единица измерения"/>
-                <DataGridTextColumn Binding="{Binding LineItem.OrderedQuantity}" Width="*" Header="Заказано"/>
-                <DataGridTextColumn Binding="{Binding LineItem.OrderedUnitNetPrice, Converter={StaticResource MoneyStringConverter}}" Width="*" Header="Цена без НДС"/>
-                <DataGridTextColumn Binding="{Binding LineItem.OrderedUnitGrossPrice, Converter={StaticResource MoneyStringConverter}}" Width="*" Header="Цена с НДС"/>
-                <DataGridTextColumn Binding="{Binding LineItem.TaxRate}" Width="*" Header="НДС"/>
+                <DataGridTextColumn Binding="{Binding ID_GOOD}" Header="Наш id товара"/>
+                <DataGridTextColumn Binding="{Binding EAN}" Header="Штрих-код"/>
+                <DataGridTextColumn Binding="{Binding BUYER_ITEM_CODE}" Header="Код товара клиента"/>
+                <DataGridTextColumn Binding="{Binding TaxRate}" Header="%НДС"/>
+                <DataGridTextColumn Binding="{Binding ITEM_DESCRIPTION}" Width="*" Header="Наименовение"/>
+                <DataGridTextColumn Binding="{Binding GrossAmount, Converter={StaticResource MoneyStringConverter}}" Header="Сумма с НДС"/>
+                <DataGridTextColumn Binding="{Binding NetAmount, Converter={StaticResource MoneyStringConverter}}" Header="Сумма"/>
+                <DataGridTextColumn Binding="{Binding UnitNetPrice, Converter={StaticResource MoneyStringConverter}}" FontWeight="Bold" Header="Цена к отправке"/>
+                <DataGridTextColumn Binding="{Binding ORDERED_UNIT_GROSS_PRICE, Converter={StaticResource MoneyStringConverter}}" Header="Цена в заказе"/>
+                <DataGridTextColumn Binding="{Binding UnitsCount}" FontWeight="Bold" Header="Кол-во к отправке"/>
+                <DataGridTextColumn Binding="{Binding ORDERED_QUANTITY}" Header="Кол-во в заказе"/>
             </DataGrid.Columns>
         </DataGrid>
 
     </Grid>
-</Page>
+</Page> 
 

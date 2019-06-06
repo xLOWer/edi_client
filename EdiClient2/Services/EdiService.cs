@@ -57,16 +57,16 @@ namespace EdiClient.Services
                 address = _address;
                 Client.Endpoint.Address = address;
             }
-            Name = AppSettings.AppConfig.Edi_User;
-            Password = AppSettings.AppConfig.Edi_Password;
+            Name = AppSettings.AppConfig.EdiUser;
+            Password = AppSettings.AppConfig.EdiPassword;
             return Client;
         }
 
         internal static EDIWebServicePortTypeClient Configure(string _endPointConfigurationName, EndpointAddress _endpointAddress)
         {
             Client = new EDIWebServicePortTypeClient(_endPointConfigurationName, _endpointAddress);
-            Name = AppSettings.AppConfig.Edi_User;
-            Password = AppSettings.AppConfig.Edi_Password;
+            Name = AppSettings.AppConfig.EdiUser;
+            Password = AppSettings.AppConfig.EdiPassword;
             return Client;
         }
 

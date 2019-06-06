@@ -16,18 +16,3 @@ namespace EdiClient.Model.MatchingDbModel
         public string ManufacturerId { get; set; }
     }
 }
-/*
-  SELECT rg.id "Id"
-    , rg.code "Code"
-    , rg.name "Name"
-    , rg.bar_code "BarCode"
-    , rg.GOOD_SIZE "GoodSize"
-    , (SELECT name FROM REF_CONTRACTORS WHERE ID = rg.id_manufacturer) "Manufacturer"
-    , rg.ID_MANUFACTURER "ManufacturerId"
-    , rg.EXPIRING_DATE "ExpiringDate"
-    , rg.REG_NUM "RegNum"
-    , rg.SERT_NUM "SertNum"
-    , rg.ID_SUBDIVISION "SubdivisionId"
-  FROM ref_goods rg
-  WHERE name like '%%';
-*/

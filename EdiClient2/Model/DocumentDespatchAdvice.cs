@@ -23,9 +23,7 @@ namespace EdiClient.Model
         public DocumentDespatchAdviceDespatchAdviceConsignment DespatchAdviceConsignment { get; set; }
         [XmlElement("DespatchAdvice-Summary")]
         public DocumentDespatchAdviceDespatchAdviceSummary DespatchAdviceSummary { get; set; }
-
-        [XmlIgnore]
-        public bool IsInEdiAsDesadv { get; set; }
+        
     }
     [Serializable()]
     [DesignerCategory("code")]

@@ -34,16 +34,16 @@
 
 
         <Label Content="Имя пользователя EDI" Grid.Column="0" Grid.Row="1"/>
-        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_User), Mode=TwoWay}" Grid.Column="1" Grid.Row="1"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.EdiUser), Mode=TwoWay}" Grid.Column="1" Grid.Row="1"/>
 
         <Label Content="Пароль пользователя EDI" Grid.Column="0" Grid.Row="2"/>
-        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_Password), Mode=TwoWay}" Grid.Column="1" Grid.Row="2" />
+        <TextBox Text="{Binding Path=(conf:AppConfig.EdiPassword), Mode=TwoWay}" Grid.Column="1" Grid.Row="2" />
 
         <Label Content="GLN пользователя EDI" Grid.Column="0" Grid.Row="3"/>
-        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_GLN), Mode=TwoWay}" Grid.Column="1" Grid.Row="3"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.EdiGLN), Mode=TwoWay}" Grid.Column="1" Grid.Row="3"/>
         
         <Label Content="URL EDI" Grid.Column="0" Grid.Row="4"/>
-        <TextBox Text="{Binding Path=(conf:AppConfig.Edi_Url), Mode=TwoWay}" Grid.Column="1" Grid.Row="4"/>
+        <TextBox Text="{Binding Path=(conf:AppConfig.EdiUrl), Mode=TwoWay}" Grid.Column="1" Grid.Row="4"/>
 
     </Grid>
 </Window>

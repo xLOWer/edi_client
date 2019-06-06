@@ -22,9 +22,7 @@ namespace EdiClient.Model
         public DocumentOrderResponseLine OrderResponseLines { get; set; }
         [XmlElement("OrderResponse-Summary")]
         public DocumentOrderResponseOrderResponseSummary OrderResponseSummary { get; set; }
-
-        [XmlIgnore]
-        public bool IsInEdiAsOrdrsp { get; set; }
+        
     }
     [Serializable()]
     [DesignerCategory("code")]

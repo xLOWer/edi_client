@@ -17,13 +17,13 @@ namespace EdiClient.Services
 
         internal static void Configure()
         {
-            //MessageBox.Show($"{AppSettings.AppConfig.connString}\n\n{AppSettings.AppConfig.OracleDbConnection_UserName}\n\n{AppSettings.AppConfig.Edi_Email}");
+            //MessageBox.Show($"{AppSettings.AppConfig.connString}\n\n{AppSettings.AppConfig.DbUserName}\n\n{AppSettings.AppConfig.EdiEmail}");
             if (!string.IsNullOrEmpty(AppConfig.connString)/* || 
-                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_UserName) ||
-                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_UserPassword) ||
-                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_SID) ||
-                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_Port) ||
-                !String.IsNullOrEmpty(AppConfig.OracleDbConnection_Host)*/)
+                !String.IsNullOrEmpty(AppConfig.DbUserName) ||
+                !String.IsNullOrEmpty(AppConfig.DbUserPassword) ||
+                !String.IsNullOrEmpty(AppConfig.DbSID) ||
+                !String.IsNullOrEmpty(AppConfig.DbPort) ||
+                !String.IsNullOrEmpty(AppConfig.DbHost)*/)
                 conn = new OracleConnection(AppConfig.connString);
             else
                 MessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");

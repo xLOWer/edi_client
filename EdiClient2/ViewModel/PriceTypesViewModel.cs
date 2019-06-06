@@ -235,12 +235,10 @@ where CUSTOMER_GLN = '{SelectedMatch.CustomerGln}' and ID_PRICE_TYPE = {Selected
 
 
         private List<PriceType> GetPriceTypes()        
-            => DbService<PriceType>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectPriceType() });
-                
-        private List<MatchingPriceTypes> GetMatchList()        
-           => DbService<MatchingPriceTypes>.DocumentSelect(new List<string>{ SqlConfiguratorService.Sql_SelectMatchingPriceTypes() })
-            .Where(x=>x.CustomerGln == SelectedRelationship.partnerIln)
-            .ToList();
+            => DbService<PriceType>.DocumentSelect(new List<string> { SqlService.GET_PRICE_TYPES });
+
+        private List<MatchingPriceTypes> GetMatchList()
+           => DbService<MatchingPriceTypes>.DocumentSelect(new List<string> { SqlService.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln) });
         
     }
 }

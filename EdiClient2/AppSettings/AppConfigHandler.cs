@@ -55,36 +55,16 @@ namespace EdiClient.AppSettings
                 stream.Close();
             }
 
-            AppConfig.OracleDbConnection_UserName = !string.IsNullOrEmpty(newLoadedConfig.OracleDbConnection_UserName)
-                        ? newLoadedConfig.OracleDbConnection_UserName
-                        : AppConfig.OracleDbConnection_UserName;
-            AppConfig.OracleDbConnection_UserPassword = !string.IsNullOrEmpty(newLoadedConfig.OracleDbConnection_UserPassword)
-                        ? newLoadedConfig.OracleDbConnection_UserPassword
-                        : AppConfig.OracleDbConnection_UserPassword;
-            AppConfig.OracleDbConnection_Port = !string.IsNullOrEmpty(newLoadedConfig.OracleDbConnection_Port)
-                        ? newLoadedConfig.OracleDbConnection_Port
-                        : AppConfig.OracleDbConnection_Port;
-            AppConfig.OracleDbConnection_SID = !string.IsNullOrEmpty(newLoadedConfig.OracleDbConnection_SID)
-                        ? newLoadedConfig.OracleDbConnection_SID
-                        : AppConfig.OracleDbConnection_SID;
-            AppConfig.OracleDbConnection_Host = !string.IsNullOrEmpty(newLoadedConfig.OracleDbConnection_Host)
-                        ? newLoadedConfig.OracleDbConnection_Host
-                        : AppConfig.OracleDbConnection_Host;
-            AppConfig.Edi_User = !string.IsNullOrEmpty(newLoadedConfig.Edi_User)
-                        ? newLoadedConfig.Edi_User
-                        : AppConfig.Edi_User;
-            AppConfig.Edi_Password = !string.IsNullOrEmpty(newLoadedConfig.Edi_Password)
-                        ? newLoadedConfig.Edi_Password
-                        : AppConfig.Edi_Password;
-            AppConfig.Edi_GLN = !string.IsNullOrEmpty(newLoadedConfig.Edi_GLN)
-                        ? newLoadedConfig.Edi_GLN
-                        : AppConfig.Edi_GLN;
-            AppConfig.Edi_Email = !string.IsNullOrEmpty(newLoadedConfig.Edi_Email)
-                        ? newLoadedConfig.Edi_Email
-                        : AppConfig.Edi_Email;
-            AppConfig.Edi_Url = !string.IsNullOrEmpty(newLoadedConfig.Edi_Url)
-                        ? newLoadedConfig.Edi_Url
-                        : AppConfig.Edi_Url;
+            AppConfig.DbUserName = !string.IsNullOrEmpty(newLoadedConfig.DbUserName) ? newLoadedConfig.DbUserName : AppConfig.DbUserName;
+            AppConfig.DbUserPassword = !string.IsNullOrEmpty(newLoadedConfig.DbUserPassword) ? newLoadedConfig.DbUserPassword : AppConfig.DbUserPassword;
+            AppConfig.DbPort = !string.IsNullOrEmpty(newLoadedConfig.DbPort) ? newLoadedConfig.DbPort : AppConfig.DbPort;
+            AppConfig.DbSID = !string.IsNullOrEmpty(newLoadedConfig.DbSID) ? newLoadedConfig.DbSID : AppConfig.DbSID;
+            AppConfig.DbHost = !string.IsNullOrEmpty(newLoadedConfig.DbHost) ? newLoadedConfig.DbHost : AppConfig.DbHost;
+            AppConfig.EdiUser = !string.IsNullOrEmpty(newLoadedConfig.EdiUser) ? newLoadedConfig.EdiUser : AppConfig.EdiUser;
+            AppConfig.EdiPassword = !string.IsNullOrEmpty(newLoadedConfig.EdiPassword) ? newLoadedConfig.EdiPassword : AppConfig.EdiPassword;
+            AppConfig.EdiGLN = !string.IsNullOrEmpty(newLoadedConfig.EdiGLN) ? newLoadedConfig.EdiGLN : AppConfig.EdiGLN;
+            AppConfig.EdiEmail = !string.IsNullOrEmpty(newLoadedConfig.EdiEmail) ? newLoadedConfig.EdiEmail : AppConfig.EdiEmail;
+            AppConfig.EdiUrl = !string.IsNullOrEmpty(newLoadedConfig.EdiUrl) ? newLoadedConfig.EdiUrl : AppConfig.EdiUrl;
         }
 
 

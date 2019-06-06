@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using EdiClient.View;
 using System.Windows.Controls;
 using System.Windows.Media;
+using EdiClient.AppSettings;
 
 namespace EdiClient.ViewModel
 {
@@ -71,7 +72,7 @@ namespace EdiClient.ViewModel
         private bool linkEnabled = true;
         public bool LinkEnabled
         {
-            get { return !String.IsNullOrEmpty(SelectedGood?.Id ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.BuyerItemCode ?? ""); }
+            get { return !String.IsNullOrEmpty(SelectedGood?.Id ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.BUYER_ITEM_CODE ?? ""); }
             set
             {
                 linkEnabled = value;
@@ -246,6 +247,7 @@ namespace EdiClient.ViewModel
                 return;
             }
 
+            // код как процедуру желательно вынести в базу
             DbService.Insert($@"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN,CUSTOMER_ARTICLE,ID_GOOD,DISABLED)
 values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.Id},0)");
 
@@ -290,33 +292,34 @@ values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.I
                 return;
             }
 
-            if (String.IsNullOrEmpty(SelectedFailedGood.BuyerItemCode) || String.IsNullOrEmpty(SelectedGood.Id))
+            if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.Id))
             {
                 msg("Код покупателя или идентификатор товара отсутствует");
                 return;
             }
 
 
+            // код как процедуру желательно вынести в базу
             var sql = $"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_GOOD, DISABLED)" +
-                $"values({SelectedRelationship.partnerIln}, '{SelectedFailedGood.BuyerItemCode}', {SelectedGood.Id}, 0)";
+                $"values({SelectedRelationship.partnerIln}, '{SelectedFailedGood.BUYER_ITEM_CODE}', {SelectedGood.Id}, 0)";
 
             DbService.Insert(sql);
 
-            UpdateDocs(SelectedFailedGood.EdiDocId);
+            UpdateDocs(SelectedFailedGood.ID_EDI_DOC);
         }
 
 
-        public void UpdateDocs(string EdiDocId)
+        public void UpdateDocs(string EDI_DOCId)
         {
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
                 {
-                    CommandText = "EDI_REFRESH_DOC_DETAILS",
+                    CommandText = "EdiREFRESH_DOC_DETAILS",
                     CommandType = CommandType.StoredProcedure,
                     Parameters =
                     {
-                        new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, EdiDocId, ParameterDirection.Input)
+                        new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, EDI_DOCId, ParameterDirection.Input)
                     }
                 });
                 FailedGoodsList = GetFailedGoods();
@@ -342,14 +345,16 @@ values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.I
 
             try
             {
+                // код как процедуру желательно вынести в базу
                 DbService.Insert($@"update abt.REF_GOODS_MATCHING set DISABLED=1
 where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{SelectedMatch.CustomerGoodId}'");
 
                 FailedGoodsList = GetFailedGoods();
                 MatchesList = GetMatchesList();
 
-                DbService.Insert($"DECLARE CURSOR v_cursor IS SELECT UNIQUE ID_EDI_DOC FROM HPCSERVICE.EDI_DOC_DETAILS WHERE ID_GOOD = {SelectedMatch.GoodId};" +
-                "BEGIN FOR DOC IN v_cursor LOOP HPCSERVICE.EDI_REFRESH_DOC_DETAILS(DOC.ID_EDI_DOC); END LOOP; EXCEPTION WHEN OTHERS THEN NULL; END;");
+                // код как процедуру желательно вынести в базу
+                DbService.Insert($"DECLARE CURSOR v_cursor IS SELECT UNIQUE ID_EDI_DOC FROM {AppConfig.Schema}EDI_DOC_DETAILS WHERE ID_GOOD = {SelectedMatch.GoodId};" +
+                "BEGIN FOR DOC IN v_cursor LOOP {AppConfig.Schema}Edi_REFRESH_DOC_DETAILS(DOC.ID_Edi_DOC); END LOOP; EXCEPTION WHEN OTHERS THEN NULL; END;");
             }
             catch (Exception ex) { Utilites.Error(ex); }
 
@@ -374,10 +379,11 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
                            var text = item?.ToUpper()?.Trim(' ') ?? "";
                            if (!String.IsNullOrEmpty(item))
                                FailedGoodsList = FailedGoodsList.Where(
-                                   x => (x.ItemDescription?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.OrderName?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.BuyerItemCode?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.Ean?.ToUpper()?.Contains(text) ?? false)
+                                   x => (x.ITEM_DESCRIPTION?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.ORDER_NUMBER?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.ORDER_DATE?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.BUYER_ITEM_CODE?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.EAN?.ToUpper()?.Contains(text) ?? false)
                                ).ToList();
                        }
                }
@@ -430,16 +436,34 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
 
 
 
-        private List<Goods> GetGoods() 
-            => DbService<Goods>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectGoods() });
+        private List<Goods> GetGoods()
+        {
+            var sql = SqlService.GET_GOODS;
+            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
+            var result = DbService<Goods>.DocumentSelect(new List<string> { sql });
+            return result;
+        }
+        
 
-        private List<FailedGoods> GetFailedGoods() 
-            => DbService<FailedGoods>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectFailedGoods() });
+        private List<FailedGoods> GetFailedGoods()
+        {
+            if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
+            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
+            var sql = SqlService.GET_FAILED_DETAILS(SelectedRelationship?.partnerIln);
+            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
+            var result = DbService<FailedGoods>.DocumentSelect(new List<string> { sql });
+            return result;
+        }
 
-        private List<Matches> GetMatchesList() 
-            => DbService<Matches>.DocumentSelect(new List<string> { SqlConfiguratorService.Sql_SelectMatches() })
-            .Where(x => x.CustomerGln == SelectedRelationship.partnerIln)
-            .ToList();
+        private List<Matches> GetMatchesList()
+        {
+            if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
+            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
+            var sql = SqlService.GET_MATCHED(SelectedRelationship?.partnerIln);
+            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
+            var result = DbService<Matches>.DocumentSelect(new List<string> { sql });
+            return result;
+        }
 
     }
 }

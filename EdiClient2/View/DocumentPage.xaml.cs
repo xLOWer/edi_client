@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EdiClient.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,14 @@ namespace EdiClient.View
     /// </summary>
     public partial class DocumentPage : Page
     {
+        public DocumentListViewModel Context { get; set; }
+
         public DocumentPage()
         {
+            Context = new DocumentListViewModel();
+            DataContext = Context;
             InitializeComponent();
         }
+        
     }
 }

@@ -12,11 +12,3 @@
         public string CustomerName { get; set; }
     }
 }
-/*
-  CUSTOMER_GLN      NUMBER(*, 0),
-  ID_PRICE_TYPE           NUMBER(*, 0),
-  DISABLED          NUMBER(1, 0),
-  DISABLED_DATETIME DATE,
-  INSERT_DATETIME   DATE              DEFAULT SYSDATE,
-  INSERT_USER       VARCHAR2(10 BYTE) DEFAULT USER
-*/

@@ -9,7 +9,7 @@ namespace EdiClient.Model
     [DesignerCategory("code")]
     [XmlType(AnonymousType = true)]
     [System.Xml.Serialization.XmlRootAttribute("Document-Order", Namespace = "", IsNullable = false)]
-    public partial class DocumentOrder : INotifyPropertyChanged
+    public partial class DocumentOrder
     {
         [XmlElement("Document-Header")]
         public DocumentOrderDocumentHeader DocumentHeader { get; set; }
@@ -26,35 +26,6 @@ namespace EdiClient.Model
         public DocumentOrderOrderSummary OrderSummary { get; set; }
         [XmlElement("Document-Attachments")]
         public DocumentOrderDocumentAttachments DocumentAttachments { get; set; }
-
-        [XmlIgnore] public string EdiIdDoc;
-        [XmlIgnore] public string TraderNumber;
-        [XmlIgnore] private bool isInDatabase;
-        [XmlIgnore] public bool IsInDatabase
-        {
-            get { return isInDatabase; }
-            set
-            {
-                isInDatabase = value;
-                NotifyPropertyChanged("IsInDatabase");
-            }
-        }
-        [XmlIgnore] private bool isFailed;
-        [XmlIgnore] public bool IsFailed
-        {
-            get { return isFailed; }
-            set
-            {
-                isFailed = value;
-                NotifyPropertyChanged("IsFailed");
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        
-        protected void NotifyPropertyChanged(string info)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
-        }
     }
     [Serializable()]
     [DesignerCategory("code")]

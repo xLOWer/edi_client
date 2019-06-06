@@ -4,30 +4,30 @@
     {
         public AppConfig()
         {
-            OracleDbConnection_UserName = AppSettings.AppConfig.OracleDbConnection_UserName;
-            OracleDbConnection_UserPassword = AppSettings.AppConfig.OracleDbConnection_UserPassword;
-            OracleDbConnection_Port = AppSettings.AppConfig.OracleDbConnection_Port;
-            OracleDbConnection_SID = AppSettings.AppConfig.OracleDbConnection_SID;
-            OracleDbConnection_Host = AppSettings.AppConfig.OracleDbConnection_Host;
-            Edi_User = AppSettings.AppConfig.Edi_User;
-            Edi_Password = AppSettings.AppConfig.Edi_Password;
-            Edi_GLN = AppSettings.AppConfig.Edi_GLN;
-            Edi_Email = AppSettings.AppConfig.Edi_Email;
-            Edi_Url = AppSettings.AppConfig.Edi_Url;
+            DbUserName = AppSettings.AppConfig.DbUserName;
+            DbUserPassword = AppSettings.AppConfig.DbUserPassword;
+            DbPort = AppSettings.AppConfig.DbPort;
+            DbSID = AppSettings.AppConfig.DbSID;
+            DbHost = AppSettings.AppConfig.DbHost;
+            EdiUser = AppSettings.AppConfig.EdiUser;
+            EdiPassword = AppSettings.AppConfig.EdiPassword;
+            EdiGLN = AppSettings.AppConfig.EdiGLN;
+            EdiEmail = AppSettings.AppConfig.EdiEmail;
+            EdiUrl = AppSettings.AppConfig.EdiUrl;
             DebugLevel = AppSettings.AppConfig.DebugLevel;
         }
 
-        public string OracleDbConnection_UserName { get; set; }
-        public string OracleDbConnection_UserPassword { get; set; }
-        public string OracleDbConnection_Port { get; set; } 
-        public string OracleDbConnection_SID { get; set; }
-        public string OracleDbConnection_Host { get; set; } 
+        public string DbUserName { get; set; }
+        public string DbUserPassword { get; set; }
+        public string DbPort { get; set; } 
+        public string DbSID { get; set; }
+        public string DbHost { get; set; } 
 
-        public string Edi_User { get; set; } 
-        public string Edi_Password { get; set; } 
-        public string Edi_GLN { get; set; } 
-        public string Edi_Email { get; set; } 
-        public string Edi_Url { get; set; }
+        public string EdiUser { get; set; } 
+        public string EdiPassword { get; set; } 
+        public string EdiGLN { get; set; } 
+        public string EdiEmail { get; set; } 
+        public string EdiUrl { get; set; }
 
         public ushort DebugLevel { get; set; }
     }

@@ -98,8 +98,10 @@ namespace EdiClient.ViewModel.Common
         public CommandService NextDayCommand => new CommandService(NextDay);
         public CommandService RefreshCommand => new CommandService(Refresh);
         public CommandService PrevDayCommand => new CommandService(PrevDay);
-        public CommandService ToEdiCommand => new CommandService(ToEdi);
-        public CommandService SaveToXmlCommand => new CommandService(SaveToXml);
+        public CommandService GetORDERSCommand => new CommandService(GetORDERS);
+        public CommandService SendORDRSPCommand => new CommandService(SendORDRSP);
+        public CommandService SendDESADVCommand => new CommandService(SendDESADV);
+        public CommandService GetDESADVCommand => new CommandService(GetDESADV);
         public CommandService CreateTraderDocumentCommand => new CommandService(CreateTraderDocument);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -108,11 +110,19 @@ namespace EdiClient.ViewModel.Common
         {
 
         }
-        public virtual void ToEdi(object o = null)
+        public virtual void GetORDERS(object o = null)
         {
 
         }
-        public virtual void SaveToXml(object o = null)
+        public virtual void SendORDRSP(object o = null)
+        {
+
+        }
+        public virtual void SendDESADV(object o = null)
+        {
+
+        }
+        public virtual void GetDESADV(object o = null)
         {
 
         }
