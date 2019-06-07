@@ -18,12 +18,12 @@ namespace EdiClient.Services
         internal static void Configure()
         {
             //MessageBox.Show($"{AppSettings.AppConfig.connString}\n\n{AppSettings.AppConfig.DbUserName}\n\n{AppSettings.AppConfig.EdiEmail}");
-            if (!string.IsNullOrEmpty(AppConfig.connString)/* || 
+            if (!string.IsNullOrEmpty(AppConfig.connString) || 
                 !String.IsNullOrEmpty(AppConfig.DbUserName) ||
                 !String.IsNullOrEmpty(AppConfig.DbUserPassword) ||
                 !String.IsNullOrEmpty(AppConfig.DbSID) ||
                 !String.IsNullOrEmpty(AppConfig.DbPort) ||
-                !String.IsNullOrEmpty(AppConfig.DbHost)*/)
+                !String.IsNullOrEmpty(AppConfig.DbHost))
                 conn = new OracleConnection(AppConfig.connString);
             else
                 MessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");

@@ -2,14 +2,9 @@
 {
     public class PriceType
     {
-        public string PriceId { get; set; }
-        public string PriceName { get; set; }
-        public string PriceCoef { get; set; }
-        public string CurrencyName { get; set; }
-        public string ParentName { get; set; }
+        public string ID { get; set; }
+        public string NAME { get; set; }
+        public string COEF { get; set; }
+        public string CURRENCY_NAME { get; set; }
     }
 }
-/*
-PriceId	    PriceName	                PriceCoef	CurrencyName	ParentName
-120501	    Дистр. Владивосток /РЕМИ	1.05	    Рубль	        Базовая
-*/

@@ -23,15 +23,14 @@ namespace EdiClient.ViewModel
             {
                 _page = page;
             }
-            catch (Exception ex) { err(ex); }
+            catch (Exception ex) { Utilites.Error(ex); }
         }
 
         #region fields
 
-        delegate void Message(string ex);
-        Message msg = Utilites.Error;
-        delegate void Error(Exception ex);
-        Error err = Utilites.Error;
+        public string ImageRefresh => @"~\..\..\Images\refresh-50.png";
+        public string ImageUnlink  => @"~\..\..\Images\unlink-50.png";
+        public string ImageLink    => @"~\..\..\Images\link-50.png";
 
         public List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;        
         public Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
@@ -60,7 +59,7 @@ namespace EdiClient.ViewModel
         {
             get
             {
-                return !String.IsNullOrEmpty(SelectedMatch?.CustomerGoodId ?? "");
+                return !String.IsNullOrEmpty(SelectedMatch?.CUSTOMER_ARTICLE ?? "");
             }
             set
             {
@@ -72,7 +71,7 @@ namespace EdiClient.ViewModel
         private bool linkEnabled = true;
         public bool LinkEnabled
         {
-            get { return !String.IsNullOrEmpty(SelectedGood?.Id ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.BUYER_ITEM_CODE ?? ""); }
+            get { return !String.IsNullOrEmpty(SelectedGood?.ID ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.BUYER_ITEM_CODE ?? ""); }
             set
             {
                 linkEnabled = value;
@@ -195,7 +194,7 @@ namespace EdiClient.ViewModel
 
         private bool HelpMode { get; set; } = false;
 
-        public CommandService NewMatchingCommand => new CommandService(NewMatching);
+        //public CommandService NewMatchingCommand => new CommandService(NewMatching);
         public CommandService FailedGoodSearchCommand => new CommandService(FailedGoodSearch);
         public CommandService MatchesSearchCommand => new CommandService(MatchesSearch);
         public CommandService GoodSearchCommand => new CommandService(GoodSearch);
@@ -212,51 +211,7 @@ namespace EdiClient.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
-
-        public void NewMatching(object obj = null)
-        {
-
-
-            if (NewCustomerItemCode.Length < 4 || NewCustomerItemCode == null)
-            {
-                Utilites.Error("Поле с кодом не должно быть короче 4 символов и быть пустым");
-                return;
-            }
-
-            if (SelectedRelationship == null)
-            {
-                Utilites.Error("Необходимо выбрать покупателя");
-                return;
-            }
-
-            if (String.IsNullOrEmpty(SelectedRelationship.partnerIln))
-            {
-                Utilites.Error("У выбранного покупателя нет кода ГЛН");
-                return;
-            }
-
-            if (SelectedGood == null)
-            {
-                Utilites.Error("Необходимо выбрать товар для сопоставления");
-                return;
-            }
-
-            if (String.IsNullOrEmpty(SelectedGood.Id))
-            {
-                Utilites.Error("Товар имеет не верный идентификатор");
-                return;
-            }
-
-            // код как процедуру желательно вынести в базу
-            DbService.Insert($@"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN,CUSTOMER_ARTICLE,ID_GOOD,DISABLED)
-values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.Id},0)");
-
-            NewCustomerItemCode = "";
-
-            FailedGoodsList = GetFailedGoods();
-            MatchesList = GetMatchesList();
-        }
-
+        
         private void SetLayoutEnabled(bool flag)
         {
             _page.LoadDataButton.IsEnabled = flag;
@@ -266,101 +221,63 @@ values('{SelectedRelationship.partnerIln}',{NewCustomerItemCode},{SelectedGood.I
         public void LoadData(object obj = null)
         {
             SetLayoutEnabled(false);
-            _page.LoadDataButton.Content = "ждите загрузки";
 
             GoodsList = GetGoods();
             fullGoodsList = GoodsList;
             FailedGoodsList = GetFailedGoods();
             MatchesList = GetMatchesList();
-
-            _page.LoadDataButton.Content = "Загрузить данные";
+            
             SetLayoutEnabled(true);
-
         }
 
         public void MakeMatching(object obj = null)
         {
-            if (SelectedFailedGood == null)
+            if (SelectedFailedGood == null) { Utilites.Error("Не выбран пункт с не сопоставленным товаром"); return; }
+            if (SelectedGood == null) { Utilites.Error("Не выбран пункт с товаром"); return; }
+            if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.ID)) 
+                { Utilites.Error("Код покупателя или идентификатор товара отсутствует"); return; }
+
+            DbService.ExecuteCommand(new OracleCommand()
             {
-                msg("Не выбран пункт с не сопоставленным товаром");
-                return;
-            }
-
-            if (SelectedGood == null)
-            {
-                msg("Не выбран пункт с товаром");
-                return;
-            }
-
-            if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.Id))
-            {
-                msg("Код покупателя или идентификатор товара отсутствует");
-                return;
-            }
-
-
-            // код как процедуру желательно вынести в базу
-            var sql = $"insert into abt.REF_GOODS_MATCHING(CUSTOMER_GLN, CUSTOMER_ARTICLE, ID_GOOD, DISABLED)" +
-                $"values({SelectedRelationship.partnerIln}, '{SelectedFailedGood.BUYER_ITEM_CODE}', {SelectedGood.Id}, 0)";
-
-            DbService.Insert(sql);
-
-            UpdateDocs(SelectedFailedGood.ID_EDI_DOC);
+                Parameters =
+                        {
+                            new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedRelationship.partnerIln, ParameterDirection.Input),
+                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedFailedGood.BUYER_ITEM_CODE, ParameterDirection.Input),
+                            new OracleParameter("P_ID_GOOD", OracleDbType.Number, SelectedGood.ID, ParameterDirection.Input),
+                            new OracleParameter("P_ID_EDI_DOC", OracleDbType.Number, SelectedFailedGood.ID_EDI_DOC, ParameterDirection.Input),
+                        },
+                Connection = OracleConnectionService.conn,
+                CommandType = CommandType.StoredProcedure,
+                CommandText = AppConfig.Schema + "EDI_MAKE_GOOD_LINK"
+            });
         }
 
-
-        public void UpdateDocs(string EDI_DOCId)
+        public void DisposeMatching(object obj = null)
         {
+            if (SelectedMatch == null) { Utilites.Error("Не выбран пункт с сопоставлением"); return; }
+            if (String.IsNullOrEmpty(SelectedMatch.CUSTOMER_ARTICLE)) { Utilites.Error("У выбранного товара отсутствует код покупателя"); return; }
+
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
                 {
-                    CommandText = "EdiREFRESH_DOC_DETAILS",
-                    CommandType = CommandType.StoredProcedure,
                     Parameters =
-                    {
-                        new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, EDI_DOCId, ParameterDirection.Input)
-                    }
+                        {
+                            new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
+                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedMatch.CUSTOMER_ARTICLE, ParameterDirection.Input),
+                            new OracleParameter("P_ID_EDI_DOC", OracleDbType.Number, SelectedFailedGood.ID_EDI_DOC, ParameterDirection.Input),
+                        },
+                    Connection = OracleConnectionService.conn,
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = AppConfig.Schema + "EDI_MAKE_GOOD_UNLINK"
                 });
+                
                 FailedGoodsList = GetFailedGoods();
                 MatchesList = GetMatchesList();
-            }
-            catch (Exception ex) { err(ex); }
-        }
-
-
-        public void DisposeMatching(object obj = null)
-        {
-            if (SelectedMatch == null)
-            {
-                msg("Не выбран пункт с сопоставлением");
-                return;
-            }
-
-            if (String.IsNullOrEmpty(SelectedMatch.CustomerGoodId))
-            {
-                msg("У выбранного товара отсутствует код покупателя");
-                return;
-            }
-
-            try
-            {
-                // код как процедуру желательно вынести в базу
-                DbService.Insert($@"update abt.REF_GOODS_MATCHING set DISABLED=1
-where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{SelectedMatch.CustomerGoodId}'");
-
-                FailedGoodsList = GetFailedGoods();
-                MatchesList = GetMatchesList();
-
-                // код как процедуру желательно вынести в базу
-                DbService.Insert($"DECLARE CURSOR v_cursor IS SELECT UNIQUE ID_EDI_DOC FROM {AppConfig.Schema}EDI_DOC_DETAILS WHERE ID_GOOD = {SelectedMatch.GoodId};" +
-                "BEGIN FOR DOC IN v_cursor LOOP {AppConfig.Schema}Edi_REFRESH_DOC_DETAILS(DOC.ID_Edi_DOC); END LOOP; EXCEPTION WHEN OTHERS THEN NULL; END;");
             }
             catch (Exception ex) { Utilites.Error(ex); }
-
         }
-
-
+        
 
         public void FailedGoodResetInput(object obj = null) => FailedGoodsList = GetFailedGoods();
         public void MatchesResetInput(object obj = null) => MatchesList = GetMatchesList();
@@ -402,10 +319,10 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
                            {
                                var text = item?.ToUpper()?.Trim(' ') ?? "";
                                MatchesList = MatchesList.Where(
-                                   x => (x.Name?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.GoodId?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.CustomerGoodId?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.BarCode?.ToUpper()?.Contains(text) ?? false)
+                                   x => (x.NAME?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.ID_GOOD?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.CUSTOMER_ARTICLE?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.BAR_CODE?.ToUpper()?.Contains(text) ?? false)
                                ).ToList();
                            }
                }
@@ -424,11 +341,11 @@ where CUSTOMER_GLN = {SelectedMatch.CustomerGln} and CUSTOMER_ARTICLE = '{Select
                            {
                                var text = item?.ToUpper()?.Trim(' ') ?? "";
                                GoodsList = GoodsList.Where(
-                                   x => (x.Name?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.Id?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.Manufacturer?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.Code?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.BarCode?.ToUpper().Trim(' ').Contains(text) ?? false)
+                                   x => (x.NAME?.ToUpper().Trim(' ').Contains(text) ?? false)
+                                     || (x.ID?.ToUpper().Trim(' ').Contains(text) ?? false)
+                                     || (x.MANUFACTURER?.ToUpper().Trim(' ').Contains(text) ?? false)
+                                     || (x.CODE?.ToUpper().Trim(' ').Contains(text) ?? false)
+                                     || (x.BAR_CODE?.ToUpper().Trim(' ').Contains(text) ?? false)
                                ).ToList();
                            }
                }

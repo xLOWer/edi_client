@@ -159,7 +159,7 @@ namespace EdiClient.ViewModel
             try
             {
                 var sql = $"INSERT INTO ABT.REF_PRICE_TYPES_MATCHING(  CUSTOMER_GLN, ID_PRICE_TYPE, DISABLED)" +
-                          $"VALUES('{SelectedRelationship.partnerIln}', { SelectedPriceType.PriceId}, 0)";
+                          $"VALUES('{SelectedRelationship.partnerIln}', { SelectedPriceType.ID}, 0)";
                 DbService.Insert(sql);
                 MatchList = GetMatchList();
             }
@@ -178,7 +178,7 @@ namespace EdiClient.ViewModel
             try
             {
                 DbService.Insert( $@"update abt.REF_Price_Types_MATCHING set DISABLED = 1
-where CUSTOMER_GLN = '{SelectedMatch.CustomerGln}' and ID_PRICE_TYPE = {SelectedMatch.IdPriceType}" );
+where CUSTOMER_GLN = '{SelectedMatch.CUSTOMER_GLN}' and ID_PRICE_TYPE = {SelectedMatch.ID_PRICE_TYPE}" );
                 
                 MatchList = GetMatchList();
             }
@@ -199,10 +199,10 @@ where CUSTOMER_GLN = '{SelectedMatch.CustomerGln}' and ID_PRICE_TYPE = {Selected
                             {
                                 var text = item?.ToUpper()?.Trim(' ') ?? "";
                                 MatchList = MatchList.Where(
-                                    x => (x.CustomerGln?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.IdPriceType?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.InsertDatetime?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.PriceTypeName?.ToUpper()?.Contains(text) ?? false)
+                                    x => (x.CUSTOMER_GLN?.ToUpper()?.Contains(text) ?? false)
+                                      || (x.ID_PRICE_TYPE?.ToUpper()?.Contains(text) ?? false)
+                                      || (x.INSERT_DATETIME?.ToUpper()?.Contains(text) ?? false)
+                                      || (x.NAME?.ToUpper()?.Contains(text) ?? false)
                                 ).ToList();
                             }
                 }
@@ -222,8 +222,8 @@ where CUSTOMER_GLN = '{SelectedMatch.CustomerGln}' and ID_PRICE_TYPE = {Selected
                             {
                                 var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
                                 PriceTypeList = PriceTypeList.Where(
-                                    x => (x.PriceName?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
-                                      || (x.PriceId?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
+                                    x => (x.NAME?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
+                                      || (x.ID?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
                                 ).ToList();
                             }
                 }

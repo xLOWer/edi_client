@@ -27,13 +27,13 @@ namespace EdiClient.Model
         public string DOC_DATETIME { get; set; }
         public string ACT_STATUS { get; set; }
 
-        public bool IsFailed => string.IsNullOrEmpty(FAILED) ? false : true;
-        public bool IsReadyToTrader => string.IsNullOrEmpty(ID_TRADER) && !IsOrdrsp && !IsDesadv && !IsFailed ? true : false;
-        public bool IsReadyToOrdrsp => !string.IsNullOrEmpty(ID_TRADER) && ACT_STATUS == "3" && !IsFailed ? true : false;
-        public bool IsReadyToDesadv => !string.IsNullOrEmpty(ORDRSP) && ACT_STATUS == "4" && !IsFailed ? true : false;
-        public bool IsInTrader => !string.IsNullOrEmpty(ID_TRADER) && !IsFailed ? true : false;
-        public bool IsOrdrsp => !string.IsNullOrEmpty(ORDRSP) && !IsFailed ? true : false;
-        public bool IsDesadv => !string.IsNullOrEmpty(DESADV) && !IsFailed ? true : false;
+        public bool IsFailed => FAILED == "1";
+        public bool IsReadyToTrader => string.IsNullOrEmpty(ID_TRADER) && !IsOrdrsp && !IsDesadv && !IsFailed;
+        public bool IsReadyToOrdrsp => !string.IsNullOrEmpty(ID_TRADER) && ACT_STATUS == "3" && !IsFailed;
+        public bool IsReadyToDesadv => !string.IsNullOrEmpty(ORDRSP) && ACT_STATUS == "4" && !IsFailed;
+        public bool IsInTrader => !string.IsNullOrEmpty(ID_TRADER) && !IsFailed;
+        public bool IsOrdrsp => !string.IsNullOrEmpty(ORDRSP) && !IsFailed;
+        public bool IsDesadv => !string.IsNullOrEmpty(DESADV) && !IsFailed;
         //public bool IsRecadv => !string.IsNullOrEmpty(RECADV) ? true : false;
 
         public List<Detail> Details { get; set; }

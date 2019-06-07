@@ -22,12 +22,10 @@ namespace EdiClient.Services
         /// <param name="commands">Команды</param>
         internal static void ExecuteCommand(List<OracleCommand> commands)
         {
-            int c = commands.Count();
-            for (int i = 1; i <= c; ++i)
-            {
-                ExecuteCommand(commands[i - 1]);
-            }
-
+            OracleConnectionService.OpenDatabaseConnect();
+            foreach (var command in commands)
+                    command.ExecuteNonQuery();
+            OracleConnectionService.CloseDatabaseConnect();
         }
 
 
@@ -35,9 +33,9 @@ namespace EdiClient.Services
         {
             using (command)
             {
-                command.Connection = OracleConnectionService.conn;
                 OracleConnectionService.OpenDatabaseConnect();
-                command.ExecuteNonQuery();
+                command.Connection = OracleConnectionService.conn;
+                var res = command.ExecuteNonQuery();
                 OracleConnectionService.CloseDatabaseConnect();
             }
         }

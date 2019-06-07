@@ -2,13 +2,12 @@
 {
     public class MatchingPriceTypes
     {
-        public string CustomerGln { get; set; }
-        public string IdPriceType { get; set; }
-        public string Disabled { get; set; }
-        public string DisabledDatetime { get; set; }
-        public string InsertDatetime { get; set; }
-        public string InsertUser { get; set; }
-        public string PriceTypeName { get; set; }
-        public string CustomerName { get; set; }
+        public string CUSTOMER_GLN { get; set; }
+        public string ID_PRICE_TYPE { get; set; }
+        public string DISABLED { get; set; }
+        public string DISABLED_DATETIME { get; set; }
+        public string INSERT_DATETIME { get; set; }
+        public string INSERT_USER { get; set; }
+        public string NAME { get; set; }
     }
 }

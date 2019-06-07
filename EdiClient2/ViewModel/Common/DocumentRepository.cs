@@ -23,47 +23,41 @@ namespace EdiClient.ViewModel.Common
         public static Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
         public static int RelationshipCount => EdiService.RelationshipCount;
 
-        private static List<Model.WebModel.DocumentInfo> NewOrders { get; set; }
-        private static List<Task> NativeTaskList = new List<Task>();
-
         /// <summary>
         /// Получить новые заказы
         /// </summary>
         /// <param name="dateFrom">начальная дата</param>
-        /// <param name="dateTo">конечная дата</param>
+        /// <param name="dateTo">конечная дата</param>x
         /// <returns>Список полученных заказов</returns>
         public static void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
             if (SelectedRelationship == null) return;
             if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
 
-            NewOrders = EdiService.ListMBEx(
-                                              SelectedRelationship.partnerIln
-                                            , SelectedRelationship.documentType
-                                            , ""
-                                            , ""
-                                            , ""
-                                            , $"{dateFrom.Year}-{dateFrom.Month}-{dateFrom.Day}"
-                                            , $"{dateTo.Year}-{dateTo.Month}-{dateTo.Day}"
-                                            , ""
-                                            , ""
-                                            , "").Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList();
+            List<Model.WebModel.DocumentInfo> NewOrders
+               = EdiService.ListMBEx(SelectedRelationship.partnerIln
+                                     , SelectedRelationship.documentType, "", "", ""
+                                     , ToEdiDateString(dateFrom)
+                                     , ToEdiDateString(dateTo)
+                                     , "", "", "").Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList();
 
-            if (RelationshipCount > 0 && NewOrders.Count() > 0)
-                foreach (var rel in Relationships)
-                    foreach (var order in NewOrders)
-                        NativeTaskList.Add(Task.Factory.StartNew(()
-                            => AddOrders(rel.partnerIln, rel.documentType, order.trackingId, rel.documentStandard, order.partneriln)));
-
-            Task.WaitAll(NativeTaskList.ToArray());
-            NativeTaskList.Clear();
-
+            if (NewOrders.Count() > 0)
+                foreach (var order in NewOrders)
+                    InsertIncomingIntoDatabase(EdiService.Receive<DocumentOrder>(
+                                                                SelectedRelationship.partnerIln,
+                                                                SelectedRelationship.documentType,
+                                                                order.trackingId,
+                                                                SelectedRelationship.documentStandard,
+                                                                "").First());
         }
+
+        private static string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
 
         public static void UpdateFailedDetails(string P_EDI_DOC_ID)
         {
             DbService.ExecuteCommand(new OracleCommand()
             {
+                Connection = OracleConnectionService.conn,
                 Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, P_EDI_DOC_ID, ParameterDirection.Input) },
                 CommandType = CommandType.StoredProcedure,
                 CommandText = AppConfig.Schema + "EDI_REFRESH_DOC_DETAILS"
@@ -84,17 +78,14 @@ namespace EdiClient.ViewModel.Common
                             {
                                 new OracleParameter("P_ID", OracleDbType.VarChar, orderNumber, ParameterDirection.Input)
                             },
+                            Connection = OracleConnectionService.conn,
                             CommandType = CommandType.StoredProcedure,
                             CommandText = AppConfig.Schema + "Edi_MOVE_ORDER"
                         }
                 };
-            //DbService.ExecuteCommand(commands);
+            DbService.ExecuteCommand(commands);
             commands.Clear();
         }
-
-        internal static bool IsOrderInDatabase(string OrderNumber) =>
-            String.IsNullOrEmpty(DbService.SelectSingleValue($"SELECT 1 FROM {AppConfig.Schema}Edi_DOC WHERE ORDER_NUMBER = '{OrderNumber}'")) ? false : true;
-
 
         /// <summary>
         /// Отправить полученные заказы в буферную таблицу
@@ -138,6 +129,7 @@ namespace EdiClient.ViewModel.Common
                         new OracleParameter("P_REMARKS", OracleDbType.NVarChar, order?.OrderHeader?.Remarks ?? "", ParameterDirection.Input),
                         new OracleParameter("P_TOTAL_GROSS_AMOUNT", OracleDbType.NVarChar, order?.OrderSummary?.TotalGrossAmount ?? "", ParameterDirection.Input)
                     },
+                Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = AppConfig.Schema + "Edi_ADD_ORDER"
             });
@@ -165,6 +157,7 @@ namespace EdiClient.ViewModel.Common
                             new OracleParameter("P_SUPPLIER_ITEM_CODE", OracleDbType.NVarChar, line?.LineItem?.SupplierItemCode ?? "", ParameterDirection.Input),
                             new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
                         },
+                        Connection = OracleConnectionService.conn,
                         CommandType = CommandType.StoredProcedure,
                         CommandText = AppConfig.Schema + "Edi_ADD_ORDER_DETAIL"
                     });
@@ -174,19 +167,86 @@ namespace EdiClient.ViewModel.Common
         }
 
 
-        private static void AddOrders(string relPartnerIln, string relDocumentType, string newOrderTrackingId, string relDocumentStandard, string orderPartnerIln)
-        {
-            if (relPartnerIln == orderPartnerIln)
-            {
-                var doc = EdiService.Receive<DocumentOrder>(relPartnerIln, relDocumentType, newOrderTrackingId, relDocumentStandard, "").First();
-                if (IsOrderInDatabase(doc.OrderHeader.OrderNumber)) // если документ не в базе - добавляем его
-                    InsertIncomingIntoDatabase(doc);
-            }
-        }
-
         internal static DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
         {
-            return new DocumentDespatchAdvice();
+            var Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
+            var PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
+
+            var details = doc.Details;
+
+            PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
+            Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
+
+            if (details.Count > 0)
+                foreach (var detail in details)
+                {
+                    PackingSequence.Add(new DocumentDespatchAdviceDespatchAdviceConsignmentLine()
+                    {
+                        LineItem = new DocumentDespatchAdviceDespatchAdviceConsignmentLineLineItem()
+                        {
+                            LineNumber = detail?.LINE_NUMBER ?? "",
+                            EAN = detail?.EAN ?? "",
+                            BuyerItemCode = detail?.BUYER_ITEM_CODE ?? "",
+                            SupplierItemCode = detail?.ID_GOOD ?? "",
+                            ItemDescription = detail?.ITEM_DESCRIPTION ?? "",
+                            OrderedQuantity = detail?.ORDERED_QUANTITY,
+                            QuantityDespatched = detail?.QUANTITY,
+                            //ItemSize = detail?.GOOD_SIZE ?? "", 
+                            UnitOfMeasure = "PCE",
+                            UnitNetPrice = detail?.UnitNetPrice.ToString(),
+                            TaxRate = detail?.TaxRate.ToString(),
+                            UnitGrossPrice = detail.UnitGrossPrice.ToString(),
+                            NetAmount = detail.NetAmount.ToString(),
+                            GrossAmount = detail.GrossAmount.ToString(),
+                            TaxAmount = detail.TaxAmount.ToString()
+                        }
+                    }
+                    );
+                }
+            Consignment.PackingSequence = PackingSequence ?? new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
+
+            var advice = new DocumentDespatchAdvice()
+            {
+                DespatchAdviceHeader = new DocumentDespatchAdviceDespatchAdviceHeader()
+                {
+                    DocumentFunctionCode = "9",
+                    DespatchAdviceNumber = doc?.CODE ?? "",
+                    DespatchAdviceDate = DateTime.Parse(doc?.DOC_DATETIME),
+                    BuyerOrderNumber = doc?.ORDER_NUMBER,
+                    UTDnumber = doc?.CODE,
+                    UTDDate = DateTime.Parse(doc?.DOC_DATETIME)
+                },
+                DocumentParties = new DocumentDespatchAdviceDocumentParties()
+                {
+
+                    Sender = new DocumentDespatchAdviceDocumentPartiesSender()
+                    {
+                        ILN = doc?.SELLER_ILN
+                    },
+                    Receiver = new DocumentDespatchAdviceDocumentPartiesReceiver()
+                    {
+                        ILN = doc?.SENDER_ILN
+                    }
+                },
+                DespatchAdviceParties = new DocumentDespatchAdviceDespatchAdviceParties()
+                {
+                    Buyer = new DocumentDespatchAdviceDespatchAdvicePartiesBuyer() { ILN = doc?.BUYER_ILN ?? "" },
+                    Seller = new DocumentDespatchAdviceDespatchAdvicePartiesSeller() { ILN = doc?.SELLER_ILN ?? "" },
+                    DeliveryPoint = new DocumentDespatchAdviceDespatchAdvicePartiesDeliveryPoint() { ILN = doc?.DELIVERY_POINT_ILN ?? "" },
+                },
+                DespatchAdviceConsignment = Consignment ?? new DocumentDespatchAdviceDespatchAdviceConsignment(),
+                DespatchAdviceSummary = new DocumentDespatchAdviceDespatchAdviceSummary()
+                {
+                    TotalLines = doc?.Details.Count.ToString() ?? "",
+                    TotalNetAmount = PackingSequence.Sum(x => double.Parse(x.LineItem.NetAmount)).ToString(),
+                    TotalGrossAmount = PackingSequence.Sum(x => double.Parse(x.LineItem.GrossAmount)).ToString(),
+                    TotalGoodsDespatchedAmount = PackingSequence.Count().ToString(),
+                    //TotalPSequence = PackingSequence.Sum(x => double.Parse(x.LineItem.NetAmount)).ToString(),
+                    TotalTaxAmount = PackingSequence.Sum(x => double.Parse(x.LineItem.TaxAmount)).ToString(),
+                }
+            };
+
+            return advice;
         }
 
         /// <summary>
@@ -214,6 +274,7 @@ namespace EdiClient.ViewModel.Common
                         {
                             new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
                         },
+                Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = AppConfig.Schema + "EDI_MAKE_DESADV"
             });
@@ -336,6 +397,7 @@ namespace EdiClient.ViewModel.Common
                         {
                             new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
                         },
+                Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = AppConfig.Schema + "EDI_MAKE_ORDRSP"
             });            
