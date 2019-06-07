@@ -98,6 +98,7 @@ namespace EdiClient.ViewModel
             {
                 selectedFailedGood = value;
                 RaiseNotifyPropertyChanged("SelectedFailedGood");
+                GoodsList = fullGoodsList.Where(x => x.BAR_CODE.Trim().ToUpper() == SelectedFailedGood.EAN.Trim().ToUpper()).ToList();
             }
         }
 
@@ -221,9 +222,11 @@ namespace EdiClient.ViewModel
         public void LoadData(object obj = null)
         {
             SetLayoutEnabled(false);
-
-            GoodsList = GetGoods();
-            fullGoodsList = GoodsList;
+            if(fullGoodsList == null || fullGoodsList.Count < 1)
+            {
+                fullGoodsList = GetGoods();
+            }
+            GoodsList = fullGoodsList;
             FailedGoodsList = GetFailedGoods();
             MatchesList = GetMatchesList();
             
@@ -323,6 +326,7 @@ namespace EdiClient.ViewModel
                                      || (x.ID_GOOD?.ToUpper()?.Contains(text) ?? false)
                                      || (x.CUSTOMER_ARTICLE?.ToUpper()?.Contains(text) ?? false)
                                      || (x.BAR_CODE?.ToUpper()?.Contains(text) ?? false)
+                                     || (x.INSERT_DATETIME?.ToUpper()?.Contains(text) ?? false)
                                ).ToList();
                            }
                }

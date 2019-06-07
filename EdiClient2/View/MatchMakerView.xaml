@@ -145,8 +145,9 @@
                 <DataGridTextColumn Binding="{Binding CUSTOMER_GLN}" Width="SizeToCells" Header="ГЛН"/>
                 <DataGridTextColumn Binding="{Binding CUSTOMER_ARTICLE}" Width="SizeToCells" Header="Код покупателя"/>
                 <DataGridTextColumn Binding="{Binding ID_GOOD}" Width="SizeToCells" Header="Код товара"/>
-                <DataGridTextColumn Binding="{Binding BAR_CODE}" Width="SizeToCells" Header="Штрх-код"/>
+                <DataGridTextColumn Binding="{Binding BAR_CODE}" Width="SizeToCells" Header="Штрх-код"/> 
                 <DataGridTextColumn Binding="{Binding NAME}" Width="*" Header="Наименование"/>
+                <DataGridTextColumn Binding="{Binding INSERT_DATETIME}" Width="*" Header="Дата создания связи"/>
             </DataGrid.Columns>
         </DataGrid>
 

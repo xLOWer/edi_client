@@ -193,8 +193,8 @@ namespace EdiClient.ViewModel.Common
                             QuantityDespatched = detail?.QUANTITY,
                             //ItemSize = detail?.GOOD_SIZE ?? "", 
                             UnitOfMeasure = "PCE",
-                            UnitNetPrice = detail?.UnitNetPrice.ToString(),
-                            TaxRate = detail?.TaxRate.ToString(),
+                            UnitNetPrice = detail?.PRICE,
+                            TaxRate = detail?.TAX_RATE.ToString(),
                             UnitGrossPrice = detail.UnitGrossPrice.ToString(),
                             NetAmount = detail.NetAmount.ToString(),
                             GrossAmount = detail.GrossAmount.ToString(),
@@ -306,8 +306,8 @@ namespace EdiClient.ViewModel.Common
                                 AllocatedDelivered = detail?.QUANTITY,
                                 QuantityDifference = detail?.UnitsDifference.ToString(),
                                 UnitOfMeasure = "PCE",
-                                OrderedUnitNetPrice = detail?.UnitNetPrice.ToString() ?? "",
-                                TaxRate = detail?.TaxRate.ToString(),
+                                OrderedUnitNetPrice = detail?.PRICE.ToString() ?? "",
+                                TaxRate = detail?.TAX_RATE.ToString(),
                                 OrderedUnitGrossPrice = detail?.UnitGrossPrice.ToString(),
                                 NetAmount = detail?.NetAmount.ToString(),
                                 GrossAmount = detail?.GrossAmount.ToString(),
@@ -417,7 +417,11 @@ namespace EdiClient.ViewModel.Common
             if (result != null)
                 if (result.Count > 0)
                     foreach (var doc in result)
+                    {
                         doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
+                        foreach (var detail in doc.Details)
+                            detail.Doc = doc;
+                    }
             return result;
         }
 

@@ -225,10 +225,10 @@
                 <DataGridTextColumn Binding="{Binding ORDER_DATE}" Header="Дата заказа"/>
                 <DataGridTextColumn Binding="{Binding DOC_DATETIME}" Header="Дата создания в трейдере"/>
                 <DataGridTextColumn Binding="{Binding EXPECTED_DELIVERY_DATE}" Header="Дата доставки"/>
-                <!--<DataGridTextColumn Binding="{Binding ORDER}" Header="Дата заказа"/>-->
                 <DataGridTextColumn Binding="{Binding ORDRSP}" Header=" Дата ответа на заказ"/>
                 <DataGridTextColumn Binding="{Binding DESADV}" Header="Дата увед. об отгрузке"/>
                 <DataGridTextColumn Binding="{Binding TOTAL_GROSS_AMOUNT, Converter={StaticResource MoneyStringConverter}}" Header="Сумма заказа"/>
+                <DataGridTextColumn Binding="{Binding Details.Count}" Header="Кол-во позиций"/>
                 <DataGridTextColumn Binding="{Binding REMARKS}" Width="*" Header="Пометки"/>
             </DataGrid.Columns>
 
@@ -245,8 +245,8 @@
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsFailed}" Value="True"> <Setter Property="Background" Value="#ff9696"/> </DataTrigger>
                         <DataTrigger Binding="{Binding HasDiffrence}" Value="True"> <Setter Property="Background" Value="#ff8"/> </DataTrigger>
+                        <DataTrigger Binding="{Binding IsFailed}" Value="True"> <Setter Property="Background" Value="#ff9696"/> </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
@@ -254,13 +254,13 @@
                 <DataGridTextColumn Binding="{Binding ID_GOOD}" Header="Наш id товара"/>
                 <DataGridTextColumn Binding="{Binding EAN}" Header="Штрих-код"/>
                 <DataGridTextColumn Binding="{Binding BUYER_ITEM_CODE}" Header="Код товара клиента"/>
-                <DataGridTextColumn Binding="{Binding TaxRate}" Header="%НДС"/>
+                <DataGridTextColumn Binding="{Binding TAX_RATE}" Header="%НДС"/>
                 <DataGridTextColumn Binding="{Binding ITEM_DESCRIPTION}" Width="*" Header="Наименовение"/>
                 <DataGridTextColumn Binding="{Binding GrossAmount, Converter={StaticResource MoneyStringConverter}}" Header="Сумма с НДС"/>
                 <DataGridTextColumn Binding="{Binding NetAmount, Converter={StaticResource MoneyStringConverter}}" Header="Сумма"/>
-                <DataGridTextColumn Binding="{Binding UnitNetPrice, Converter={StaticResource MoneyStringConverter}}" FontWeight="Bold" Header="Цена к отправке"/>
+                <DataGridTextColumn Binding="{Binding PRICE, Converter={StaticResource MoneyStringConverter}}" FontWeight="Bold" Header="Цена к отправке"/>
                 <DataGridTextColumn Binding="{Binding ORDERED_UNIT_GROSS_PRICE, Converter={StaticResource MoneyStringConverter}}" Header="Цена в заказе"/>
-                <DataGridTextColumn Binding="{Binding UnitsCount}" FontWeight="Bold" Header="Кол-во к отправке"/>
+                <DataGridTextColumn Binding="{Binding QUANTITY}" FontWeight="Bold" Header="Кол-во к отправке"/>
                 <DataGridTextColumn Binding="{Binding ORDERED_QUANTITY}" Header="Кол-во в заказе"/>
             </DataGrid.Columns>
         </DataGrid>

@@ -4,6 +4,7 @@ namespace EdiClient.Model
 {
     public class Detail
     {
+
         public string ID_GOOD { get; set; }
         public string ID_EDI_DOC { get; set; }
         public string EAN { get; set; }
@@ -26,20 +27,19 @@ namespace EdiClient.Model
         public string LINE_NUMBER { get; set; }
         public string QUANTITY { get; set; }
         public string PRICE { get; set; }
+        public string DIFF { get; set; }
 
-        public bool IsFailed => string.IsNullOrEmpty(FAILED) ? false : true;
-                
-        public bool HasDiffrence => UnitsCount != double.Parse(ORDERED_QUANTITY) || UnitNetPrice != double.Parse(ORDERED_UNIT_GROSS_PRICE) ? true : false;
+        public bool IsFailed => FAILED == "1";
+        public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
+        //public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
 
-        public double TaxRate => double.Parse(TAX_RATE);
-        public double UnitNetPrice => double.Parse(PRICE);
-        public double UnitsCount => double.Parse(QUANTITY);
-        public double UnitsDifference => double.Parse(ORDERED_QUANTITY) - UnitsCount;
+        public string UnitsDifference { get; set; }
 
-        public double UnitGrossPrice => Math.Round(UnitNetPrice / 100 * (100 + TaxRate), 2);
-        public double GrossAmount => Math.Round(UnitGrossPrice * UnitsCount, 2);
-        public double TaxAmount => Math.Round(GrossAmount * TaxRate / (100 + TaxRate), 2);
-        public double NetAmount => GrossAmount - TaxAmount;
+        public string UnitGrossPrice { get; set; }
+        public string GrossAmount { get; set; }
+        public string TaxAmount { get; set; }
+        public string NetAmount { get; set; }
 
+        public Document Doc { get; set; }
     }
 }
