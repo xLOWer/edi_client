@@ -246,6 +246,7 @@
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding HasDiffrence}" Value="True"> <Setter Property="Background" Value="#ff8"/> </DataTrigger>
+                        <DataTrigger Binding="{Binding IsNotmatched}" Value="True"> <Setter Property="Background" Value="#ffe1c4"/> </DataTrigger>
                         <DataTrigger Binding="{Binding IsFailed}" Value="True"> <Setter Property="Background" Value="#ff9696"/> </DataTrigger>
                     </Style.Triggers>
                 </Style>

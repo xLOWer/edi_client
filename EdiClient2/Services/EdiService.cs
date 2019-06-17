@@ -32,8 +32,10 @@ namespace EdiClient.Services
         {
             get
             {
-                if (Relationships == null || selectedRelationship == null) return null;
-                else return Relationships[0] ?? new Relation();
+                if (Relationships == null || selectedRelationship == null)
+                    return null;
+                else
+                    return selectedRelationship ?? Relationships[0] ?? new Relation();
             }
             set { selectedRelationship = value; }
         }

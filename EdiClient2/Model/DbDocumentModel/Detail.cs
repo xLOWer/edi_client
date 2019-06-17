@@ -29,16 +29,18 @@ namespace EdiClient.Model
         public string PRICE { get; set; }
         public string DIFF { get; set; }
 
-        public bool IsFailed => FAILED == "1";
-        public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
-        //public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
-
         public string UnitsDifference { get; set; }
 
         public string UnitGrossPrice { get; set; }
         public string GrossAmount { get; set; }
         public string TaxAmount { get; set; }
         public string NetAmount { get; set; }
+
+        public bool IsFailed => FAILED == "1";
+        public bool IsNotmatched => QUANTITY is null || GrossAmount is null;
+        public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
+        //public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
+
 
         public Document Doc { get; set; }
     }

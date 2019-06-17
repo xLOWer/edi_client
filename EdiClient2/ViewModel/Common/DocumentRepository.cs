@@ -301,7 +301,7 @@ namespace EdiClient.ViewModel.Common
                                 BuyerItemCode = detail?.BUYER_ITEM_CODE ?? "",
                                 SupplierItemCode = detail?.ID_GOOD ?? "",
                                 ItemDescription = detail?.ITEM_DESCRIPTION ?? "",
-                                OrderedQuantity = detail?.QUANTITY,
+                                OrderedQuantity = detail?.ORDERED_QUANTITY,
                                 QuantityToBeDelivered = detail?.QUANTITY,
                                 AllocatedDelivered = detail?.QUANTITY,
                                 QuantityDifference = detail?.UnitsDifference.ToString(),
@@ -315,6 +315,12 @@ namespace EdiClient.ViewModel.Common
                             }
                         });
                     }
+                /*
+                <ItemStatus>3</ItemStatus>    
+                <OrderedQuantity>12.000</OrderedQuantity>    *
+                <AllocatedDelivered>12.000</AllocatedDelivered>    *
+                <QuantityDifference>0.000</QuantityDifference>    
+                */
                 orderLines.Lines = lines ?? new List<Line>();
 
                 ordrsp = new DocumentOrderResponse()

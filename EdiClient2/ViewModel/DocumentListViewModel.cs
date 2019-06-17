@@ -89,7 +89,7 @@ namespace EdiClient.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual void ToTrader(object o = null) => ActionInTime(() 
-            => { DocumentRepository.CreateTraderDocument(SelectedDocument.ORDER_NUMBER); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
+            => { DocumentRepository.CreateTraderDocument(SelectedDocument.ID); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
         public void SendORDRSP(object o = null) => ActionInTime(() 
             => { DocumentRepository.SendOrdrsp(SelectedDocument); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
         public void SendDESADV(object o = null) => ActionInTime(() 
