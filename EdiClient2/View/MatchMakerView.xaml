@@ -13,8 +13,8 @@
             <Setter Property="Control.Margin" Value="2,2" />
             <Setter Property="Control.BorderThickness" Value="0" />
         </Style>
-
     </Page.Resources>
+    
     <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
@@ -44,13 +44,13 @@
             </Grid.RowDefinitions>
 
             <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="{Binding ImageRefresh}" Margin="-1"/> </Button>
+                <Image Source="~\..\..\Images\refresh-50.png" Margin="-1"/> </Button>
 
             <Button Grid.Column="1" ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="{Binding ImageLink}" Margin="-1"/> </Button>
+                <Image Source="~\..\..\Images\link-50.png" Margin="-1"/> </Button>
 
             <Button Grid.Column="2" ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="{Binding ImageUnlink}" Margin="-1"/> </Button>
+                <Image Source="~\..\..\Images\unlink-50.png" Margin="-1"/> </Button>
             
         </Grid>
 

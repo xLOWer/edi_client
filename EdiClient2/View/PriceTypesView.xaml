@@ -7,133 +7,106 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PriceTypesView">
-
+    <Page.Resources>
+        <Style x:Key="ControlButtons">
+            <Setter Property="Control.BorderBrush" Value="Transparent" />
+            <Setter Property="Control.Background" Value="Transparent" />
+            <Setter Property="Control.Margin" Value="2,2" />
+            <Setter Property="Control.BorderThickness" Value="0" />
+        </Style>
+    </Page.Resources>
+    
     <Grid x:Name="mainPriceTypesMatchGrid">
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-
-        <Grid Grid.Column="0">
+        <Grid Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="28"/>
             </Grid.RowDefinitions>
+            <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\refresh-50.png" Margin="-1"/>
+            </Button>
+            <Button Grid.Column="1" ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\link-50.png" Margin="-1"/>
+            </Button>
+            <Button Grid.Column="2" ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\unlink-50.png" Margin="-1"/>
+            </Button>
+        </Grid>
+
+        <Label Grid.Row="1" Content="Список доступных типов цен" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
             </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="2" Text="{Binding PriceTypeSearchText, IsAsync=True}"/>
+            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding PriceTypeSearchCommand, IsAsync=True}"/>
+            <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding PriceTypeResetInputCommand, IsAsync=True}"/>
+        </Grid>
 
-            <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2" Text="{Binding PriceTypeSearchText, IsAsync=True}"/>
-
-            <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: РеМи"
-                    Margin="2"  Command="{Binding PriceTypeSearchCommand, IsAsync=True}"/>
-
-            <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
-                    ToolTip="Сбросить поиск не стирая введённое"
-                    Margin="2"  Command="{Binding PriceTypeResetInputCommand, IsAsync=True}"/>
-
-            <DataGrid Name="PriceTypesDataGrid" 
+        <DataGrid Name="PriceTypesDataGrid" 
                       ItemsSource="{Binding Path=PriceTypeList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedPriceType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+                      SelectedItem="{Binding Path=SelectedPriceType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"   
                       SelectionMode="Single"
-                      Grid.Row="1"    
-                      Grid.ColumnSpan="3"
-                      Margin="5"
+                      Grid.Row="3" 
                       Grid.IsSharedSizeScope="True" 
                       AutoGenerateColumns="False" 
                       SelectionUnit="FullRow">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding PriceId}" Width="SizeToCells" Header="Id"/>
-                    <DataGridTextColumn Binding="{Binding PriceName}" Width="SizeToCells" Header="Наименовение"/>
-                    <DataGridTextColumn Binding="{Binding PriceCoef}" Width="*" Header="Коэфф."/>
-                    <DataGridTextColumn Binding="{Binding CurrencyName}" Width="SizeToCells" Header="Валюта"/>
-                    <DataGridTextColumn Binding="{Binding ParentName}" Width="SizeToCells" Header="Родитель"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid> 
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ID}" Width="SizeToCells" Header="Id"/>
+                <DataGridTextColumn Binding="{Binding NAME}" Width="SizeToCells" Header="Наименовение"/>
+                <DataGridTextColumn Binding="{Binding COEF}" Width="*" Header="Коэфф."/>
+                <DataGridTextColumn Binding="{Binding CURRENCY_NAME}" Width="SizeToCells" Header="Валюта"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
 
-        <Grid Grid.Column="1" Grid.RowSpan="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="90"/>
-                <RowDefinition Height="90"/>
-                <RowDefinition Height="90"/>
-                <RowDefinition Height="90"/>
-                <RowDefinition Height="90"/>
-                <RowDefinition Height="90"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+
+        <Label Grid.Row="4" Content="Список сопоставленных цен" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+        <Grid Grid.Row="5" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="60"/>
             </Grid.ColumnDefinitions>
-
-            <Button Name="LoadDataButton" Content="Загрузить данные" Grid.Row="1" Grid.Column="1"
-                    Margin="2,30" IsEnabled="{Binding IsAsync=True}"
-                    Command="{Binding LoadDataCommand, IsAsync=True}"/>
-
-            <Button Content="Связать" Grid.Row="2" Grid.Column="1"
-                    Margin="2,30"
-                    Command="{Binding MakeMatchingCommand, IsAsync=True}"/>
-
-            <Button Content="Отвязать" Grid.Row="3" Grid.Column="1"
-                    Margin="2,30" 
-                    Command="{Binding DisposeMatchingCommand, IsAsync=True}"/>
-
+            <TextBox Grid.Column="0" Margin="2" Text="{Binding MatchSearchText, IsAsync=True}"/>
+            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding MatchSearchCommand, IsAsync=True}"/>
+            <Button Grid.Column="2" Content="сброс"  Margin="2" Command="{Binding  MatchResetInputCommand, IsAsync=True}"/>
         </Grid>
-
-
-        <Grid Grid.Column="2" Grid.RowSpan="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="70"/>
-            </Grid.ColumnDefinitions>
-
-
-            <TextBox Grid.Row="0" Grid.Column="0" 
-                     Margin="2" Text="{Binding MatchSearchText, IsAsync=True}"/>
-
-            <Button Grid.Row="0"  Grid.Column="1" Content="искать"
-                    ToolTip="Поиск по введённым словам. Через пробел по одному слову или цифре. Например: зубная ПАСТА   кОлГЕйт"                    
-                    Margin="2"  Command="{Binding MatchSearchCommand, IsAsync=True}"/>
-
-            <Button Grid.Row="0"  Grid.Column="2" Content="сброс"
-                    ToolTip="Сбросить поиск не стирая введённое"
-                    Margin="2"  Command="{Binding  MatchResetInputCommand, IsAsync=True}"/>
-
-            <DataGrid Name="MatchDataGrid" 
-                  ItemsSource="{Binding Path=MatchList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                  SelectionMode="Single"
-                  Grid.Row="1"  
-                  Grid.RowSpan="3"
-                  Grid.Column="0"
-                  Grid.ColumnSpan="3"
-                  Margin="5"
-                  Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False" 
-                  SelectionUnit="FullRow">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding CustomerGln}" Width="SizeToCells" Header="ГЛН"/>
-                    <DataGridTextColumn Binding="{Binding IdPriceType}" Width="SizeToCells" Header="Id цены"/>
-                    <DataGridTextColumn Binding="{Binding InsertDatetime}" Width="SizeToCells" Header="Дата добавления"/>
-                    <DataGridTextColumn Binding="{Binding PriceTypeName}" Width="*" Header="Наименование"/>
-                </DataGrid.Columns>
-            </DataGrid>
-
-        </Grid>
+        <DataGrid Name="MatchDataGrid" 
+                      ItemsSource="{Binding Path=MatchList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+                      SelectionMode="Single"
+                      Grid.Row="6"
+                      Grid.IsSharedSizeScope="True" 
+                      AutoGenerateColumns="False" 
+                      SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding CUSTOMER_GLN}" Width="SizeToCells" Header="ГЛН"/>
+                <DataGridTextColumn Binding="{Binding ID_PRICE_TYPE}" Width="SizeToCells" Header="Id цены"/>
+                <DataGridTextColumn Binding="{Binding INSERT_DATETIME}" Width="SizeToCells" Header="Дата добавления"/>
+                <DataGridTextColumn Binding="{Binding NAME}" Width="*" Header="Наименование"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
 
     </Grid>

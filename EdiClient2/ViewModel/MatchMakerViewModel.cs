@@ -27,11 +27,7 @@ namespace EdiClient.ViewModel
         }
 
         #region fields
-
-        public string ImageRefresh => @"~\..\..\Images\refresh-50.png";
-        public string ImageUnlink  => @"~\..\..\Images\unlink-50.png";
-        public string ImageLink    => @"~\..\..\Images\link-50.png";
-
+        
         public List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;        
         public Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
         public int RelationshipCount => EdiService.RelationshipCount;

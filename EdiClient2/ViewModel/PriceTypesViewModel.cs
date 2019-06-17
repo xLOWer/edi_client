@@ -12,6 +12,7 @@ using EdiClient.View;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static EdiClient.Model.WebModel.RelationResponse;
+using EdiClient.AppSettings;
 
 namespace EdiClient.ViewModel
 {
@@ -22,16 +23,11 @@ namespace EdiClient.ViewModel
             try
             {
                 _page = page;
-            } catch (Exception ex) { err( ex ); }
+            } catch (Exception ex) { Utilites.Error( ex ); }
         }
 
         #region fields
-
-        delegate void Message(string ex);
-        Message msg = Utilites.Error;
-        delegate void Error(Exception ex);
-        Error err = Utilites.Error;
-        
+                
         public List<Relation> Relationships => EdiService.Relationships;
         public Relation SelectedRelationship => EdiService.SelectedRelationship;
         public int RelationshipCount => EdiService.RelationshipCount;
@@ -132,54 +128,56 @@ namespace EdiClient.ViewModel
         public void LoadData(object obj = null)
         {
             SetLayoutEnabled( false );
-            _page.LoadDataButton.Content = "ждите загрузки";
 
            PriceTypeList = GetPriceTypes();
             MatchList = GetMatchList();
-
-            _page.LoadDataButton.Content = "Загрузить данные";
+            
             SetLayoutEnabled( true );
 
         }
         
         public void MakeMatching(object obj = null)
         {
-            if (SelectedRelationship == null)
-            {
-                msg( "Не выбран покупатель" );
-                return;
-            }
-
-            if (SelectedPriceType == null)
-            {
-                msg( "Не выбран тип цены" );
-                return;
-            }
+            if (SelectedRelationship == null) { Utilites.Error( "Не выбран покупатель" ); return; }
+            if (SelectedPriceType == null) { Utilites.Error( "Не выбран тип цены" ); return; }
 
             try
             {
-                var sql = $"INSERT INTO ABT.REF_PRICE_TYPES_MATCHING(  CUSTOMER_GLN, ID_PRICE_TYPE, DISABLED)" +
-                          $"VALUES('{SelectedRelationship.partnerIln}', { SelectedPriceType.ID}, 0)";
-                DbService.Insert(sql);
+                DbService.ExecuteCommand(new OracleCommand()
+                {
+                    Parameters =
+                        {
+                            new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
+                            new OracleParameter("ID_PRICE_TYPE", OracleDbType.NVarChar, SelectedMatch.ID_PRICE_TYPE, ParameterDirection.Input),
+                        },
+                    Connection = OracleConnectionService.conn,
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = AppConfig.Schema + "EDI_MAKE_PRICE_LINK"
+                });
+
                 MatchList = GetMatchList();
             }
-            catch (Exception ex) { err( ex ); }
+            catch (Exception ex) { Utilites.Error( ex ); }
         }
         
         
         public void DisposeMatching(object obj = null)
         {
-            if (SelectedMatch == null)
-            {
-                msg( "Не выбран пункт с сопоставлением" );
-                return;
-            }
+            if (SelectedMatch == null) { Utilites.Error( "Не выбран пункт с сопоставлением" ); return; }
             
             try
             {
-                DbService.Insert( $@"update abt.REF_Price_Types_MATCHING set DISABLED = 1
-where CUSTOMER_GLN = '{SelectedMatch.CUSTOMER_GLN}' and ID_PRICE_TYPE = {SelectedMatch.ID_PRICE_TYPE}" );
-                
+                DbService.ExecuteCommand(new OracleCommand()
+                {
+                    Parameters =
+                        {
+                            new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
+                            new OracleParameter("ID_PRICE_TYPE", OracleDbType.NVarChar, SelectedMatch.ID_PRICE_TYPE, ParameterDirection.Input),
+                        },
+                    Connection = OracleConnectionService.conn,
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = AppConfig.Schema + "EDI_MAKE_PRICE_UNLINK"
+                });
                 MatchList = GetMatchList();
             }
             catch (Exception ex) { Utilites.Error( ex ); }
@@ -232,13 +230,26 @@ where CUSTOMER_GLN = '{SelectedMatch.CUSTOMER_GLN}' and ID_PRICE_TYPE = {Selecte
         
         public void MatchResetInput(object obj = null) => MatchList = GetMatchList();
         public void PriceTypesResetInput(object obj = null) => PriceTypeList = GetPriceTypes();
-
-
-        private List<PriceType> GetPriceTypes()        
-            => DbService<PriceType>.DocumentSelect(new List<string> { SqlService.GET_PRICE_TYPES });
+        
+        private List<PriceType> GetPriceTypes()
+        {
+            if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
+            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
+            var sql = SqlService.GET_PRICE_TYPES;
+            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
+            var result = DbService<PriceType>.DocumentSelect(new List<string> { sql });
+            return result;
+        }
 
         private List<MatchingPriceTypes> GetMatchList()
-           => DbService<MatchingPriceTypes>.DocumentSelect(new List<string> { SqlService.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln) });
-        
+        {
+            if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
+            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
+            var sql = SqlService.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln);
+            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
+            var result = DbService<MatchingPriceTypes>.DocumentSelect(new List<string> { sql });
+            return result;
+        }
+
     }
 }

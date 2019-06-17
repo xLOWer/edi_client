@@ -191,7 +191,6 @@
     <Compile Include="Services\XmlService.cs" />
     <Compile Include="ViewModel\Common\TabViewModel.cs" />
     <Compile Include="ViewModel\Common\MainViewModel.cs" />
-    <Compile Include="ViewModel\Common\ListViewModel.cs" />
     <Compile Include="Model\DocumentOrder.cs" />
     <Compile Include="ViewModel\DocumentListViewModel.cs" />
     <Compile Include="ViewModel\PriceTypesViewModel.cs" />

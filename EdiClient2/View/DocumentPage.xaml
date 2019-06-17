@@ -54,7 +54,7 @@
 
             <Button Grid.Column="2" ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
                     Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}">
-                <Image Source="{Binding ImageBack}" Margin="-1" >
+                <Image Source="~\..\..\Images\prev-day.png" Margin="-1" >
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -72,7 +72,7 @@
 
             <Button Grid.Column="3" ToolTip="Следующий день"  Style="{StaticResource ControlButtons}"
                     Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}">
-                <Image Source="{Binding ImageForward}" Margin="-1" >
+                <Image Source="~\..\..\Images\next-day.png" Margin="-1" >
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -87,10 +87,10 @@
                     </Image.Style>
                 </Image>
             </Button>
-
+           
             <Button Grid.Column="4" ToolTip="Обновить" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Command="{Binding GetDocumentsCommand}">
-                <Image Source="{Binding ImageRefresh}" Margin="-1">
+                <Image Source="~\..\..\Images\refresh-50.png" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -108,7 +108,7 @@
 
             <Button Grid.Column="6" ToolTip="Создать документ в трейдере" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding SelectedDocument.IsReadyToTrader}" Command="{Binding ToTraderCommand}">
-                <Image Source="{Binding ImageToTrader}" Margin="-1">
+                <Image Source="~\..\..\Images\to-trader-50.png" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -126,7 +126,7 @@
 
             <Button Grid.Column="7" ToolTip="Отправить ответ на заказ" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding SelectedDocument.IsReadyToOrdrsp}" Command="{Binding SendORDRSPCommand}">
-                <Image Source="{Binding ImageSendOrdrsp}" Margin="-1">
+                <Image Source="~\..\..\Images\send-ordrsp-50.png" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -144,7 +144,7 @@
 
             <Button Grid.Column="8" ToolTip="Отправить уведомление об отгрузке" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding SelectedDocument.IsReadyToDesadv}" Command="{Binding SendDESADVCommand}">
-                <Image Source="{Binding ImageSendDesadv}" Margin="-1">
+                <Image Source="~\..\..\Images\send-desadv-50.png" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -160,8 +160,8 @@
                 </Image>
             </Button>
 
-            <Button Grid.Column="10" ToolTip="Забарать документы с платформы EDISOFT" Style="{StaticResource ControlButtons}" Command="{Binding GetORDERSCommand}">
-                <Image Source="{Binding ImageGetOrders}" Margin="-1">
+            <Button Grid.Column="10" ToolTip="Забарать документы с платформы EDISOFT" Style="{StaticResource ControlButtons}" Command="{Binding GetEDIDOCCommand}">
+                <Image Source="~\..\..\Images\get-orders-50.png" Margin="-1">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
