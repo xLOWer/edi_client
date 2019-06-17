@@ -25,7 +25,7 @@
         /// Например 3: будет писать WARNING, ERROR, CRITICAL
         /// </summary>
         public static ushort DebugLevel { get; set; } = 0;
-        public static string Schema { get; } = "DEVELOPER3.";
+        public static string Schema { get; } = "HPCSERVICE.";
         public static string connString => $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {DbHost})(PORT = {DbPort}))(CONNECT_DATA = "
                                + $"(SERVER = DEDICATED)(SERVICE_NAME = {DbSID})));Password={DbUserPassword};User ID={DbUserName}";
 
