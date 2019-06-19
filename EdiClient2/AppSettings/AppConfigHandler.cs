@@ -15,17 +15,23 @@ namespace EdiClient.AppSettings
         
         public static void ConfigureEdi()
         {
+            LogService.Log("[EdiService]");
             try { EdiService.Configure(); }
-            catch (Exception ex) { Utilites.Error(ex); }            
+            catch (Exception ex) { Utilites.Error(ex); }
+            LogService.Log("BindingName " + EdiService.Client.Endpoint.Name);
+            LogService.Log("Uri " + EdiService.Client.Endpoint.ListenUri.AbsoluteUri);
         }
 
         public static void ConfigureOracle()
         {
+            LogService.Log("[OracleConnectionService]");
             try { OracleConnectionService.Configure(); }
             catch (Exception ex) { Utilites.Error(ex); }
+            LogService.Log("ClientVersion " + OracleConnectionService.conn.ClientVersion);
+            LogService.Log("Server " + OracleConnectionService.conn.Server);
+            LogService.Log("ServerVersion " + OracleConnectionService.conn.ServerVersion);
+            LogService.Log("UserId " + OracleConnectionService.conn.UserId);
         }
-
-
 
         public static void Load()
         {
@@ -36,6 +42,8 @@ namespace EdiClient.AppSettings
                 Create();
 
             Read();
+
+            LogService.Log($"conf_dir {directoryPath}\\{dirName}");
         }
 
 
@@ -47,6 +55,7 @@ namespace EdiClient.AppSettings
 
         public static void Read()
         {
+            LogService.Log("[APPCONFIG]");
             var newLoadedConfig = new Model.Common.AppConfig();
             XmlSerializer xml = new XmlSerializer(typeof(Model.Common.AppConfig));
             using (var stream = XmlReader.Create(fullPath))
@@ -65,6 +74,15 @@ namespace EdiClient.AppSettings
             AppConfig.EdiGLN = !string.IsNullOrEmpty(newLoadedConfig.EdiGLN) ? newLoadedConfig.EdiGLN : AppConfig.EdiGLN;
             AppConfig.EdiEmail = !string.IsNullOrEmpty(newLoadedConfig.EdiEmail) ? newLoadedConfig.EdiEmail : AppConfig.EdiEmail;
             AppConfig.EdiUrl = !string.IsNullOrEmpty(newLoadedConfig.EdiUrl) ? newLoadedConfig.EdiUrl : AppConfig.EdiUrl;
+
+            LogService.Log("DbUserName " + AppConfig.DbUserName);
+            LogService.Log("DbPort " + AppConfig.DbPort);
+            LogService.Log("DbSID " + AppConfig.DbSID);
+            LogService.Log("DbHost " + AppConfig.DbHost);
+            LogService.Log("EdiUser " + AppConfig.EdiUser);
+            LogService.Log("EdiGLN " + AppConfig.EdiGLN);
+            LogService.Log("EdiEmail " + AppConfig.EdiEmail);
+            LogService.Log("EdiUrl " + AppConfig.EdiUrl);
         }
 
 

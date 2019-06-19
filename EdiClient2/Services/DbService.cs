@@ -124,26 +124,27 @@ namespace EdiClient.Services
     {
         internal static List<TModel> DocumentSelect(string Sql)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log(Sql);
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
             {
                 command.Connection = OracleConnectionService.conn;
-                //OracleConnectionService.Check();
+                OracleConnectionService.Check();
                 OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
-                //
-
             }
 
             Documents = ToListof(DataGridItems).ToList();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             return Documents;
         }
 
         internal static List<TModel> DocumentSelect(List<string> Sqls)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log("Sqls.Count "+Sqls.Count.ToString());
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable(typeof(TModel));
             using (OracleCommand command = new OracleCommand())

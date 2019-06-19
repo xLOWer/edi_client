@@ -5,6 +5,7 @@ using EdiClient.AppSettings;
 using System.Windows.Controls;
 using System.Linq;
 using System;
+using System.Reflection;
 
 namespace EdiClient.ViewModel.Common
 {
@@ -54,10 +55,11 @@ namespace EdiClient.ViewModel.Common
 
         public void RefreshRelationships(object o)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
                 EdiService.UpdateData();
 
-            (o as ComboBox).ItemsSource = EdiService.Relationships;//.Where( x => !x.Name.ToUpper().Contains("тестовый".ToUpper()) );
+            (o as ComboBox).ItemsSource = EdiService.Relationships;
         }
     }
 }

@@ -13,9 +13,11 @@ namespace EdiClient
     {
         public App()
         {
+            LogService.Log("========== START INIT APPLICATION ==========");
             AppConfigHandler.Load();
             AppConfigHandler.ConfigureEdi();
             AppConfigHandler.ConfigureOracle();
+            LogService.Log("========== END INIT APPLICATION ==========");
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -113,6 +114,7 @@ namespace EdiClient.ViewModel
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
+                LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
                 act.Invoke();
             }
             catch (Exception ex)

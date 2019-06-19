@@ -36,13 +36,13 @@ namespace EdiClient.Services
             $"SELECT * FROM {AppConfig.Schema}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
 
         internal static string GET_MATCHED_PRICE_TYPES(string CUSTOMER_GLN) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN=to_number({CUSTOMER_GLN})";
+            $"SELECT * FROM {AppConfig.Schema}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
 
         internal static string GET_ORDERS(string SENDER_ILN, DateTime DateFrom, DateTime DateTo) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_ORDERS WHERE SENDER_ILN = to_number({SENDER_ILN}) AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
+            $"SELECT * FROM {AppConfig.Schema}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
 
-        internal static string GET_ORDER_DETAILS(string ID_EDI_DOC) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC=to_number({ID_EDI_DOC})";
+        internal static string GET_ORDER_DETAILS(string ID_EDI_DOC) =>    
+            $"SELECT * FROM {AppConfig.Schema}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
 
         internal static string GET_PRICE_TYPES =>
             $"SELECT * FROM {AppConfig.Schema}EDI_GET_PRICE_TYPES";

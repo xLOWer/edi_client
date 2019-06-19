@@ -28,20 +28,17 @@ namespace EdiClient.Services
             return log;
         }
 
-        public static void Log(string msg, ushort level)
+        public static void Log(string msg)
         {
-            /*if (AppSettings.AppConfig.DebugLevel <= level)
+            if (string.IsNullOrEmpty(msg)) return;
+            string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}.{DateTime.UtcNow.Millisecond}] "
+                + $"{msg}\r\n";
+            int c = message.Count();
+            using (var stream = new FileStream(fullPath, FileMode.Append))
             {
-                if (string.IsNullOrEmpty(msg)) return;
-                string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}.{DateTime.UtcNow.Millisecond}] "
-                    + $"{msg}\r\n";
-                int c = message.Count();
-                using (var stream = new FileStream(fullPath, FileMode.Append))
-                {
-                    stream.Write(Encoding.Default.GetBytes(message), 0, c);
-                    stream.Close();
-                }
-            }*/
+                stream.Write(Encoding.Default.GetBytes(message), 0, c);
+                stream.Close();
+            }
         }
 
         public static string FormatArgsArray(Type[] types)

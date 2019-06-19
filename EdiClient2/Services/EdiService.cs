@@ -44,9 +44,12 @@ namespace EdiClient.Services
 
         internal static void UpdateData()
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             Relationships = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
             SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
             RelationshipCount = Relationships.Count;
+            LogService.Log(RelationshipCount.ToString());
+            LogService.Log(SelectedRelationship.partnerIln);
         }
 
         internal static EDIWebServicePortTypeClient Configure(EndpointAddress _address = null)

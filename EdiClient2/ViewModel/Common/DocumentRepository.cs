@@ -70,6 +70,8 @@ namespace EdiClient.ViewModel.Common
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
         internal static void CreateTraderDocument(string orderNumber)
         {
+            LogService.Log($"===============================");
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var commands = new List<OracleCommand>()
                 {
                         new OracleCommand()
@@ -255,6 +257,7 @@ namespace EdiClient.ViewModel.Common
         /// <param name="advice">отправляемый заказ</param>
         internal static void SendDesadv(Document doc)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
 
@@ -384,6 +387,7 @@ namespace EdiClient.ViewModel.Common
         /// <param name="order">отправляемый заказ</param>
         internal static void SendOrdrsp(Document doc)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
 
@@ -411,22 +415,28 @@ namespace EdiClient.ViewModel.Common
         
         internal static List<Detail> GetDocumentDetails(string Id)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log(Id);
             var sql = SqlService.GET_ORDER_DETAILS(Id);
+            LogService.Log(sql);
             var result = DbService<Detail>.DocumentSelect(sql);
             return result;
         }
 
         internal static List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
         {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = SqlService.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
+            LogService.Log(sql);
             var result = DbService<Document>.DocumentSelect(sql);
             if (result != null)
                 if (result.Count > 0)
                     foreach (var doc in result)
                     {
+                        LogService.Log("foreach doc id=" + doc.ID);
                         doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
-                        foreach (var detail in doc.Details)
-                            detail.Doc = doc;
+                        foreach (var detail in doc.Details)                        
+                            detail.Doc = doc;                        
                     }
             return result;
         }
