@@ -14,18 +14,15 @@ namespace EdiClient.Services
 {
     internal static partial class DbService
     {
-        private static List<Task> NativeTaskList = new List<Task>();
-
         /// <summary>
         /// Запускает массив команд с возможностью задавать параметры
         /// </summary>
         /// <param name="commands">Команды</param>
         internal static void ExecuteCommand(List<OracleCommand> commands)
         {
-            OracleConnectionService.OpenDatabaseConnect();
+            OracleConnectionService.Check();
             foreach (var command in commands)
                     command.ExecuteNonQuery();
-            OracleConnectionService.CloseDatabaseConnect();
         }
 
 
@@ -33,10 +30,10 @@ namespace EdiClient.Services
         {
             using (command)
             {
-                OracleConnectionService.OpenDatabaseConnect();
+                OracleConnectionService.Check();
                 command.Connection = OracleConnectionService.conn;
                 var res = command.ExecuteNonQuery();
-                OracleConnectionService.CloseDatabaseConnect();
+                
             }
         }
         /// <summary>
@@ -50,12 +47,12 @@ namespace EdiClient.Services
             using (OracleCommand command = new OracleCommand())
             {
                 command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.OpenDatabaseConnect();
+                OracleConnectionService.Check();
                 OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
                 OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
-                OracleConnectionService.CloseDatabaseConnect();
+                
             }
 
             //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
@@ -68,9 +65,9 @@ namespace EdiClient.Services
             using (OracleCommand command = new OracleCommand(Sql))
             {
                 command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.OpenDatabaseConnect();
+                OracleConnectionService.Check();
                 command.ExecuteNonQuery();
-                OracleConnectionService.CloseDatabaseConnect();
+                
             }
             //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
         }
@@ -83,9 +80,9 @@ namespace EdiClient.Services
                 using (OracleCommand command = new OracleCommand(Sqls[i - 1]))
                 {
                     command.Connection = OracleConnectionService.conn;
-                    OracleConnectionService.OpenDatabaseConnect();
+                    OracleConnectionService.Check();
                     command.ExecuteNonQuery();
-                    OracleConnectionService.CloseDatabaseConnect();
+                    
                 }
             }
             //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
@@ -132,12 +129,11 @@ namespace EdiClient.Services
             using (OracleCommand command = new OracleCommand())
             {
                 command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.OpenDatabaseConnect();
+                //OracleConnectionService.Check();
                 OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
-                OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
-                OracleConnectionService.CloseDatabaseConnect();
+                //
 
             }
 
@@ -155,12 +151,12 @@ namespace EdiClient.Services
                 foreach (var Sql in Sqls)
                 {
                     command.Connection = OracleConnectionService.conn;
-                    OracleConnectionService.OpenDatabaseConnect();
+                    //OracleConnectionService.Check();
                     OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
                     OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                     DataGridItems.Clear();
                     adapter.Fill(DataGridItems);
-                    OracleConnectionService.CloseDatabaseConnect();
+                    //
                 }
             }
 

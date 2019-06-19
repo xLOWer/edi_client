@@ -401,14 +401,14 @@ namespace EdiClient.ViewModel.Common
             {
                 Parameters =
                         {
-                            new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
+                            new OracleParameter("P_ID", OracleDbType.Number, doc.ID, ParameterDirection.Input)
                         },
                 Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = AppConfig.Schema + "EDI_MAKE_ORDRSP"
             });            
         }
-
+        
         internal static List<Detail> GetDocumentDetails(string Id)
         {
             var sql = SqlService.GET_ORDER_DETAILS(Id);
@@ -418,7 +418,7 @@ namespace EdiClient.ViewModel.Common
 
         internal static List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
         {
-            var sql = SqlService.GET_ORDERS(SelectedRelationship?.partnerIln ?? "", dateFrom, dateTo);
+            var sql = SqlService.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
             var result = DbService<Document>.DocumentSelect(sql);
             if (result != null)
                 if (result.Count > 0)
@@ -430,7 +430,7 @@ namespace EdiClient.ViewModel.Common
                     }
             return result;
         }
-
+        
         internal static List<DocumentReceivingAdvice> GetRecadv()
         {
             return new List<DocumentReceivingAdvice>();

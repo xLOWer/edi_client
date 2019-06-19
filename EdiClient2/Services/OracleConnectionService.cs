@@ -14,34 +14,31 @@ namespace EdiClient.Services
     public static class OracleConnectionService
     {
         internal static OracleConnection conn { get; set; }
+        public static string Timeout => conn?.ConnectionTimeout.ToString() ?? "ошибка";
 
         internal static void Configure()
         {
-            //MessageBox.Show($"{AppSettings.AppConfig.connString}\n\n{AppSettings.AppConfig.DbUserName}\n\n{AppSettings.AppConfig.EdiEmail}");
             if (!string.IsNullOrEmpty(AppConfig.connString) || 
                 !String.IsNullOrEmpty(AppConfig.DbUserName) ||
                 !String.IsNullOrEmpty(AppConfig.DbUserPassword) ||
                 !String.IsNullOrEmpty(AppConfig.DbSID) ||
                 !String.IsNullOrEmpty(AppConfig.DbPort) ||
                 !String.IsNullOrEmpty(AppConfig.DbHost))
-                conn = new OracleConnection(AppConfig.connString);
+            {
+                conn = new OracleConnection(AppConfig.connString);               
+            }
             else
-                MessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");
-
-            
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+                MessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");            
         }
 
-        internal static void OpenDatabaseConnect()
+        internal static void Open() => conn.Open();
+        internal static void Close() => conn.Close();
+
+        internal static void Check()
         {
-            conn.Open();            
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            if(conn.State != System.Data.ConnectionState.Open)
+                conn.Open();  
         }
-
-        internal static void CloseDatabaseConnect()
-        {
-            conn.Close();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
-        }
+        
     }
 }

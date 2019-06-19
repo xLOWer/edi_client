@@ -117,12 +117,14 @@ namespace EdiClient.ViewModel
             }
             catch (Exception ex)
             {
+                watch.Stop();
                 Utilites.Error(ex);
             }
             finally
             {
                 watch.Stop();
                 Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+                Utilites.Time = Time;
             }
             NotifyPropertyChanged("Documents");
             NotifyPropertyChanged("DateFrom");

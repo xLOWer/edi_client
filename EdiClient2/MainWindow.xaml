@@ -14,9 +14,9 @@
             <RowDefinition Height="26"/>
             <RowDefinition Height="26"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="174"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -25,7 +25,7 @@
         <Menu Name="TopMenu1" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0"  Grid.IsSharedSizeScope="True">
             <MenuItem Header="Настройки">
                 <MenuItem.Items>
-                    <MenuItem x:Name="CommonSettings" Header="Общие настройки" Command="{Binding OpenCommonSettingsCommand}"/>
+                    <MenuItem x:Name="CommonSettings" Header="Общие настройки" Command="{Binding OpenCommonSettingsCommand}" />
                     <MenuItem x:Name="ConnectionSettings" Header="Настройки соединения с базой" Command="{Binding OpenConnectionSettingsCommand}" />
                     <MenuItem x:Name="EdiSettings" Header="Настройки работы с EDI" Command="{Binding OpenEdiSettingsCommand}"/>
                     <!--<MenuItem x:Name="Logger" Header="Logger" Command="{Binding OpenEdiSettingsCommand}"/>-->
@@ -37,7 +37,7 @@
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="26"/>
             </Grid.RowDefinitions>
@@ -45,7 +45,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="28"/>
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="0" ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
+            <ComboBox ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
                         SelectedIndex="0" BorderThickness="0" Background="Transparent"
                         SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
                         DisplayMemberPath="Name" x:Name="RelationshipsComboBox"
@@ -59,7 +59,7 @@
 
         
 
-        <TabControl Name="MainTabControl" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="Transparent" BorderThickness="0"
+        <TabControl Name="MainTabControl" Grid.Row="2" BorderBrush="Transparent" BorderThickness="0"
                     ItemsSource="{Binding Source={x:Static services:TabService.Tabs}}"
                         SelectedIndex="0">
             <TabControl.ItemTemplate>
@@ -75,7 +75,18 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-
-
+        <StatusBar Grid.Row="3" >
+            <StatusBarItem>
+                <StackPanel>
+                    <Label x:Name="Timeout" Content="{Binding Path=(services:OracleConnectionService.Timeout)}"/>
+                </StackPanel>
+            </StatusBarItem>
+            <!--<Separator/>
+            <StatusBarItem>
+                <StackPanel>
+                    <Label x:Name="ActionTime" Content="{Binding Path=(services:Utilites.Time)}"/>
+                </StackPanel>
+            </StatusBarItem>-->
+        </StatusBar>
     </Grid>
 </Window>

@@ -7,7 +7,7 @@ namespace EdiClient.Services
     {
         internal static void Error(Exception ex)
         {
-            MessageBox.Show( $"[ОШИБКА] {GetInnerExceptionMessage( ex )}\n\n{ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\n{ex.StackTrace}",
+            MessageBox.Show( $"Message: {ex.Message}\n\nSource: {ex.Source}\n\n{GetInnerExceptionMessage( ex )}\n\nTargetSite: {ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\nStackTrace: {ex.StackTrace}",
                 "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error );
         }
 

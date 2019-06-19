@@ -4,13 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EdiClient.View"
-      xmlns:dblconv="clr-namespace:EdiClient.Services.Converters"
+      xmlns:conv="clr-namespace:EdiClient.Services.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="OrdersListView">
     <Page.Resources>
         <!-- Converters -->
-        <dblconv:ToMoneyString x:Key="MoneyStringConverter" />
+        <conv:ToMoneyString x:Key="MoneyStringConverter" />
+        <conv:ToDateTime x:Key="DateStringConverter"/>
+        <!---->
         <Style x:Key="ControlButtons">
             <Setter Property="Control.BorderBrush" Value="Transparent" />
             <Setter Property="Control.Background" Value="Transparent" />
@@ -21,7 +23,7 @@
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="45"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="300"/>
         </Grid.RowDefinitions>
@@ -31,17 +33,17 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="190"/>
+                <ColumnDefinition Width="190"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <DatePicker Grid.Column="0" Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
@@ -197,22 +199,22 @@
                             <Setter Property="Background" Value="White"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsInTrader}" Value="True">
-                            <Setter Property="Background" Value="#cbe0ef"/>
+                            <Setter Property="Background" Value="LightGray"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsReadyToOrdrsp}" Value="True">
                             <Setter Property="Background" Value="#ede"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsOrdrsp}" Value="True">
-                            <Setter Property="Background" Value="#e7d7f7"/>
+                            <Setter Property="Background" Value="CornflowerBlue"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsReadyToDesadv}" Value="True">
                             <Setter Property="Background" Value="#dec"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsDesadv}" Value="True">
-                            <Setter Property="Background" Value="#d2f7bb"/>
+                            <Setter Property="Background" Value="GreenYellow"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsFailed}" Value="True">
-                            <Setter Property="Background" Value="#f76767"/>
+                            <Setter Property="Background" Value="OrangeRed"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
