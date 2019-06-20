@@ -4,10 +4,7 @@ using EdiClient.ViewModel.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace EdiClient.ViewModel
@@ -16,6 +13,7 @@ namespace EdiClient.ViewModel
     {
         public DocumentListViewModel()
         {
+            LogService.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             DateFrom = DateTime.Today;
             DateTo = DateTime.Today.AddDays(1);
         }
@@ -104,10 +102,10 @@ namespace EdiClient.ViewModel
         
         public void ActionInTime(Action act)
         {
+            LogService.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
-                LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
                 act.Invoke();
             }
             catch (Exception ex)

@@ -22,20 +22,25 @@ namespace EdiClient.Services
         /// <param name="commands">Команды</param>
         internal static void ExecuteCommand(List<OracleCommand> commands)
         {
-            OracleConnectionService.Check();
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log("\t\tcount=" + commands.Count.ToString());
             foreach (var command in commands)
-                    command.ExecuteNonQuery();
+            {
+                command.Connection = OracleConnectionService.conn;
+                OracleConnectionService.Check();
+                command.ExecuteNonQuery();
+            }
         }
 
 
         internal static void ExecuteCommand(OracleCommand command)
         {
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (command)
             {
                 OracleConnectionService.Check();
                 command.Connection = OracleConnectionService.conn;
-                var res = command.ExecuteNonQuery();
-                
+                var res = command.ExecuteNonQuery();                
             }
         }
         /// <summary>
@@ -45,6 +50,7 @@ namespace EdiClient.Services
         /// <returns>DataTable с резльтатом запроса</returns>
         internal static DataTable Select(string Sql)
         {
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             DataTable DataGridItems = ObjToDataTable(typeof(string));
             using (OracleCommand command = new OracleCommand())
             {
@@ -55,15 +61,13 @@ namespace EdiClient.Services
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
                 
-            }
-
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            }            
             return DataGridItems;
         }
 
         internal static void Insert(string Sql)
         {
-
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (OracleCommand command = new OracleCommand(Sql))
             {
                 command.Connection = OracleConnectionService.conn;
@@ -71,11 +75,11 @@ namespace EdiClient.Services
                 command.ExecuteNonQuery();
                 
             }
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
         }
 
         internal static void Insert(List<string> Sqls)
         {
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             int c = Sqls.Count();
             for (int i = 1; i <= c; ++i)
             {
@@ -87,12 +91,12 @@ namespace EdiClient.Services
                     
                 }
             }
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
 
         }
 
         internal static string SelectSingleValue(string Sql)
         {
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             OracleDataReader reader;
             string retVal = "";
             using (OracleCommand command = new OracleCommand())
@@ -126,8 +130,8 @@ namespace EdiClient.Services
     {
         internal static List<TModel> DocumentSelect(string Sql)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log(Sql);
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log("\t\t"+Sql);
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
@@ -187,8 +191,8 @@ namespace EdiClient.Services
 
         internal static List<TModel> DocumentSelect(List<string> Sqls)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log("Sqls.Count " + Sqls.Count.ToString());
+            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log("\t\tSqls.Count=" + Sqls.Count.ToString());
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
@@ -205,7 +209,6 @@ namespace EdiClient.Services
             }
 
             Documents = ToListof(DataGridItems).ToList();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
             return Documents;
         }
 

@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static EdiClient.Model.WebModel.RelationResponse;
 using EdiClient.AppSettings;
+using System.Reflection;
 
 namespace EdiClient.ViewModel
 {
@@ -138,6 +139,7 @@ namespace EdiClient.ViewModel
         
         public void MakeMatching(object obj = null)
         {
+            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error( "Не выбран покупатель" ); return; }
             if (SelectedPriceType == null) { Utilites.Error( "Не выбран тип цены" ); return; }
 
@@ -163,6 +165,7 @@ namespace EdiClient.ViewModel
         
         public void DisposeMatching(object obj = null)
         {
+            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedMatch == null) { Utilites.Error( "Не выбран пункт с сопоставлением" ); return; }
             
             try
@@ -187,6 +190,7 @@ namespace EdiClient.ViewModel
         public void MatchSearch(object obj = null) =>
             Task.Factory.StartNew( () =>
             {
+                LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
                 MatchResetInput();
                 if (!String.IsNullOrEmpty(MatchSearchText))
                 {
@@ -210,6 +214,7 @@ namespace EdiClient.ViewModel
         public void PriceTypeSearch(object obj = null) =>        
             Task.Factory.StartNew( () =>
             {
+                LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
                 PriceTypesResetInput();
                 if (!String.IsNullOrEmpty( PriceTypeSearchText ))
                 {
@@ -233,6 +238,7 @@ namespace EdiClient.ViewModel
         
         private List<PriceType> GetPriceTypes()
         {
+            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
             var sql = SqlService.GET_PRICE_TYPES;
@@ -243,6 +249,7 @@ namespace EdiClient.ViewModel
 
         private List<MatchingPriceTypes> GetMatchList()
         {
+            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
             var sql = SqlService.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln);

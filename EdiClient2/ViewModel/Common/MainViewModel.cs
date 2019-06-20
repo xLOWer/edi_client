@@ -20,6 +20,7 @@ namespace EdiClient.ViewModel.Common
 
         public MainViewModel()
         {
+            LogService.Log($"[MAIN] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             TabService.NewTab( typeof(DocumentPage  ), "Документы" );
             TabService.NewTab( typeof(MatchMakerView), "Связи товаров" );
             TabService.NewTab( typeof(PriceTypesView), "Связи цен");
@@ -55,7 +56,7 @@ namespace EdiClient.ViewModel.Common
 
         public void RefreshRelationships(object o)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log($"[MAIN] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
                 EdiService.UpdateData();
 

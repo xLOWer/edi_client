@@ -31,7 +31,7 @@ namespace EdiClient.Services
         public static void Log(string msg)
         {
             if (string.IsNullOrEmpty(msg)) return;
-            string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}.{DateTime.UtcNow.Millisecond}] "
+            string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}] "
                 + $"{msg}\r\n";
             int c = message.Count();
             using (var stream = new FileStream(fullPath, FileMode.Append))
@@ -40,14 +40,7 @@ namespace EdiClient.Services
                 stream.Close();
             }
         }
-
-        public static string FormatArgsArray(Type[] types)
-        {
-            string ret = ""; int i = 1;
-            foreach(var type in types)            
-                ret += $"arg{i++}: {type.Name}";            
-            return ret;
-        }
+        
 
 
     }

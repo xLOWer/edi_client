@@ -12,6 +12,7 @@ using EdiClient.View;
 using System.Windows.Controls;
 using System.Windows.Media;
 using EdiClient.AppSettings;
+using System.Reflection;
 
 namespace EdiClient.ViewModel
 {
@@ -217,6 +218,7 @@ namespace EdiClient.ViewModel
 
         public void LoadData(object obj = null)
         {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             SetLayoutEnabled(false);
             if(fullGoodsList == null || fullGoodsList.Count < 1)
             {
@@ -231,6 +233,7 @@ namespace EdiClient.ViewModel
 
         public void MakeMatching(object obj = null)
         {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedFailedGood == null) { Utilites.Error("Не выбран пункт с не сопоставленным товаром"); return; }
             if (SelectedGood == null) { Utilites.Error("Не выбран пункт с товаром"); return; }
             if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.ID)) 
@@ -253,6 +256,7 @@ namespace EdiClient.ViewModel
 
         public void DisposeMatching(object obj = null)
         {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedMatch == null) { Utilites.Error("Не выбран пункт с сопоставлением"); return; }
             if (String.IsNullOrEmpty(SelectedMatch.CUSTOMER_ARTICLE)) { Utilites.Error("У выбранного товара отсутствует код покупателя"); return; }
 
@@ -284,8 +288,9 @@ namespace EdiClient.ViewModel
 
 
         public void FailedGoodSearch(object obj = null) => Task.Factory.StartNew(() =>
-           {
-               FailedGoodResetInput();
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            FailedGoodResetInput();
                if (!String.IsNullOrEmpty(FailedGoodSearchText))
                {
                    var searchList = FailedGoodSearchText.Split(' ');
@@ -307,8 +312,9 @@ namespace EdiClient.ViewModel
 
 
         public void MatchesSearch(object obj = null) => Task.Factory.StartNew(() =>
-           {
-               MatchesResetInput();
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            MatchesResetInput();
                if (!String.IsNullOrEmpty(MatchesSearchText))
                {
                    var searchList = MatchesSearchText.Split(' ');
@@ -330,8 +336,9 @@ namespace EdiClient.ViewModel
 
 
         public void GoodSearch(object obj = null) => Task.Factory.StartNew(() =>
-           {
-               GoodsList = fullGoodsList;
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            GoodsList = fullGoodsList;
                if (!String.IsNullOrEmpty(GoodSearchText))
                {
                    var searchList = GoodSearchText.Split(' ');
@@ -355,6 +362,7 @@ namespace EdiClient.ViewModel
 
         private List<Goods> GetGoods()
         {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = SqlService.GET_GOODS;
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
             var result = DbService<Goods>.DocumentSelect(new List<string> { sql });
@@ -364,6 +372,7 @@ namespace EdiClient.ViewModel
 
         private List<FailedGoods> GetFailedGoods()
         {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
             var sql = SqlService.GET_FAILED_DETAILS(SelectedRelationship?.partnerIln);
@@ -374,6 +383,7 @@ namespace EdiClient.ViewModel
 
         private List<Matches> GetMatchesList()
         {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
             var sql = SqlService.GET_MATCHED(SelectedRelationship?.partnerIln);
