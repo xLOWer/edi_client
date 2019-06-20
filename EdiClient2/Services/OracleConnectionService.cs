@@ -25,7 +25,8 @@ namespace EdiClient.Services
                 !String.IsNullOrEmpty(AppConfig.DbPort) ||
                 !String.IsNullOrEmpty(AppConfig.DbHost))
             {
-                conn = new OracleConnection(AppConfig.connString);               
+                conn = new OracleConnection(AppConfig.connString);
+                DbService.SelectSingleValue("alter session set nls_numeric_characters = ',.'");
             }
             else
                 MessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");            

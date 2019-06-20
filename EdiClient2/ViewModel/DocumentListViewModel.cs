@@ -16,15 +16,8 @@ namespace EdiClient.ViewModel
     {
         public DocumentListViewModel()
         {
-            try
-            {
-                DateFrom = DateTime.Today;
-                DateTo = DateTime.Today.AddDays(1);
-            }
-            catch (Exception ex)
-            {
-                Utilites.Error(ex);
-            }
+            DateFrom = DateTime.Today;
+            DateTo = DateTime.Today.AddDays(1);
         }
 
         private string time;

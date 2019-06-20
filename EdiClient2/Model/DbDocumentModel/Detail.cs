@@ -27,7 +27,7 @@ namespace EdiClient.Model
         public string LINE_NUMBER { get; set; }
         public string QUANTITY { get; set; }
         public string PRICE { get; set; }
-        public string DIFF { get; set; }
+        //public string DIFF { get; set; }
 
         public string UnitsDifference { get; set; }
 
@@ -38,8 +38,8 @@ namespace EdiClient.Model
 
         public bool IsFailed => FAILED == "1";
         public bool IsNotmatched => QUANTITY is null || GrossAmount is null;
-        public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
-        //public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
+        //public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
+        public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
 
 
         public Document Doc { get; set; }

@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using EdiClient.AppSettings;
+using EdiClient.Model;
 
 namespace EdiClient.Services
 {
@@ -140,32 +142,18 @@ namespace EdiClient.Services
             Documents = ToListof(DataGridItems).ToList();
             return Documents;
         }
-
-        internal static List<TModel> DocumentSelect(List<string> Sqls)
+        /*
+        internal static TModel ObjectToClass(object[] obj)
         {
-            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log("Sqls.Count "+Sqls.Count.ToString());
-            List<TModel> Documents = new List<TModel>();
-            DataTable DataGridItems = ObjToDataTable(typeof(TModel));
-            using (OracleCommand command = new OracleCommand())
-            {
-                foreach (var Sql in Sqls)
-                {
-                    command.Connection = OracleConnectionService.conn;
-                    //OracleConnectionService.Check();
-                    OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
-                    OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
-                    DataGridItems.Clear();
-                    adapter.Fill(DataGridItems);
-                    //
-                }
-            }
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+            TModel inst = Activator.CreateInstance<TModel>();
+            var objectProperties = typeof(TModel).GetProperties(flags);
+            int c = obj.Count();
+            for (int i = 0; i < c; ++i)            
+                objectProperties[i].SetValue(inst, obj[i].ToString(), null);  
+            return inst;
+        }*/
 
-            Documents = ToListof(DataGridItems).ToList();
-            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
-            return Documents;
-        }
-        
         internal static List<TModel> ToListof(DataTable dt)
         {
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
@@ -196,7 +184,31 @@ namespace EdiClient.Services
             dt.AcceptChanges();
             return dt;
         }
-        
+
+        internal static List<TModel> DocumentSelect(List<string> Sqls)
+        {
+            LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log("Sqls.Count " + Sqls.Count.ToString());
+            List<TModel> Documents = new List<TModel>();
+            DataTable DataGridItems = ObjToDataTable(typeof(TModel));
+            using (OracleCommand command = new OracleCommand())
+            {
+                foreach (var Sql in Sqls)
+                {
+                    command.Connection = OracleConnectionService.conn;
+                    OracleConnectionService.Check();
+                    OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
+                    OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
+                    DataGridItems.Clear();
+                    adapter.Fill(DataGridItems);
+                }
+            }
+
+            Documents = ToListof(DataGridItems).ToList();
+            //LogService.Log($"[INFO] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}", 2);
+            return Documents;
+        }
+
 
     }
 }
