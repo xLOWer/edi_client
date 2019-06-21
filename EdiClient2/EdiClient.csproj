@@ -31,7 +31,7 @@
     <PublisherName>ВИРЭЙ</PublisherName>
     <SuiteName>EDI_CLIENT</SuiteName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -156,12 +156,6 @@
     <Compile Include="CommonSettingsWindow.xaml.cs">
       <DependentUpon>CommonSettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ConnectionSettingsWindow.xaml.cs">
-      <DependentUpon>ConnectionSettingsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="EdiSettingsWindow.xaml.cs">
-      <DependentUpon>EdiSettingsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Model\Common\AppConfig.cs" />
     <Compile Include="Model\DbDocumentModel\Detail.cs" />
     <Compile Include="Model\DbDocumentModel\Document.cs" />
@@ -175,6 +169,7 @@
     <Compile Include="Model\WebModel\DocumentInfo.cs" />
     <Compile Include="Model\WebModel\OrganizationInfo.cs" />
     <Compile Include="Model\WebModel\RelationResponse.cs" />
+    <Compile Include="Services\AutoHandlerService.cs" />
     <Compile Include="Services\Converters\ToDateTime.cs" />
     <Compile Include="Services\Converters\ToMoneyString.cs" />
     <Compile Include="Services\DbService.cs" />
@@ -204,14 +199,6 @@
       <DependentUpon>PriceTypesView.xaml</DependentUpon>
     </Compile>
     <Page Include="CommonSettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ConnectionSettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="EdiSettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

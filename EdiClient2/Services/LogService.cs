@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EdiClient.AppSettings;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace EdiClient.Services
 
         public static void Log(string msg)
         {
+            if (!AppConfig.EnableLogging ?? false) return;
             if (string.IsNullOrEmpty(msg)) return;
             string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}] "
                 + $"{msg}\r\n";

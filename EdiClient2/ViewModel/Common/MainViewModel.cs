@@ -13,8 +13,6 @@ namespace EdiClient.ViewModel.Common
     {
         public string ImageRefresh => @"~\..\Images\refresh-50.png";
         public CommandService OpenCommonSettingsCommand => new CommandService( OpenCommonSettings );
-        public CommandService OpenConnectionSettingsCommand => new CommandService( OpenConnectionSettings );
-        public CommandService OpenEdiSettingsCommand => new CommandService( OpenEdiSettings );
         public event PropertyChangedEventHandler PropertyChanged;
         public CommandService RefreshRelationshipsCommand => new CommandService(RefreshRelationships);
 
@@ -32,21 +30,7 @@ namespace EdiClient.ViewModel.Common
             setWin.Show();
             setWin.UpdateLayout();
         }
-
-        public void OpenConnectionSettings(object o)
-        {
-            ConnectionSettingsWindow setWin = new ConnectionSettingsWindow();
-            setWin.Show();
-            setWin.UpdateLayout();
-        }
-
-        public void OpenEdiSettings(object o)
-        {
-            EdiSettingsWindow setWin = new EdiSettingsWindow();
-            setWin.Show();
-            setWin.UpdateLayout();
-        }
-
+        
         public void OnPropertyChanged(string prop = "")
         {
             if (PropertyChanged == null)

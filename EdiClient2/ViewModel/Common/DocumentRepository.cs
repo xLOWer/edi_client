@@ -59,7 +59,7 @@ namespace EdiClient.ViewModel.Common
                 Connection = OracleConnectionService.conn,
                 Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, P_EDI_DOC_ID, ParameterDirection.Input) },
                 CommandType = CommandType.StoredProcedure,
-                CommandText = AppConfig.Schema + "EDI_REFRESH_DOC_DETAILS"
+                CommandText = (AppConfig.Schema+".") + "EDI_REFRESH_DOC_DETAILS"
             });
         }
 
@@ -81,7 +81,7 @@ namespace EdiClient.ViewModel.Common
                             },
                             Connection = OracleConnectionService.conn,
                             CommandType = CommandType.StoredProcedure,
-                            CommandText = AppConfig.Schema + "EDI_MOVE_ORDER"
+                            CommandText = (AppConfig.Schema+".") + "EDI_MOVE_ORDER"
                         }
                 };
             DbService.ExecuteCommand(commands);
@@ -134,7 +134,7 @@ namespace EdiClient.ViewModel.Common
                     },
                 Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = AppConfig.Schema + "Edi_ADD_ORDER"
+                CommandText = (AppConfig.Schema+".") + "Edi_ADD_ORDER"
             });
 
             if (order.OrderLines.Lines.Count > 0)
@@ -162,7 +162,7 @@ namespace EdiClient.ViewModel.Common
                         },
                         Connection = OracleConnectionService.conn,
                         CommandType = CommandType.StoredProcedure,
-                        CommandText = AppConfig.Schema + "Edi_ADD_ORDER_DETAIL"
+                        CommandText = (AppConfig.Schema+".") + "Edi_ADD_ORDER_DETAIL"
                     });
                 }
 
@@ -281,7 +281,7 @@ namespace EdiClient.ViewModel.Common
                         },
                 Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = AppConfig.Schema + "EDI_MAKE_DESADV"
+                CommandText = (AppConfig.Schema+".") + "EDI_MAKE_DESADV"
             });
         }
 
@@ -406,7 +406,7 @@ namespace EdiClient.ViewModel.Common
                         },
                 Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = AppConfig.Schema + "EDI_MAKE_ORDRSP"
+                CommandText = (AppConfig.Schema+".") + "EDI_MAKE_ORDRSP"
             });            
         }
         

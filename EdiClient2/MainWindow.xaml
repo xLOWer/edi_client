@@ -36,14 +36,7 @@
 
 
         <Menu Name="TopMenu1" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0"  Grid.IsSharedSizeScope="True">
-            <MenuItem Header="Настройки">
-                <MenuItem.Items>
-                    <MenuItem x:Name="CommonSettings" Header="Общие настройки" Command="{Binding OpenCommonSettingsCommand}" />
-                    <MenuItem x:Name="ConnectionSettings" Header="Настройки соединения с базой" Command="{Binding OpenConnectionSettingsCommand}" />
-                    <MenuItem x:Name="EdiSettings" Header="Настройки работы с EDI" Command="{Binding OpenEdiSettingsCommand}"/>
-                    <!--<MenuItem x:Name="Logger" Header="Logger" Command="{Binding OpenEdiSettingsCommand}"/>-->
-                </MenuItem.Items>
-            </MenuItem>
+            <MenuItem Header="Настройки"  x:Name="CommonSettings" Command="{Binding OpenCommonSettingsCommand}" />
             <MenuItem Header="About">
                 <MenuItem x:Name="License" Header="Лицензия" Click="License_Click" />
                 <MenuItem x:Name="About" Header="О программе" Click="About_Click"/>

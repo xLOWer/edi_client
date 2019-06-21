@@ -27,25 +27,25 @@ namespace EdiClient.Services
         }
         
         internal static string GET_FAILED_DETAILS(string SENDER_ILN) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_FAILED_DETAILS WHERE SENDER_ILN={SENDER_ILN}";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_FAILED_DETAILS WHERE SENDER_ILN={SENDER_ILN}";
 
         internal static string GET_GOODS =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_GOODS";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_GOODS";
 
         internal static string GET_MATCHED(string CUSTOMER_GLN) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
 
         internal static string GET_MATCHED_PRICE_TYPES(string CUSTOMER_GLN) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
 
         internal static string GET_ORDERS(string SENDER_ILN, DateTime DateFrom, DateTime DateTo) =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
 
         internal static string GET_ORDER_DETAILS(string ID_EDI_DOC) =>    
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
 
         internal static string GET_PRICE_TYPES =>
-            $"SELECT * FROM {AppConfig.Schema}EDI_GET_PRICE_TYPES";
+            $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_PRICE_TYPES";
 
 
     }
