@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:EdiClient"
         xmlns:conf="clr-namespace:EdiClient.AppSettings"
         mc:Ignorable="d"
-        Title="Настройки" Height="270" Width="600" Closed="WindowClosed">
+        Title="Настройки" Height="370" Width="600" Closed="WindowClosed">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -22,7 +22,7 @@
             <TabItem Header="Общие">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="210"/>
+                        <ColumnDefinition Width="170"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -34,15 +34,17 @@
                         <RowDefinition Height="34"/>
                     </Grid.RowDefinitions>
 
-                    <CheckBox x:Name="EnableAutoHandler" Content="Автообработчк (авт. забор, отправка, перенос в трейдер)" 
+                    <CheckBox x:Name="EnableAutoHandler" Content="Автообработчк" 
                               Grid.Column="1" Grid.Row="0" Margin="4" VerticalAlignment="Center"/>
 
-                    <Label Content="Период обработки(по-умолч. 10)" Grid.Column="0" Grid.Row="1" Margin="4"/>                    
+                    <Label Content="Период обработки" Grid.Column="0" Grid.Row="1" Margin="4"/>
                     <TextBox x:Name="AutoHandlerPeriod" Grid.Column="1" Grid.Row="1" Margin="4"/>
-                    
+
                     <CheckBox x:Name="EnableLogging" Content="Логирование" 
                               Grid.Column="1" Grid.Row="2" Margin="4" VerticalAlignment="Center"/>
 
+                    <TextBox x:Name="LogPath" Margin="4" Grid.Column="1" Grid.Row="3"/>
+                    <Button Margin="4" Padding="10,0,10,2" Content="Открыть папку лога" Grid.Column="0" Grid.Row="3" Click="Button_Click"/>
 
                 </Grid>
             </TabItem>
@@ -53,37 +55,48 @@
 
             <TabItem Header="База данных">
                 <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="190"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="34"/>
-                            <RowDefinition Height="34"/>
-                            <RowDefinition Height="34"/>
-                            <RowDefinition Height="34"/>
-                            <RowDefinition Height="34"/>
-                            <RowDefinition Height="34"/>
-                        </Grid.RowDefinitions>
-                        
-                        <Label Content="Пользователь" Grid.Column="0" Grid.Row="0" Margin="4"/>
-                        <TextBox x:Name="DbUserName" Grid.Column="1" Grid.Row="0" Margin="4"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                    </Grid.RowDefinitions>
 
-                        <Label Content="Пароль" Grid.Column="0" Grid.Row="1" Margin="4"/>
-                        <TextBox x:Name="DbUserPassword" Grid.Column="1" Grid.Row="1" Margin="4"/>
+                    <Label Content="Пользователь" Grid.Column="0" Grid.Row="0" Margin="4"/>
+                    <TextBox x:Name="DbUserName" Grid.Column="1" Grid.Row="0" Margin="4"/>
 
-                        <Label Content="Схема(по-умолч. HPCSERVICE)" Grid.Column="0" Grid.Row="2" Margin="4"/>
-                        <TextBox x:Name="Schema" Grid.Column="1" Grid.Row="2" Margin="4"/>
+                    <Label Content="Пароль" Grid.Column="0" Grid.Row="1" Margin="4"/>
+                    <PasswordBox x:Name="DbUserPassword" Grid.Column="1" Grid.Row="1" Margin="4" PasswordChar="*"/>
 
-                        <Label Content="Хост/IP" Grid.Column="0" Grid.Row="3" Margin="4"/>
-                        <TextBox x:Name="DbHost" Grid.Column="1" Grid.Row="3" Margin="4"/>
+                    <Label Content="Схема" Grid.Column="0" Grid.Row="2" Margin="4"/>
+                    <TextBox x:Name="Schema" Grid.Column="1" Grid.Row="2" Margin="4"/>
 
-                        <Label Content="Порт(по-умолч. 1521)" Grid.Column="0" Grid.Row="4" Margin="4"/>
-                        <TextBox x:Name="DbPort" Grid.Column="1" Grid.Row="4" Margin="4"/>
+                    <Label Content="Хост/IP" Grid.Column="0" Grid.Row="3" Margin="4"/>
+                    <TextBox x:Name="DbHost" Grid.Column="1" Grid.Row="3" Margin="4"/>
 
-                        <Label Content="SID" Grid.Column="0" Grid.Row="5" Margin="4"/>
-                        <TextBox x:Name="DbSID" Grid.Column="1" Grid.Row="5" Margin="4"/>
-                    </Grid>      
+                    <Label Content="Порт" Grid.Column="0" Grid.Row="4" Margin="4"/>
+                    <TextBox x:Name="DbPort" Grid.Column="1" Grid.Row="4" Margin="4"/>
+
+                    <Label Content="SID" Grid.Column="0" Grid.Row="5" Margin="4"/>
+                    <TextBox x:Name="DbSID" Grid.Column="1" Grid.Row="5" Margin="4"/>
+
+                    <Label Content="Польз-ль трейдера" Grid.Column="0" Grid.Row="6" Margin="4"/>
+                    <TextBox x:Name="TraderUserName" Grid.Column="1" Grid.Row="6" Margin="4"/>
+
+                    <Label Content="Пароль польз-ля трейдера" Grid.Column="0" Grid.Row="7" Margin="4"/>
+                    <PasswordBox x:Name="TraderUserPassword" Grid.Column="1" Grid.Row="7" Margin="4" PasswordChar="*"/>
+
+                    <Button Content="Проверить данные пользователя в трейдере" Grid.Column="1" Grid.Row="8" Margin="4" Click="Button_Click_1"/>
+                </Grid>
             </TabItem>
 
 
@@ -92,7 +105,7 @@
             <TabItem Header="Обмен EDI">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="170"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -103,16 +116,16 @@
                         <RowDefinition Height="34"/>
                         <RowDefinition Height="34"/>
                     </Grid.RowDefinitions>
-                    <Label Content="Таймаут коннекта(по-умолч. 5000)" Grid.Column="0" Grid.Row="0" Margin="4"/>
+                    <Label Content="Таймаут коннекта" Grid.Column="0" Grid.Row="0" Margin="4"/>
                     <TextBox x:Name="EdiTimeout" Grid.Column="1" Grid.Row="0" Margin="4"/>
 
-                    <Label Content="Пользователь(по-умолч. 4607971729990)" Grid.Column="0" Grid.Row="1" Margin="4"/>
+                    <Label Content="Пользователь" Grid.Column="0" Grid.Row="1" Margin="4"/>
                     <TextBox x:Name="EdiUser" Grid.Column="1" Grid.Row="1" Margin="4"/>
 
                     <Label Content="Пароль" Grid.Column="0" Grid.Row="2" Margin="4"/>
-                    <TextBox x:Name="EdiPassword" Grid.Column="1" Grid.Row="2" Margin="4"/>
+                    <PasswordBox x:Name="EdiPassword" Grid.Column="1" Grid.Row="2" Margin="4" PasswordChar="*"/>
 
-                    <Label Content="GLN(по-умолч. 4607971729990)" Grid.Column="0" Grid.Row="3" Margin="4"/>
+                    <Label Content="GLN" Grid.Column="0" Grid.Row="3" Margin="4"/>
                     <TextBox x:Name="EdiGLN" Grid.Column="1" Grid.Row="3" Margin="4"/>
 
                     <Label Content="Email" Grid.Column="0" Grid.Row="4" Margin="4"/>
@@ -124,9 +137,9 @@
             </TabItem>
 
 
-            
+
         </TabControl>
-        
-        
+
+
     </Grid>
 </Window>

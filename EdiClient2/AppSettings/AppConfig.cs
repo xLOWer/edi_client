@@ -8,6 +8,9 @@
         public static string DbSID { get; set; } // имя сервиса 
         public static string DbHost { get; set; } // ip/хост базы 
 
+        public static string TraderUserName { get; set; } // имя пользователя в трейдере для создания документа 
+        public static string TraderUserPassword { get; set; } // пароль пользователя в трейдере для создания документа 
+
         public static int? EdiTimeout { get; set; } = 5000; // таймаут соединения с сервисами
         public static string EdiUser { get; set; } // аккаунт EDI. без ЕС - обычный
         public static string EdiPassword { get; set; } // пароль edi
@@ -17,7 +20,6 @@
 
         public static bool?   EnableAutoHandler { get; set; } = false; // включен ли автообработчик (по-умолч. false)
         public static int?    AutoHandlerPeriod { get; set; } = 10; // время цикла(в минутах) автообработчика (по-умолч. 10)
-
         public static bool? EnableLogging { get; set; } = false; // включено ли логирование (выключено по-умолч.)
 
         public static string Schema { get; set; } = "HPCSERVICE";
