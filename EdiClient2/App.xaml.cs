@@ -26,5 +26,6 @@ namespace EdiClient
 
             AppConfig.EnableLogging = LogState; // и возвращаем то что было до принудительного включения
         }
+        
     }
 }

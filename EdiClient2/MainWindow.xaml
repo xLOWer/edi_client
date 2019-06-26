@@ -37,7 +37,7 @@
 
         <Menu Name="TopMenu1" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0"  Grid.IsSharedSizeScope="True">
             <MenuItem Header="Настройки"  x:Name="CommonSettings" Command="{Binding OpenCommonSettingsCommand}" />
-            <MenuItem Header="About">
+            <MenuItem Header="О программе">
                 <MenuItem x:Name="License" Header="Лицензия" Click="License_Click" />
                 <MenuItem x:Name="About" Header="О программе" Click="About_Click"/>
             </MenuItem>
@@ -61,9 +61,9 @@
 
             <Button ToolTip="Обновить список контрагентов" Grid.Column="1" Margin="2,2" BorderBrush="Transparent" Background="Transparent" BorderThickness="0"
                     Command="{Binding RefreshRelationshipsCommand}" CommandParameter="{Binding ElementName=RelationshipsComboBox}">
-                <Image Source="{Binding ImageRefresh}" Margin="-1"/>                
+                <Image Source="~\..\Images\refresh-50.png" Margin="-1"/>                
             </Button>
-            <Label Content="- нажми если нет нужного клиента" Grid.Column="2"/>
+            <!--<Label Content="- нажми если нет нужного клиента" Grid.Column="2"/>-->
         </Grid>
 
 
@@ -99,10 +99,6 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="хост: " Style="{StaticResource lname}"/>
                     <Label Content="{Binding Path=(settings:AppConfig.DbHost)}" Style="{StaticResource lvalue}"/>
-                    <Label Content=":" Style="{StaticResource lvalue}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.DbPort)}" Style="{StaticResource lvalue}"/>
-                    <Label Content=":" Style="{StaticResource lvalue}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.DbSID)}" Style="{StaticResource lvalue}"/>
                 </StackPanel>
             </StatusBarItem>
 
@@ -119,23 +115,14 @@
 
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="EDI пользователь: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.EdiUser)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
-
-            <Separator/>
-
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
                     <Label Content="Польз-ль трейдера: " Style="{StaticResource lname}"/>
                     <Label Content="{Binding Path=(settings:AppConfig.TraderUserName)}" Style="{StaticResource lvalue}"/>
                 </StackPanel>
             </StatusBarItem>
 
             <Separator/>
-            
-            <StatusBarItem>
+
+            <!--<StatusBarItem>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Логирование: " Style="{StaticResource lname}"/>
                     <Label Content="{Binding Path=(settings:AppConfig.EnableLogging)}" Style="{StaticResource lvalue}"/>
@@ -150,7 +137,9 @@
                     <Label Content="{Binding Path=(settings:AppConfig.EnableAutoHandler)}" Style="{StaticResource lvalue}"/>
                 </StackPanel>
             </StatusBarItem>
-            <Separator/>
+            
+            <Separator/>-->
+            
             <StatusBarItem>
                 <Label Content=""/>
             </StatusBarItem>

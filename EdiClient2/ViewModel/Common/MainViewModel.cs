@@ -11,7 +11,6 @@ namespace EdiClient.ViewModel.Common
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        public string ImageRefresh => @"~\..\Images\refresh-50.png";
         public CommandService OpenCommonSettingsCommand => new CommandService( OpenCommonSettings );
         public event PropertyChangedEventHandler PropertyChanged;
         public CommandService RefreshRelationshipsCommand => new CommandService(RefreshRelationships);

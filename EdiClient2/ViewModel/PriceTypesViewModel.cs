@@ -154,7 +154,7 @@ namespace EdiClient.ViewModel
                         },
                     Connection = OracleConnectionService.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = AppConfig.Schema + "EDI_MAKE_PRICE_LINK"
+                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_PRICE_LINK"
                 });
 
                 MatchList = GetMatchList();
@@ -179,7 +179,7 @@ namespace EdiClient.ViewModel
                         },
                     Connection = OracleConnectionService.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = AppConfig.Schema + "EDI_MAKE_PRICE_UNLINK"
+                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_PRICE_UNLINK"
                 });
                 MatchList = GetMatchList();
             }

@@ -13,6 +13,7 @@ using System.Linq;
 using EdiClient.AppSettings;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Net;
 
 namespace EdiClient.Services
 {
@@ -45,8 +46,12 @@ namespace EdiClient.Services
         internal static void UpdateData()
         {
             LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var rels = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
-            if (rels == null) {LogService.Log($"\t\tGetRelationships() return null"); return; }
+
+            var rl = GetRelationships() ?? new List<Relation>();
+            if (rl.Count == 0) { LogService.Log($"\t\tGetRelationships() return null"); return; }
+            var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
+            //var rels = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
+
             Relationships = rels;
             SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
             RelationshipCount = Relationships.Count;
@@ -62,8 +67,26 @@ namespace EdiClient.Services
                 address = _address;
                 Client.Endpoint.Address = address;
             }
-            Name = AppSettings.AppConfig.EdiUser;
-            Password = AppSettings.AppConfig.EdiPassword;
+
+
+            if (AppConfig.EnableProxy == true)
+            {
+                // задать настройки прокси как у системы
+                GlobalProxySelection.Select = WebProxy.GetDefaultProxy();
+
+                if (!String.IsNullOrEmpty(AppConfig.ProxyUserName) && !String.IsNullOrEmpty(AppConfig.ProxyUserPassword))
+                    // задаём данные для аутентификации пользователя прокси
+                    GlobalProxySelection.Select.Credentials = new NetworkCredential(AppConfig.ProxyUserName, AppConfig.ProxyUserPassword);
+                else Utilites.Error("Не удалось задать пользователя прокси.\nДанные пользователе не верны или отсутствуют");
+            }
+            else
+            {
+                // сбрасываем данные для аутентификации пользователя прокси
+                GlobalProxySelection.Select.Credentials = null;
+            }
+
+            Name = AppConfig.EdiUser;
+            Password = AppConfig.EdiPassword;
             return Client;
         }
 
@@ -77,6 +100,7 @@ namespace EdiClient.Services
 
         internal static string ResponseErrorHandler(retRes res)
         {
+            if (res == null) return "";
             var result = "";
             switch (res.res)
             {

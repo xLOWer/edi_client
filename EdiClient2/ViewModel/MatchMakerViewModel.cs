@@ -246,11 +246,10 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedRelationship.partnerIln, ParameterDirection.Input),
                             new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedFailedGood.BUYER_ITEM_CODE, ParameterDirection.Input),
                             new OracleParameter("P_ID_GOOD", OracleDbType.Number, SelectedGood.ID, ParameterDirection.Input),
-                            new OracleParameter("P_ID_EDI_DOC", OracleDbType.Number, SelectedFailedGood.ID_EDI_DOC, ParameterDirection.Input),
                         },
                 Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = AppConfig.Schema + "EDI_MAKE_GOOD_LINK"
+                CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_LINK"
             });
         }
 
@@ -267,12 +266,11 @@ namespace EdiClient.ViewModel
                     Parameters =
                         {
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
-                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedMatch.CUSTOMER_ARTICLE, ParameterDirection.Input),
-                            new OracleParameter("P_ID_EDI_DOC", OracleDbType.Number, SelectedFailedGood.ID_EDI_DOC, ParameterDirection.Input),
+                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedMatch.CUSTOMER_ARTICLE, ParameterDirection.Input)
                         },
                     Connection = OracleConnectionService.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = AppConfig.Schema + "EDI_MAKE_GOOD_UNLINK"
+                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_UNLINK"
                 });
                 
                 FailedGoodsList = GetFailedGoods();

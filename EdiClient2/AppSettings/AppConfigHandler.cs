@@ -19,8 +19,6 @@ namespace EdiClient.AppSettings
             LogService.Log("[EdiService]");
             try { EdiService.Configure(); }
             catch (Exception ex) { Utilites.Error(ex); }
-            LogService.Log("\t\tBindingName " + EdiService.Client.Endpoint.Name);
-            LogService.Log("\t\tUri " + EdiService.Client.Endpoint.ListenUri.AbsoluteUri);
         }
 
         public static void ConfigureOracle()
@@ -30,8 +28,6 @@ namespace EdiClient.AppSettings
             catch (Exception ex) { Utilites.Error(ex); }
             LogService.Log("\t\tClientVersion " + OracleConnectionService.conn.ClientVersion);
             LogService.Log("\t\tServer " + OracleConnectionService.conn.Server);
-            LogService.Log("\t\tServerVersion " + OracleConnectionService.conn.ServerVersion);
-            LogService.Log("\t\tUserId " + OracleConnectionService.conn.UserId);
         }
 
         public static void Load()
@@ -81,20 +77,21 @@ namespace EdiClient.AppSettings
             AppConfig.EdiEmail = !string.IsNullOrEmpty(newLoadedConfig.EdiEmail) ? newLoadedConfig.EdiEmail : AppConfig.EdiEmail;
             AppConfig.EdiUrl = !string.IsNullOrEmpty(newLoadedConfig.EdiUrl) ? newLoadedConfig.EdiUrl : AppConfig.EdiUrl;
 
-            AppConfig.EnableAutoHandler = newLoadedConfig.EnableAutoHandler == null ? newLoadedConfig.EnableAutoHandler : AppConfig.EnableAutoHandler;
+            AppConfig.EnableAutoHandler = newLoadedConfig.EnableAutoHandler ?? AppConfig.EnableAutoHandler;
             AppConfig.AutoHandlerPeriod = !string.IsNullOrEmpty(newLoadedConfig.AutoHandlerPeriod.ToString()) ? newLoadedConfig.AutoHandlerPeriod : AppConfig.AutoHandlerPeriod;
-            AppConfig.EnableLogging = newLoadedConfig.EnableLogging == null ? newLoadedConfig.EnableLogging : AppConfig.EnableLogging;
+            AppConfig.EnableLogging = newLoadedConfig.EnableLogging ?? AppConfig.EnableLogging;
 
             AppConfig.Schema = !string.IsNullOrEmpty(newLoadedConfig.Schema) ? newLoadedConfig.Schema : AppConfig.Schema;
-            
-        LogService.Log("\t\tDbUserName " + AppConfig.DbUserName);
-            LogService.Log("\t\tDbPort " + AppConfig.DbPort);
-            LogService.Log("\t\tDbSID " + AppConfig.DbSID);
+
+            AppConfig.EnableProxy = newLoadedConfig.EnableProxy ?? AppConfig.EnableProxy;
+            AppConfig.ProxyUserName = !string.IsNullOrEmpty(newLoadedConfig.ProxyUserName) ? newLoadedConfig.ProxyUserName : AppConfig.ProxyUserName;
+            AppConfig.ProxyUserPassword = !string.IsNullOrEmpty(newLoadedConfig.ProxyUserPassword) ? newLoadedConfig.ProxyUserPassword : AppConfig.ProxyUserPassword;
+
+
+            LogService.Log("\t\tDbUserName " + AppConfig.DbUserName);
             LogService.Log("\t\tDbHost " + AppConfig.DbHost);
             LogService.Log("\t\tEdiUser " + AppConfig.EdiUser);
             LogService.Log("\t\tEdiGLN " + AppConfig.EdiGLN);
-            LogService.Log("\t\tEdiEmail " + AppConfig.EdiEmail);
-            LogService.Log("\t\tEdiUrl " + AppConfig.EdiUrl);
         }
 
 

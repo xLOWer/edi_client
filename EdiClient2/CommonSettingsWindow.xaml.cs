@@ -38,10 +38,10 @@ namespace EdiClient
 
             var connstr = $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {AppConfig.DbHost})(PORT = {AppConfig.DbPort}))(CONNECT_DATA = " +
                           $"(SERVER = DEDICATED)(SERVICE_NAME = {AppConfig.DbSID})));Password={AppConfig.TraderUserPassword};User ID={AppConfig.TraderUserName}";
-            
+
             try
             {
-                using(var conn = new OracleConnection(connstr))
+                using (var conn = new OracleConnection(connstr))
                 {
                     Utilites.Error($"UserId: {conn.UserId}\nPassword: {conn.Password}\nState: {conn.State}\nClientVersion: {conn.ClientVersion}\nConnectMode: {conn.ConnectMode}\nHome: {conn.Home}");
                     conn.Open();
@@ -71,13 +71,18 @@ namespace EdiClient
             EdiEmail.Text = AppConfig.EdiEmail;
             EdiUrl.Text = AppConfig.EdiUrl;
 
-            EnableAutoHandler.IsChecked = AppConfig.EnableAutoHandler;
-            AutoHandlerPeriod.Text = AppConfig.AutoHandlerPeriod.ToString();
+            //EnableAutoHandler.IsChecked = AppConfig.EnableAutoHandler;
+            //AutoHandlerPeriod.Text = AppConfig.AutoHandlerPeriod.ToString();
             EnableLogging.IsChecked = AppConfig.EnableLogging;
 
             LogPath.Text = AppConfigHandler.LogPath;
+
+            EnableProxy.IsChecked = AppConfig.EnableProxy;
+            ProxyUserName.Text = AppConfig.ProxyUserName;
+            ProxyUserPassword.Password = AppConfig.ProxyUserPassword;
+
         }
-        
+
         private void ConfSave()
         {
             AppConfig.DbUserName = DbUserName.Text;
@@ -97,9 +102,13 @@ namespace EdiClient
             AppConfig.EdiEmail = EdiEmail.Text;
             AppConfig.EdiUrl = EdiUrl.Text;
 
-            AppConfig.EnableAutoHandler = EnableAutoHandler.IsChecked ?? false;
-            AppConfig.AutoHandlerPeriod = int.Parse(AutoHandlerPeriod.Text);
-            AppConfig.EnableLogging = EnableLogging.IsChecked ?? false;
+            //AppConfig.EnableAutoHandler = EnableAutoHandler.IsChecked ?? false;
+            //AppConfig.AutoHandlerPeriod = int.Parse(AutoHandlerPeriod.Text);
+            AppConfig.EnableLogging = EnableLogging.IsChecked;
+
+            AppConfig.EnableProxy = EnableProxy.IsChecked;
+            AppConfig.ProxyUserName = ProxyUserName.Text;
+            AppConfig.ProxyUserPassword = ProxyUserPassword.Password;
 
             AppConfigHandler.Save();
             AppConfigHandler.Load();

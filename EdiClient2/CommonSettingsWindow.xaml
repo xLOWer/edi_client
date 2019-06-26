@@ -34,11 +34,11 @@
                         <RowDefinition Height="34"/>
                     </Grid.RowDefinitions>
 
-                    <CheckBox x:Name="EnableAutoHandler" Content="Автообработчк" 
+                    <!--<CheckBox x:Name="EnableAutoHandler" Content="Автообработчк" 
                               Grid.Column="1" Grid.Row="0" Margin="4" VerticalAlignment="Center"/>
 
                     <Label Content="Период обработки" Grid.Column="0" Grid.Row="1" Margin="4"/>
-                    <TextBox x:Name="AutoHandlerPeriod" Grid.Column="1" Grid.Row="1" Margin="4"/>
+                    <TextBox x:Name="AutoHandlerPeriod" Grid.Column="1" Grid.Row="1" Margin="4"/>-->
 
                     <CheckBox x:Name="EnableLogging" Content="Логирование" 
                               Grid.Column="1" Grid.Row="2" Margin="4" VerticalAlignment="Center"/>
@@ -138,8 +138,32 @@
 
 
 
-        </TabControl>
 
+            <TabItem Header="Прокси">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                        <RowDefinition Height="34"/>
+                    </Grid.RowDefinitions>
+                    <CheckBox x:Name="EnableProxy" Content="Включить прокси" 
+                              Grid.Column="1" Grid.Row="0" Margin="4" VerticalAlignment="Center"/>
+
+                    <Label Content="Пользователь" Grid.Column="0" Grid.Row="1" Margin="4" />
+                    <TextBox x:Name="ProxyUserName" Grid.Column="1" Grid.Row="1" Margin="4" IsEnabled="{Binding ElementName=EnableProxy, Path=IsChecked}"/>
+
+                    <Label Content="Пароль" Grid.Column="0" Grid.Row="2" Margin="4"/>
+                    <PasswordBox x:Name="ProxyUserPassword" Grid.Column="1" Grid.Row="2" Margin="4" PasswordChar="*" IsEnabled="{Binding ElementName=EnableProxy, Path=IsChecked}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>
