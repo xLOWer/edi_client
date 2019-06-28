@@ -35,19 +35,23 @@ namespace EdiClient
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             ConfSave();
-
+            bool failFlag = false;
             var connstr = $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {AppConfig.DbHost})(PORT = {AppConfig.DbPort}))(CONNECT_DATA = " +
                           $"(SERVER = DEDICATED)(SERVICE_NAME = {AppConfig.DbSID})));Password={AppConfig.TraderUserPassword};User ID={AppConfig.TraderUserName}";
 
             try
             {
                 using (var conn = new OracleConnection(connstr))
-                {
-                    Utilites.Error($"UserId: {conn.UserId}\nPassword: {conn.Password}\nState: {conn.State}\nClientVersion: {conn.ClientVersion}\nConnectMode: {conn.ConnectMode}\nHome: {conn.Home}");
+                {                    
                     conn.Open();
                 }
             }
-            catch (Exception ex) { Utilites.Error(ex); }
+            catch (Exception ex) { failFlag = true;  }
+
+            if(failFlag)
+                Utilites.Error($"Пользователь {AppConfig.TraderUserName}: нет доступа!");
+            else
+                MessageBox.Show($"Пользователь {AppConfig.TraderUserName}: OK!");
         }
 
 
