@@ -67,17 +67,18 @@ namespace EdiClient.ViewModel.Common
         /// Создать реальный документ для работы в trader
         /// </summary>
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
-        internal static void CreateTraderDocument(string orderNumber)
+        internal static void CreateTraderDocument(string orderID)
         {
             LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderNumber);
+            LogService.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
             var commands = new List<OracleCommand>()
                 {
                         new OracleCommand()
                         {
                             Parameters =
                             {
-                                new OracleParameter("P_ID", OracleDbType.VarChar, orderNumber, ParameterDirection.Input)
+                                new OracleParameter("P_ID", OracleDbType.VarChar, orderID, ParameterDirection.Input),
+                                new OracleParameter("P_USERNAME", OracleDbType.VarChar, AppConfig.TraderUserName, ParameterDirection.Input)
                             },
                             Connection = OracleConnectionService.conn,
                             CommandType = CommandType.StoredProcedure,
