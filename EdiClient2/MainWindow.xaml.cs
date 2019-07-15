@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Media.Animation;
-using EdiClient.AppSettings;
 using EdiClient.Services;
 using EdiClient.ViewModel.Common;
 

@@ -26,9 +26,22 @@ namespace EdiClient.Model
         public string CODE { get; set; }
         public string DOC_DATETIME { get; set; }
         public string ACT_STATUS { get; set; }
+        public string CONTRACTOR_MANE { get; set; }
+
+        public string DocumentType
+        {
+            get
+            {
+                if (IsReadyToTrader) return "Заказ";
+                if (IsInTrader && !IsOrdrsp && !IsDesadv) return "В трейдере";
+                if (IsReadyToDesadv || IsDesadv) return "Отгрузка";
+                if (IsReadyToOrdrsp || IsOrdrsp) return "Ответ";
+                return "Ошибки";
+            }
+        }
 
         public bool IsFailed => FAILED == "1";
-        public bool IsReadyToTrader => string.IsNullOrEmpty(ID_TRADER) && !IsOrdrsp && !IsDesadv && !IsFailed;
+        public bool IsReadyToTrader => string.IsNullOrEmpty(ID_TRADER) && !IsOrdrsp && !IsDesadv && !IsFailed && !string.IsNullOrEmpty(CONTRACTOR_MANE);
         public bool IsReadyToOrdrsp => !string.IsNullOrEmpty(ID_TRADER) && int.Parse(ACT_STATUS) >= 3  && !IsFailed;
         public bool IsReadyToDesadv => !string.IsNullOrEmpty(ORDRSP) && int.Parse(ACT_STATUS) >= 4 && !IsFailed;
         public bool IsInTrader => !string.IsNullOrEmpty(ID_TRADER) && !IsFailed;

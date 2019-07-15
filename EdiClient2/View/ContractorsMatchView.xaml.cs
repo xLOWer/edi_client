@@ -1,6 +1,7 @@
 ﻿using EdiClient.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -16,15 +17,15 @@ using System.Windows.Shapes;
 namespace EdiClient.View
 {
     /// <summary>
-    /// Логика взаимодействия для DocumentPage.xaml
+    /// Логика взаимодействия для MatchMakerView.xaml
     /// </summary>
-    public partial class DocumentPage : Page
+    public partial class ContractorsMatchView : Page
     {
-        public DocumentListViewModel Context { get; set; }
+        public ContractorsMatchViewModel Context { get; set; }
 
-        public DocumentPage()
+        public ContractorsMatchView()
         {
-            Context = new DocumentListViewModel();
+            Context = new ContractorsMatchViewModel( );
             DataContext = Context;
             InitializeComponent();
         }

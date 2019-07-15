@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using System.Windows;
 using System.Reflection;
-//using Oracle.DataAccess.Client;
 using Devart.Data.Oracle;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Data.Entity;
-using EdiClient.AppSettings;
-using EdiClient.Model;
 
 namespace EdiClient.Services
 {

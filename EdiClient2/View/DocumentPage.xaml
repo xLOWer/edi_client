@@ -24,6 +24,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
+            <RowDefinition Height="26"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="300"/>
         </Grid.RowDefinitions>
@@ -181,17 +182,101 @@
 
             <Label Grid.Column="11" Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
         </Grid>
-
-
+        
+        
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="105"/>
+                <ColumnDefinition Width="105"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Text="Группировка" VerticalAlignment="Center" Margin="5 2"/>
+        <Button Grid.Column="1" Content="Сбросить" Margin="5 2" Command="{Binding GroupClearCommand}"/>
+        <Button Grid.Column="2" Content="Тип" Margin="5 2" Command="{Binding GroupDocumentTypeCommand}"/>
+        <Button Grid.Column="3" Content="Заказчик" Margin="5 2" Command="{Binding GroupContractorCommand}"/>
+        <Button Grid.Column="4" Content="Тип-Заказчик" Margin="5 2" Command="{Binding GroupDocumentTypeContractorCommand}"/>
+        <Button Grid.Column="5" Content="Заказчик-Тип" Margin="5 2" Command="{Binding GroupContractorDocumentTypeCommand}"/>
+        <GroupBox Grid.Column="6"></GroupBox>
+        </Grid>
 
         <DataGrid Name="DocumentsDataGrid"  PresentationTraceSources.TraceLevel="High"
-                  ItemsSource="{Binding Path=Documents}"
+                  ItemsSource="{Binding Path=GroupDocs}"
                   SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                   SelectionMode="Single"
                   Grid.Column="0"                   
-                  Grid.Row="1" 
+                  Grid.Row="2" 
                   Grid.IsSharedSizeScope="True" 
                   AutoGenerateColumns="False"  >
+            <DataGrid.GroupStyle>
+        <GroupStyle>
+            <GroupStyle.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=Name}" />
+                    </StackPanel>
+                </DataTemplate>
+            </GroupStyle.HeaderTemplate>
+            <GroupStyle.ContainerStyle>
+                <Style TargetType="{x:Type GroupItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                <Expander Background="#b5f5da">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                          <TextBlock Text="{Binding Path=Name}" />
+                                          <TextBlock Text=" ["/>
+                                          <TextBlock Text="{Binding Path=ItemCount}"/>
+                                          <TextBlock Text="]"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsPresenter />
+                                </Expander>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </GroupStyle.ContainerStyle>
+        </GroupStyle>
+                
+    <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=Name}" />
+                    </StackPanel>
+                </DataTemplate>
+            </GroupStyle.HeaderTemplate>
+            <GroupStyle.ContainerStyle>
+                <Style TargetType="{x:Type GroupItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                <Expander Background="#93dbbd" Margin="15 0 0 0">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                          <TextBlock Text="{Binding Path=Name}" />
+                                          <TextBlock Text=" ["/>
+                                          <TextBlock Text="{Binding Path=ItemCount}"/>
+                                          <TextBlock Text="]"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <ItemsPresenter />
+                                </Expander>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </GroupStyle.ContainerStyle>
+    </GroupStyle>
+                
+                
+    </DataGrid.GroupStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
@@ -223,6 +308,8 @@
                 <DataGridTextColumn Binding="{Binding ID}" Header="ID док."/>
                 <DataGridTextColumn Binding="{Binding CODE}" Header="Код"/>
                 <DataGridTextColumn Binding="{Binding ACT_STATUS}" Header="Статус"/>
+                <DataGridTextColumn Binding="{Binding CONTRACTOR_MANE}" Header="Заказчик"/>
+                <DataGridTextColumn Binding="{Binding DocumentType}" Header="Тип"/>
                 <DataGridTextColumn Binding="{Binding ORDER_NUMBER}" Header="Заказ"/>
                 <DataGridTextColumn Binding="{Binding ORDER_DATE}" Header="Дата заказа"/>
                 <DataGridTextColumn Binding="{Binding DOC_DATETIME}" Header="Дата создания в трейдере"/>

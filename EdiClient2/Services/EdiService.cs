@@ -11,8 +11,6 @@ using static EdiClient.Model.WebModel.RelationResponse;
 using System.Reflection;
 using System.Linq;
 using EdiClient.AppSettings;
-using System.Threading.Tasks;
-using System.ComponentModel;
 using System.Net;
 
 namespace EdiClient.Services
@@ -48,6 +46,11 @@ namespace EdiClient.Services
             LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
             var rl = GetRelationships() ?? new List<Relation>();
+            /* // для дебага
+            string ss = "";
+            foreach(var r in rl)            
+                ss += $"{r.relationId}\t{r.partnerIln}\t{r.partnerName}\t{r.documentType}\t{r.documentVersion}\t{r.documentStandard}\t{r.documentTest}\t{r.direction}\t{r.description}\t{r.test}\t{r.form}\r\n";
+            */
             if (rl.Count == 0) { LogService.Log($"\t\tGetRelationships() return null"); return; }
             var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
             //var rels = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
@@ -77,7 +80,7 @@ namespace EdiClient.Services
                 if (!String.IsNullOrEmpty(AppConfig.ProxyUserName) && !String.IsNullOrEmpty(AppConfig.ProxyUserPassword))
                     // задаём данные для аутентификации пользователя прокси
                     GlobalProxySelection.Select.Credentials = new NetworkCredential(AppConfig.ProxyUserName, AppConfig.ProxyUserPassword);
-                else Utilites.Error("Не удалось задать пользователя прокси.\nДанные пользователе не верны или отсутствуют");
+                else Utilites.Error("Не удалось задать пользователя прокси.\nДанные пользователя не верны");
             }
             else
             {
