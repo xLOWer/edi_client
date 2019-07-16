@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace EdiClient.ViewModel
 {
@@ -19,23 +18,11 @@ namespace EdiClient.ViewModel
             DateTo = DateTime.Today.AddDays(1);
         }
 
-        private ListCollectionView groupDocs { get; set; }
         private string time;
         private DateTime dateTo;
         private DateTime dateFrom;
         private Document selectedDocument;
         private List<Document> documents;
-
-
-        public ListCollectionView GroupDocs
-        {
-            get { return groupDocs; }
-            set
-            {
-                groupDocs = value;
-                NotifyPropertyChanged("GroupDocs");
-            }
-        }
 
         public string Time
         {
@@ -84,90 +71,35 @@ namespace EdiClient.ViewModel
         }
 
         public CommandService NextDayCommand => new CommandService(NextDay);
-        public CommandService PrevDayCommand => new CommandService(PrevDay);
-
         public CommandService GetDocumentsCommand => new CommandService(GetDocuments);
-
+        public CommandService PrevDayCommand => new CommandService(PrevDay);
         public CommandService GetEDIDOCCommand => new CommandService(GetEDIDOC);
         public CommandService SendORDRSPCommand => new CommandService(SendORDRSP);
         public CommandService SendDESADVCommand => new CommandService(SendDESADV);
         public CommandService ToTraderCommand => new CommandService(ToTrader);
 
-        public CommandService GroupDocumentTypeCommand => new CommandService(GroupDocumentType);
-        public CommandService GroupContractorCommand => new CommandService(GroupContractor);
-        public CommandService GroupContractorDocumentTypeCommand => new CommandService(GroupContractorDocumentType);
-        public CommandService GroupDocumentTypeContractorCommand => new CommandService(GroupDocumentTypeContractor);
-        public CommandService GroupClearCommand => new CommandService(GroupClear);
-
-        private void GroupDocumentType(object o = null)
-        {
-            GroupClear();
-            GroupDocs.GroupDescriptions.Add(new PropertyGroupDescription("DocumentType"));
-        }
-
-        private void GroupContractor(object o = null)
-        {
-            GroupClear();
-            GroupDocs.GroupDescriptions.Add(new PropertyGroupDescription("CONTRACTOR_MANE"));
-        }
-
-        private void GroupDocumentTypeContractor(object o = null)
-        {
-            GroupClear();
-            GroupDocs.GroupDescriptions.Add(new PropertyGroupDescription("DocumentType"));
-            GroupDocs.GroupDescriptions.Add(new PropertyGroupDescription("CONTRACTOR_MANE"));
-        }
-
-        private void GroupContractorDocumentType(object o = null)
-        {
-            GroupClear();
-            GroupDocs.GroupDescriptions.Add(new PropertyGroupDescription("CONTRACTOR_MANE"));
-            GroupDocs.GroupDescriptions.Add(new PropertyGroupDescription("DocumentType"));
-        }
-
-        private void GroupClear(object o = null)
-        {
-            GroupDocs.GroupDescriptions.Clear();
-        }
-
-
-
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual void ToTrader(object o = null) => ActionInTime(() => 
-        {
-            DocumentRepository.CreateTraderDocument(SelectedDocument.ID);
-            GetEDIDOC();
-        });
-
-        public void SendORDRSP(object o = null) => ActionInTime(() => 
-        {
-            DocumentRepository.SendOrdrsp(SelectedDocument);
-            GetEDIDOC();
-        });
-
-        public void SendDESADV(object o = null) => ActionInTime(() => 
-        {
-            DocumentRepository.SendDesadv(SelectedDocument);
-            GetEDIDOC();
-        });
-
-        public void GetDocuments(object o = null) => ActionInTime(() => 
-        {
-            GetEDIDOC();
-        });
-        public void GetEDIDOC(object o = null) => ActionInTime(() => 
-        {
-            //DocumentRepository.GetRecadv();
-            Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
-            GroupDocs = new ListCollectionView(Documents);
-        });
+        public virtual void ToTrader(object o = null) => ActionInTime(()
+            => { DocumentRepository.CreateTraderDocument(SelectedDocument.ID); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
+        public void SendORDRSP(object o = null) => ActionInTime(()
+            => { DocumentRepository.SendOrdrsp(SelectedDocument); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
+        public void SendDESADV(object o = null) => ActionInTime(()
+            => { DocumentRepository.SendDesadv(SelectedDocument); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
+        public void GetDocuments(object o = null) => ActionInTime(()
+            => { Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
+        public void GetEDIDOC(object o = null) => ActionInTime(()
+            => {
+                //DocumentRepository.GetRecadv();
+                DocumentRepository.GetNewOrders(dateFrom, dateTo);
+                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
+            });
 
         protected void NotifyPropertyChanged(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
-        
+
         public void ActionInTime(Action act)
         {
             LogService.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
@@ -192,7 +124,7 @@ namespace EdiClient.ViewModel
             NotifyPropertyChanged("DateTo");
             NotifyPropertyChanged("SelectedDocument");
         }
-        
+
         public void NextDay(object o = null)
         {
             DateFrom = DateFrom.AddDays(1);

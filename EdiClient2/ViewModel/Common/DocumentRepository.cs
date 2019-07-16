@@ -440,5 +440,13 @@ namespace EdiClient.ViewModel.Common
             LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             return new List<DocumentReceivingAdvice>();
         }
+
+        public static List<T> GetList<T>(string sql)
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки"); return null; }
+            var result = DbService<T>.DocumentSelect(new List<string> { sql }).Cast<T>().ToList();
+            return result;
+        }
     }
 }

@@ -47,6 +47,14 @@ namespace EdiClient.Services
         internal static string GET_PRICE_TYPES =>
             $"SELECT * FROM {(AppConfig.Schema+".")}EDI_GET_PRICE_TYPES";
 
+        internal static string GET_CLIENTS =>
+            $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_DELIVERY_POINTS";
+
+        internal static string GET_CUSTOMERS =>
+            $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_CUSTOMERS";
+
+        internal static string GET_CONTRACTORS =>
+            $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_CONTRACTORS";
 
     }
 

@@ -157,6 +157,8 @@
     <Compile Include="Model\DbDocumentModel\Document.cs" />
     <Compile Include="Model\DocumentDespatchAdvice.cs" />
     <Compile Include="Model\DocumentReceivingAdvice.cs" />
+    <Compile Include="Model\MatchingDbModel\Client.cs" />
+    <Compile Include="Model\MatchingDbModel\Customer.cs" />
     <Compile Include="Model\MatchingDbModel\FailedGoods.cs" />
     <Compile Include="Model\MatchingDbModel\Goods.cs" />
     <Compile Include="Model\MatchingDbModel\Matches.cs" />

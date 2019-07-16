@@ -17,132 +17,245 @@
     
     <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" >
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="45"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\refresh-50.png" Margin="-1"/> </Button>
+            <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Добавить новый" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
+                <TextBlock Text="Загрузить"/> </Button>
 
-            <Button Grid.Column="2" ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\link-50.png" Margin="-1"/> </Button>
+            <Button Grid.Column="1" ToolTip="Удалить" Command="{Binding RemoveCommand}" Style="{StaticResource ControlButtons}">
+                <TextBlock Text="Удалить"/> </Button>
 
-            <Button Grid.Column="4" ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\unlink-50.png" Margin="-1"/> </Button>
+            <Button Grid.Column="2" ToolTip="Изменить" Command="{Binding EditCommand}" Style="{StaticResource ControlButtons}">
+                <TextBlock Text="Изменить"/>
+            </Button>
 
-            <Button Grid.Column="6" ToolTip="Пере-привязать" Command="{Binding RelinkCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\change-50.png" Margin="-1"/>
+            <Button Grid.Column="3" ToolTip="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource ControlButtons}">
+                <TextBlock Text="Сохранить"/>
+            </Button>
+
+            <Button Grid.Column="4" ToolTip="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource ControlButtons}">
+                <TextBlock Text="Отмена"/>
             </Button>
         </Grid>
 
 
+        <Grid Grid.Row="1" Grid.Column="0" Margin="5 5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Label Grid.Row="1" Content="Список контрагентов" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding GoodSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding GoodSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding GoodResetInputCommand, IsAsync=True}"/>
+            <Grid Grid.Row="0" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="2" Text="{Binding ClientSearchText, IsAsync=True}"/>
+                <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding ClientSearchCommand, IsAsync=True}"/>
+                <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding ClientResetInputCommand, IsAsync=True}"/>
+            </Grid>
+
+            <DataGrid Name="ClientsDataGrid" 
+                      ItemsSource="{Binding Path=ClientsGroupList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+                      SelectionMode="Single"
+                      Grid.Row="1"
+                      AutoGenerateColumns="False" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding SENDER_GLN}" Header="SENDER_GLN"/>
+                    <DataGridTextColumn Binding="{Binding BUYER_GLN}" Header="BUYER_GLN"/>
+                    <DataGridTextColumn Binding="{Binding DELIVERY_POINT_GLN}" Header="DELIVERY_POINT_GLN"/>
+                    <DataGridTextColumn Binding="{Binding DELIVERY_POINT_NAME}" Header="DELIVERY_POINT_NAME"/>
+                    <DataGridTextColumn Binding="{Binding BUYER_NAME}" Header="BUYER_NAME"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
-        <DataGrid Name="GoodsDataGrid" 
-                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+        <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="5 1 5 5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="{Binding SelectedClient.DELIVERY_POINT_NAME}"/>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Column="0" Content="Клиент" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="GLN" Margin="10 0" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Column="1" Text="{Binding SelectedClient.SENDER_GLN}" Margin="10 0"/>
+                    <Label Grid.Column="2" Content="{Binding SelectedSenderCustomer.Name}" Margin="10 0"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="2" Text="{Binding SenderCustomerSearchText, IsAsync=True}"/>
+                    <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding SenderCustomerSearchCommand, IsAsync=True}"/>
+                    <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding SenderCustomerResetInputCommand, IsAsync=True}"/>
+                </Grid>
+
+                <DataGrid Name="wg" 
+                      ItemsSource="{Binding Path=SenderCustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedSenderCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                       SelectionMode="Single"
                       Grid.Row="3" 
                       Grid.IsSharedSizeScope="True" 
                       AutoGenerateColumns="False" 
                       SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ID}" Header="Id"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ID}" Header="Id"/>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Наименование"/>
+                        <DataGridTextColumn Binding="{Binding Address}" Header="Адрес"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            
+            
+            
+            
+            <Separator Grid.Row="2" />
 
+            
+            
+            
+            <Grid Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
+                <Label Grid.Column="0" Content="Покупатель" Margin="10 0" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="GLN" Margin="10 0" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Column="1" Text="{Binding SelectedClient.BUYER_GLN}" Margin="10 0"/>
+                    <Label Grid.Column="2" Content="{Binding SelectedBuyerCustomer.Name}" Margin="10 0"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="2" Text="{Binding BuyerCustomerSearchText, IsAsync=True}"/>
+                    <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding BuyerCustomerSearchCommand, IsAsync=True}"/>
+                    <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding BuyerCustomerResetInputCommand, IsAsync=True}"/>
+                </Grid>
 
-
-        <Label Grid.Row="4" Content="Не сопоставленные контрагенты" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-
-        <Grid Grid.Row="5" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding FailedGoodSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding FailedGoodSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс"  Margin="2" Command="{Binding  FailedGoodResetInputCommand, IsAsync=True}"/>
-        </Grid>
-        <DataGrid Name="FailedGoodDataGrid" 
-                      ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+                <DataGrid Name="wg2" 
+                      ItemsSource="{Binding Path=BuyerCustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedBuyerCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
                       SelectionMode="Single"
-                      Grid.Row="6"
+                      Grid.Row="3" 
                       Grid.IsSharedSizeScope="True" 
                       AutoGenerateColumns="False" 
                       SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ITEM_DESCRIPTION}" Header="Наименование"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ID}" Header="Id"/>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Наименование"/>
+                        <DataGridTextColumn Binding="{Binding Address}" Header="Адрес"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
 
+            
+            
+            
+            <Separator Grid.Row="4"/>
 
-        <Label Grid.Row="7" Content="Контрагенты имеющие связь с GLN" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+            
+            
+            
+            <Grid Grid.Row="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-        <Grid Grid.Row="8" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding MatchesSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1"  Content="искать" Margin="2"  Command="{Binding MatchesSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс" Margin="2"  Command="{Binding  MatchesResetInputCommand, IsAsync=True}"/>
+                <Label Grid.Column="0" Content="Точка доставки" Margin="10 0" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="GLN" Margin="10 0" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Column="1" Text="{Binding SelectedClient.DELIVERY_POINT_GLN}" Margin="10 0"/>
+                    <Label Grid.Column="2" Content="{Binding SelectedDeliveryPointContractor.Name}" Margin="10 0"/>
+                </Grid>
+                <Grid Grid.Row="2" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="2" Text="{Binding DeliveryPointContractorSearchText, IsAsync=True}"/>
+                    <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding DeliveryPointContractorSearchCommand, IsAsync=True}"/>
+                    <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding DeliveryPointContractorResetInputCommand, IsAsync=True}"/>
+                </Grid>
+
+                <DataGrid Name="wg3" 
+                      ItemsSource="{Binding Path=DeliveryPointContractorsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
+                      SelectedItem="{Binding Path=SelectedDeliveryPointContractor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
+                      SelectionMode="Single"
+                      Grid.Row="3" 
+                      Grid.IsSharedSizeScope="True" 
+                      AutoGenerateColumns="False" 
+                      SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ID}" Header="Id"/>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Наименование"/>
+                        <DataGridTextColumn Binding="{Binding Address}" Header="Адрес"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
         </Grid>
-        <DataGrid Name="MatchesDataGrid" 
-                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                  SelectionMode="Single"
-                  Grid.Row="9"  
-                  Margin="5"
-                  Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False" 
-                  SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding CUSTOMER_GLN}" Width="SizeToCells" Header="ГЛН"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-
     </Grid>
 </Page>

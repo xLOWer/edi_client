@@ -21,6 +21,7 @@ namespace EdiClient.ViewModel.Common
             TabService.NewTab( typeof(DocumentPage  ), "Документы" );
             TabService.NewTab( typeof(MatchMakerView), "Связи товаров" );
             TabService.NewTab( typeof(PriceTypesView), "Связи цен");
+            TabService.NewTab(typeof(ContractorsMatchView), "Связи точек доставки");
         }
 
         public void OpenCommonSettings(object o)

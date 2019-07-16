@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 using EdiClient.View;
 using EdiClient.AppSettings;
 using System.Reflection;
-
+using EdiClient.ViewModel.Common;
+using System.Windows.Data;
 
 namespace EdiClient.ViewModel
 {
@@ -22,367 +23,270 @@ namespace EdiClient.ViewModel
 
         }
 
-        #region fields
-
-        public List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;
-        public Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
-        public int RelationshipCount => EdiService.RelationshipCount;
-
-        private MatchMakerView _page { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private bool isNewMatchingEnabled = true;
-        public virtual bool IsNewMatchingEnabled
-        {
-            get
-            {
-                return !String.IsNullOrEmpty(NewCustomerItemCode);
-            }
-            set
-            {
-                isNewMatchingEnabled = value;
-                RaiseNotifyPropertyChanged("IsNewMatchingEnabled");
-            }
-        }
-
-
-        private bool disposeEnabled = true;
-        public bool DisposeEnabled
-        {
-            get
-            {
-                return !String.IsNullOrEmpty(SelectedMatch?.CUSTOMER_ARTICLE ?? "");
-            }
-            set
-            {
-                disposeEnabled = value;
-                RaiseNotifyPropertyChanged("DisposeEnabled");
-            }
-        }
-
-        private bool linkEnabled = true;
-        public bool LinkEnabled
-        {
-            get { return !String.IsNullOrEmpty(SelectedGood?.ID ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.BUYER_ITEM_CODE ?? ""); }
-            set
-            {
-                linkEnabled = value;
-                RaiseNotifyPropertyChanged("LinkEnabled");
-            }
-        }
-
-        private Goods selectedGood = new Goods();
-        public Goods SelectedGood
-        {
-            get { return selectedGood; }
-            set
-            {
-                selectedGood = value;
-                RaiseNotifyPropertyChanged("SelectedGood");
-            }
-        }
-
-        private FailedGoods selectedFailedGood = new FailedGoods();
-        public FailedGoods SelectedFailedGood
-        {
-            get { return selectedFailedGood; }
-            set
-            {
-                selectedFailedGood = value;
-                RaiseNotifyPropertyChanged("SelectedFailedGood");
-                GoodsList = fullGoodsList.Where(x => x.BAR_CODE.Trim().ToUpper() == SelectedFailedGood.EAN.Trim().ToUpper()).ToList();
-            }
-        }
-
-        private Matches selectedMatch = new Matches();
-        public Matches SelectedMatch
-        {
-            get { return selectedMatch; }
-            set
-            {
-                selectedMatch = value;
-                RaiseNotifyPropertyChanged("SelectedMatch");
-            }
-        }
-
-
-        private string newCustomerItemCode = "";
-        public string NewCustomerItemCode
-        {
-            get { return newCustomerItemCode; }
-            set
-            {
-                newCustomerItemCode = value;
-                RaiseNotifyPropertyChanged("NewCustomerItemCode");
-            }
-        }
-
-        private string goodSearchText = "";
-        public string GoodSearchText
-        {
-            get { return goodSearchText; }
-            set
-            {
-                goodSearchText = value;
-                RaiseNotifyPropertyChanged("GoodSearchText");
-            }
-        }
-
-        private string failedGoodSearchText = "";
-        public string FailedGoodSearchText
-        {
-            get { return failedGoodSearchText; }
-            set
-            {
-                failedGoodSearchText = value;
-                RaiseNotifyPropertyChanged("FailedGoodSearchText");
-            }
-        }
-
-        private string matchesSearchText = "";
-        public string MatchesSearchText
-        {
-            get { return matchesSearchText; }
-            set
-            {
-                matchesSearchText = value;
-                RaiseNotifyPropertyChanged("MatchesSearchText");
-            }
-        }
-
-        private List<Goods> fullGoodsList = new List<Goods>();
-
-        private List<Goods> goodsList = new List<Goods>();
-        public List<Goods> GoodsList
-        {
-            get { return goodsList; }
-            set
-            {
-                goodsList = value;
-                RaiseNotifyPropertyChanged("GoodsList");
-            }
-        }
-
-        private List<FailedGoods> failedGoodsList = new List<FailedGoods>();
-        public List<FailedGoods> FailedGoodsList
-        {
-            get { return failedGoodsList; }
-            set
-            {
-                failedGoodsList = value;
-                RaiseNotifyPropertyChanged("FailedGoodsList");
-            }
-        }
-
-        private List<Matches> matchesList = new List<Matches>();
-        public List<Matches> MatchesList
-        {
-            get { return matchesList; }
-            set
-            {
-                matchesList = value;
-                RaiseNotifyPropertyChanged("MatchesList");
-            }
-        }
-
-        private bool HelpMode { get; set; } = false;
-
-        //public CommandService NewMatchingCommand => new CommandService(NewMatching);
-        public CommandService FailedGoodSearchCommand => new CommandService(FailedGoodSearch);
-        public CommandService MatchesSearchCommand => new CommandService(MatchesSearch);
-        public CommandService GoodSearchCommand => new CommandService(GoodSearch);
-        public CommandService LoadDataCommand => new CommandService(LoadData);
-        public CommandService MakeMatchingCommand => new CommandService(MakeMatching);
-        public CommandService DisposeMatchingCommand => new CommandService(DisposeMatching);
-        public CommandService FailedGoodResetInputCommand => new CommandService(FailedGoodResetInput);
-        public CommandService MatchesResetInputCommand => new CommandService(MatchesResetInput);
-        public CommandService GoodResetInputCommand => new CommandService(GoodResetInput);
-
-        #endregion
-
         protected void RaiseNotifyPropertyChanged(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private void SetLayoutEnabled(bool flag)
+        private string clientsearchtext { get; set; }
+        private string buyercustomersearchtext { get; set; }
+        private string sendercustomersearchtext { get; set; }
+        private string deliverypointcontractorsearchtext { get; set; }
+        private Client selectedclient { get; set; }
+        private List<Client> clientslist { get; set; }
+        private List<Customer> sendercustomerslist { get; set; }
+        private List<Customer> buyercustomerslist { get; set; }
+        private List<Customer> deliverypointcontractorslist { get; set; }
+        private ListCollectionView clientsgrouplist { get; set; }
+        private Customer linkeddeliverypointcontractor { get; set; }
+        private Customer linkedbuyercustomer { get; set; }
+        private Customer linkedsendercustomer { get; set; }
+        private Customer selectedbuyercustomer { get; set; }
+        private Customer selectedsendercustomer { get; set; }
+        private Customer selecteddeliverypointcontractor { get; set; }
+
+
+        public string ClientSearchText
         {
-            _page.LoadDataButton.IsEnabled = flag;
-            _page.LoadDataButton.UpdateLayout();
+            get { return clientsearchtext; }
+            set
+            {
+                clientsearchtext = value;
+                RaiseNotifyPropertyChanged("ClientSearchText");
+            }
         }
+
+        public string BuyerCustomerSearchText
+        {
+            get { return buyercustomersearchtext; }
+            set
+            {
+                buyercustomersearchtext = value;
+                RaiseNotifyPropertyChanged("BuyerCustomerSearchText");
+            }
+        }
+
+        public string SenderCustomerSearchText
+        {
+            get { return sendercustomersearchtext; }
+            set
+            {
+                sendercustomersearchtext = value;
+                RaiseNotifyPropertyChanged("SenderCustomerSearchText");
+            }
+        }
+
+        public string DeliveryPointContractorSearchText
+        {
+            get { return deliverypointcontractorsearchtext; }
+            set
+            {
+                deliverypointcontractorsearchtext = value;
+                RaiseNotifyPropertyChanged("DeliveryPointContractorSearchText");
+            }
+        }
+
+        public Customer SelectedBuyerCustomer
+        {
+            get { return selectedbuyercustomer; }
+            set
+            {
+                selectedbuyercustomer = value;
+                RaiseNotifyPropertyChanged("SelectedBuyerCustomer");
+            }
+        }
+
+        public Customer SelectedSenderCustomer
+        {
+            get { return selectedsendercustomer; }
+            set
+            {
+                selectedsendercustomer = value;
+                RaiseNotifyPropertyChanged("SelectedSenderCustomer");
+            }
+        }
+
+        public Customer SelectedDeliveryPointContractor
+        {
+            get { return selecteddeliverypointcontractor; }
+            set
+            {
+                selecteddeliverypointcontractor = value;
+                RaiseNotifyPropertyChanged("SelectedDeliveryPointContractor");
+            }
+        }
+
+        public Client SelectedClient
+        {
+            get { return selectedclient; }
+            set
+            {
+                selectedclient = value;
+                RaiseNotifyPropertyChanged("SelectedClient");
+            }
+        }
+
+        public List<Client> ClientsList
+        {
+            get { return clientslist; }
+            set
+            {
+                clientslist = value;
+                RaiseNotifyPropertyChanged("ClientsList");
+            }
+        }
+
+        public ListCollectionView ClientsGroupList
+        {
+            get { return clientsgrouplist; }
+            set
+            {
+                clientsgrouplist = value;
+                RaiseNotifyPropertyChanged("ClientsGroupList");
+            }
+        }
+
+        public List<Customer> SenderCustomersList
+        {
+            get { return sendercustomerslist; }
+            set
+            {
+                sendercustomerslist = value;
+                RaiseNotifyPropertyChanged("SenderCustomersList");
+            }
+        }
+
+        public List<Customer> BuyerCustomersList
+        {
+            get { return buyercustomerslist; }
+            set
+            {
+                buyercustomerslist = value;
+                RaiseNotifyPropertyChanged("BuyerCustomersList");
+            }
+        }
+        
+        public List<Customer> DeliveryPointContractorsList
+        {
+            get { return deliverypointcontractorslist; }
+            set
+            {
+                deliverypointcontractorslist = value;
+                RaiseNotifyPropertyChanged("DeliveryPointContractorsList");
+            }
+        }
+
+        public Customer LinkedDeliveryPointContractor
+        {
+            get { return linkeddeliverypointcontractor; }
+            set
+            {
+                linkeddeliverypointcontractor = value;
+                RaiseNotifyPropertyChanged("LinkedDeliveryPointContractor");
+            }
+        }
+        
+        public Customer LinkedBuyerCustomer
+        {
+            get { return linkedbuyercustomer; }
+            set
+            {
+                linkedbuyercustomer = value;
+                RaiseNotifyPropertyChanged("LinkedBuyerCustomer");
+            }
+        }
+
+        public Customer LinkedSenderCustomer
+        {
+            get { return linkedsendercustomer; }
+            set
+            {
+                linkedsendercustomer = value;
+                RaiseNotifyPropertyChanged("LinkedSenderCustomer");
+            }
+        }
+        
+        public CommandService DeliveryPointContractorSearchCommand => new CommandService(DeliveryPointContractorSearch);
+        public CommandService DeliveryPointContractorResetInputCommand => new CommandService(DeliveryPointContractorResetInput);
+        public CommandService BuyerCustomerSearchCommand => new CommandService(BuyerCustomerSearch);
+        public CommandService BuyerCustomerResetInputCommand => new CommandService(BuyerCustomerResetInput);
+        public CommandService SenderCustomerSearchCommand => new CommandService(SenderCustomerSearch);
+        public CommandService SenderCustomerResetInputCommand => new CommandService(SenderCustomerResetInput);
+        public CommandService ClientSearchCommand => new CommandService(ClientSearch);
+        public CommandService ClientResetInputCommand => new CommandService(ClientResetInput);
+
+        public CommandService CommandServiceLoadDataCommand => new CommandService(CommandServiceLoadData);
+        public CommandService RemoveCommand => new CommandService(Remove);
+        public CommandService EditCommand => new CommandService(Edit);
+        public CommandService LoadDataCommand => new CommandService(LoadData);
+
+        public void DeliveryPointContractorSearch(object obj = null)
+        {
+        }
+
+        public void DeliveryPointContractorResetInput(object obj = null)
+        {
+        }
+
+        public void BuyerCustomerSearch(object obj = null)
+        {
+        }
+
+        public void BuyerCustomerResetInput(object obj = null)
+        {
+        }
+
+        public void SenderCustomerSearch(object obj = null)
+        {
+        }
+
+        public void SenderCustomerResetInput(object obj = null)
+        {
+        }
+
+        public void ClientSearch(object obj = null)
+        {
+        }
+
+        public void ClientResetInput(object obj = null)
+        {
+        }
+
+        public void CommandServiceLoadData(object obj = null)
+        {
+        }
+
+        public void Remove(object obj = null)
+        {
+        }
+
+        public void Edit(object obj = null)
+        {
+            if((SenderCustomersList?.Count ?? 1) > 0) SenderCustomersList = DocumentRepository.GetList<Customer>(SqlService.GET_CUSTOMERS);             
+            if ((DeliveryPointContractorsList?.Count ?? 1) > 0) DeliveryPointContractorsList = DocumentRepository.GetList<Customer>(SqlService.GET_CONTRACTORS);
+            BuyerCustomersList = SenderCustomersList;
+
+            if (!string.IsNullOrEmpty(SelectedClient.SENDER_CUSTOMER_ID))
+                SelectedSenderCustomer = SenderCustomersList.First(x=>x.Id == SelectedClient.SENDER_CUSTOMER_ID);
+
+            if (!string.IsNullOrEmpty(SelectedClient.BUYER_CUSTOMER_ID))
+                SelectedBuyerCustomer = BuyerCustomersList.First(x => x.Id == SelectedClient.BUYER_CUSTOMER_ID);
+
+            if (!string.IsNullOrEmpty(SelectedClient.DELIVERY_POINT_CONTRACTOR_ID))
+                SelectedDeliveryPointContractor = DeliveryPointContractorsList.First(x => x.Id == SelectedClient.DELIVERY_POINT_CONTRACTOR_ID);
+        }
+        
 
         public void LoadData(object obj = null)
         {
             LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            SetLayoutEnabled(false);
-            if (fullGoodsList == null || fullGoodsList.Count < 1)
-            {
-                fullGoodsList = GetGoods();
-            }
-            GoodsList = fullGoodsList;
-            FailedGoodsList = GetFailedGoods();
-            MatchesList = GetMatchesList();
+            ClientsList = DocumentRepository.GetList<Client>(SqlService.GET_CLIENTS);
+            ClientsGroupList = new ListCollectionView(ClientsList);
+            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("SENDER_GLN"));
+            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("BUYER_GLN"));
 
-            SetLayoutEnabled(true);
         }
 
-        public void MakeMatching(object obj = null)
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedFailedGood == null) { Utilites.Error("Не выбран пункт с не сопоставленным товаром"); return; }
-            if (SelectedGood == null) { Utilites.Error("Не выбран пункт с товаром"); return; }
-            if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.ID))
-            { Utilites.Error("Код покупателя или идентификатор товара отсутствует"); return; }
-
-            DbService.ExecuteCommand(new OracleCommand()
-            {
-                Parameters =
-                        {
-                            new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedRelationship.partnerIln, ParameterDirection.Input),
-                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedFailedGood.BUYER_ITEM_CODE, ParameterDirection.Input),
-                            new OracleParameter("P_ID_GOOD", OracleDbType.Number, SelectedGood.ID, ParameterDirection.Input),
-                        },
-                Connection = OracleConnectionService.conn,
-                CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_LINK"
-            });
-        }
-
-        public void DisposeMatching(object obj = null)
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedMatch == null) { Utilites.Error("Не выбран пункт с сопоставлением"); return; }
-            if (String.IsNullOrEmpty(SelectedMatch.CUSTOMER_ARTICLE)) { Utilites.Error("У выбранного товара отсутствует код покупателя"); return; }
-
-            try
-            {
-                DbService.ExecuteCommand(new OracleCommand()
-                {
-                    Parameters =
-                        {
-                            new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
-                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedMatch.CUSTOMER_ARTICLE, ParameterDirection.Input)
-                        },
-                    Connection = OracleConnectionService.conn,
-                    CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_UNLINK"
-                });
-
-                FailedGoodsList = GetFailedGoods();
-                MatchesList = GetMatchesList();
-            }
-            catch (Exception ex) { Utilites.Error(ex); }
-        }
-
-
-        public void FailedGoodResetInput(object obj = null) => FailedGoodsList = GetFailedGoods();
-        public void MatchesResetInput(object obj = null) => MatchesList = GetMatchesList();
-        public void GoodResetInput(object obj = null) => GoodsList = GetGoods();
-
-
-        public void FailedGoodSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            FailedGoodResetInput();
-            if (!String.IsNullOrEmpty(FailedGoodSearchText))
-            {
-                var searchList = FailedGoodSearchText.Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                    {
-                        var text = item?.ToUpper()?.Trim(' ') ?? "";
-                        if (!String.IsNullOrEmpty(item))
-                            FailedGoodsList = FailedGoodsList.Where(
-                                x => (x.ITEM_DESCRIPTION?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.ORDER_NUMBER?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.ORDER_DATE?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.BUYER_ITEM_CODE?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.EAN?.ToUpper()?.Contains(text) ?? false)
-                            ).ToList();
-                    }
-            }
-        });
-
-
-        public void MatchesSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            MatchesResetInput();
-            if (!String.IsNullOrEmpty(MatchesSearchText))
-            {
-                var searchList = MatchesSearchText.Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                        if (!String.IsNullOrEmpty(item))
-                        {
-                            var text = item?.ToUpper()?.Trim(' ') ?? "";
-                            MatchesList = MatchesList.Where(
-                                x => (x.NAME?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.ID_GOOD?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.CUSTOMER_ARTICLE?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.BAR_CODE?.ToUpper()?.Contains(text) ?? false)
-                                  || (x.INSERT_DATETIME?.ToUpper()?.Contains(text) ?? false)
-                            ).ToList();
-                        }
-            }
-        });
-
-
-        public void GoodSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            GoodsList = fullGoodsList;
-            if (!String.IsNullOrEmpty(GoodSearchText))
-            {
-                var searchList = GoodSearchText.Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                        if (!String.IsNullOrEmpty(item))
-                        {
-                            var text = item?.ToUpper()?.Trim(' ') ?? "";
-                            GoodsList = GoodsList.Where(
-                                x => (x.NAME?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                  || (x.ID?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                  || (x.MANUFACTURER?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                  || (x.CODE?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                  || (x.BAR_CODE?.ToUpper().Trim(' ').Contains(text) ?? false)
-                            ).ToList();
-                        }
-            }
-        });
-
-
-
-        private List<Goods> GetGoods()
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var sql = SqlService.GET_GOODS;
-            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<Goods>.DocumentSelect(new List<string> { sql });
-            return result;
-        }
-
-
-        private List<FailedGoods> GetFailedGoods()
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
-            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
-            var sql = SqlService.GET_FAILED_DETAILS(SelectedRelationship?.partnerIln);
-            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<FailedGoods>.DocumentSelect(new List<string> { sql });
-            return result;
-        }
-
-        private List<Matches> GetMatchesList()
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
-            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
-            var sql = SqlService.GET_MATCHED(SelectedRelationship?.partnerIln);
-            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<Matches>.DocumentSelect(new List<string> { sql });
-            return result;
-        }
     }
 }
