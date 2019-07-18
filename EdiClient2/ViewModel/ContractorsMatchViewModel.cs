@@ -27,6 +27,9 @@ namespace EdiClient.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
+
+        #region props
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string clientsearchtext { get; set; }
@@ -45,6 +48,61 @@ namespace EdiClient.ViewModel
         private Customer selectedbuyercustomer { get; set; }
         private Customer selectedsendercustomer { get; set; }
         private Customer selecteddeliverypointcontractor { get; set; }
+
+        private string sendergln { get; set; }
+        private string buyergln { get; set; }
+        private string deliverygln { get; set; }
+
+        private string deliveryaddress { get; set; }
+        private string buyername { get; set; }
+
+        public string DeliveryAddress
+        {
+            get { return deliveryaddress; }
+            set
+            {
+                deliveryaddress = value;
+                RaiseNotifyPropertyChanged("DeliveryAddress");
+            }
+        }
+
+        public string BuyerName
+        {
+            get { return buyername; }
+            set
+            {
+                buyername = value;
+                RaiseNotifyPropertyChanged("BuyerName");
+            }
+        }
+
+        public string SenderGln
+        {
+            get { return sendergln; }
+            set
+            {
+                sendergln = value;
+                RaiseNotifyPropertyChanged("SenderGln");
+            }
+        }
+        public string BuyerGln
+        {
+            get { return buyergln; }
+            set
+            {
+                buyergln = value;
+                RaiseNotifyPropertyChanged("BuyerGln");
+            }
+        }
+        public string DeliveryGln
+        {
+            get { return deliverygln; }
+            set
+            {
+                deliverygln = value;
+                RaiseNotifyPropertyChanged("DeliveryGln");
+            }
+        }
 
 
         public string ClientSearchText
@@ -166,7 +224,7 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("BuyerCustomersList");
             }
         }
-        
+
         public List<Customer> DeliveryPointContractorsList
         {
             get { return deliverypointcontractorslist; }
@@ -186,7 +244,7 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("LinkedDeliveryPointContractor");
             }
         }
-        
+
         public Customer LinkedBuyerCustomer
         {
             get { return linkedbuyercustomer; }
@@ -206,86 +264,253 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("LinkedSenderCustomer");
             }
         }
-        
+
+        public CommandService SelectedDeliveryPointContractorClearCommand => new CommandService(SelectedDeliveryPointContractorClear);
+        public CommandService SelectedBuyerCustomerClearCommand => new CommandService(SelectedBuyerCustomerClear);
+        public CommandService SelectedSenderCustomerClearCommand => new CommandService(SelectedSenderCustomerClear);
+
         public CommandService DeliveryPointContractorSearchCommand => new CommandService(DeliveryPointContractorSearch);
-        public CommandService DeliveryPointContractorResetInputCommand => new CommandService(DeliveryPointContractorResetInput);
         public CommandService BuyerCustomerSearchCommand => new CommandService(BuyerCustomerSearch);
-        public CommandService BuyerCustomerResetInputCommand => new CommandService(BuyerCustomerResetInput);
         public CommandService SenderCustomerSearchCommand => new CommandService(SenderCustomerSearch);
-        public CommandService SenderCustomerResetInputCommand => new CommandService(SenderCustomerResetInput);
         public CommandService ClientSearchCommand => new CommandService(ClientSearch);
+
+        public CommandService DeliveryPointContractorResetInputCommand => new CommandService(DeliveryPointContractorResetInput);
+        public CommandService BuyerCustomerResetInputCommand => new CommandService(BuyerCustomerResetInput);
+        public CommandService SenderCustomerResetInputCommand => new CommandService(SenderCustomerResetInput);
         public CommandService ClientResetInputCommand => new CommandService(ClientResetInput);
 
-        public CommandService CommandServiceLoadDataCommand => new CommandService(CommandServiceLoadData);
+        public CommandService LoadDataCommand => new CommandService(LoadData);
         public CommandService RemoveCommand => new CommandService(Remove);
         public CommandService EditCommand => new CommandService(Edit);
-        public CommandService LoadDataCommand => new CommandService(LoadData);
+        public CommandService SaveCommand => new CommandService(Save);
+        public CommandService AddNewCommand => new CommandService(AddNew);
 
-        public void DeliveryPointContractorSearch(object obj = null)
+        #endregion
+
+        private void AddNew(object obj = null)
         {
+            SelectedDeliveryPointContractorClear();
+            SelectedBuyerCustomerClear();
+            SelectedSenderCustomerClear();
+            SelectedClient = null;
         }
 
-        public void DeliveryPointContractorResetInput(object obj = null)
+        private void SelectedDeliveryPointContractorClear(object obj = null)
         {
+            LinkedDeliveryPointContractor = null;
+            SelectedDeliveryPointContractor = null;
         }
 
-        public void BuyerCustomerSearch(object obj = null)
+        private void SelectedBuyerCustomerClear(object obj = null)
         {
+            LinkedBuyerCustomer = null;
+            SelectedBuyerCustomer = null;
         }
 
-        public void BuyerCustomerResetInput(object obj = null)
+        private void SelectedSenderCustomerClear(object obj = null)
         {
+            LinkedSenderCustomer = null;
+            SelectedSenderCustomer = null;
+        }
+        
+        public void BuyerCustomerSearch(object obj = null) => Task.Factory.StartNew(() =>
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            BuyerCustomerResetInput();
+            if (!String.IsNullOrEmpty(BuyerCustomerSearchText))
+            {
+                var searchList = BuyerCustomerSearchText.ToUpper().Split(' ');
+                if (searchList.Count() > 0)
+                    foreach (var item in searchList)
+                    {
+                        var text = item ?? "";
+                        if (!String.IsNullOrEmpty(item))
+                            BuyerCustomersList
+                                = BuyerCustomersList.Where(x =>
+                                   (x.Id?.ToUpper()?.Contains(text) ?? false)
+                                || (x.Name?.ToUpper()?.Contains(text) ?? false)
+                                || (x.Address?.ToUpper()?.Contains(text) ?? false)
+                                ).ToList();
+                    }
+            }
+        });
+
+        public void SenderCustomerSearch(object obj = null) => Task.Factory.StartNew(() =>
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            SenderCustomerResetInput();
+            if (!String.IsNullOrEmpty(SenderCustomerSearchText))
+            {
+                var searchList = SenderCustomerSearchText.ToUpper().Split(' ');
+                if (searchList.Count() > 0)
+                    foreach (var item in searchList)
+                    {
+                        var text = item ?? "";
+                        if (!String.IsNullOrEmpty(item))
+                            SenderCustomersList
+                                = SenderCustomersList.Where(x =>
+                                   (x.Id?.ToUpper()?.Contains(text) ?? false)
+                                || (x.Name?.ToUpper()?.Contains(text) ?? false)
+                                || (x.Address?.ToUpper()?.Contains(text) ?? false)
+                                ).ToList();
+                    }
+            }
+        });
+
+        public void ClientSearch(object obj = null) => Task.Factory.StartNew(() =>
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            ClientResetInput();
+            if (!String.IsNullOrEmpty(ClientSearchText))
+            {
+                var searchList = ClientSearchText.ToUpper().Split(' ');
+                if (searchList.Count() > 0)
+                    foreach (var item in searchList)
+                    {
+                        var text = item ?? "";
+                        if (!String.IsNullOrEmpty(item))
+                            ClientsList
+                                = ClientsList.Where(x =>
+                                   (x.BUYER_CUSTOMER?.ToUpper()?.Contains(text) ?? false)
+                                || (x.BUYER_CUSTOMER_ID?.ToUpper()?.Contains(text) ?? false)
+                                || (x.BUYER_GLN?.ToUpper()?.Contains(text) ?? false)
+                                || (x.BUYER_NAME?.ToUpper()?.Contains(text) ?? false)                                
+                                || (x.DELIVERY_POINT_CONTRACTOR?.ToUpper()?.Contains(text) ?? false)
+                                || (x.DELIVERY_POINT_CONTRACTOR_ID?.ToUpper()?.Contains(text) ?? false)
+                                || (x.DELIVERY_POINT_GLN?.ToUpper()?.Contains(text) ?? false)
+                                || (x.DELIVERY_POINT_NAME?.ToUpper()?.Contains(text) ?? false)                                
+                                || (x.SENDER_CUSTOMER?.ToUpper()?.Contains(text) ?? false)
+                                || (x.SENDER_CUSTOMER_ID?.ToUpper()?.Contains(text) ?? false)
+                                || (x.SENDER_GLN?.ToUpper()?.Contains(text) ?? false)
+                                ).ToList();
+                    }
+            }
+            UpdateGroupView();
+        });
+
+        public void DeliveryPointContractorSearch(object obj = null) => Task.Factory.StartNew(() =>
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            DeliveryPointContractorResetInput();
+            if (!String.IsNullOrEmpty(DeliveryPointContractorSearchText))
+            {
+                var searchList = DeliveryPointContractorSearchText.ToUpper().Split(' ');
+                if (searchList.Count() > 0)
+                    foreach (var item in searchList)
+                    {
+                        var text = item ?? "";
+                        if (!String.IsNullOrEmpty(item))
+                            DeliveryPointContractorsList 
+                                = DeliveryPointContractorsList.Where(x =>
+                                (x.Address?.ToUpper()?.Contains(text) ?? false)
+                                || (x.Name?.ToUpper()?.Contains(text) ?? false)
+                                ||(x.Id?.ToUpper()?.Contains(text) ?? false)
+                                ).ToList();
+                    }
+            }
+        });
+
+        public void ClientResetInput(object obj = null) { GetClients(); }
+        public void DeliveryPointContractorResetInput(object obj = null) { GetDelivery(); }
+        public void BuyerCustomerResetInput(object obj = null) {GetBuyers(); }
+        public void SenderCustomerResetInput(object obj = null) { GetSenders(); }
+
+
+        public void Save(object obj = null)
+        {
+            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+
+            double eval1 = double.Parse(SenderGln);
+
+            LinkedSenderCustomer = SelectedSenderCustomer;
+            LinkedBuyerCustomer = SelectedBuyerCustomer;
+            LinkedDeliveryPointContractor = SelectedDeliveryPointContractor;
+
+            try
+            {
+                DbService.ExecuteCommand(new OracleCommand()
+                {
+                    Parameters =
+                        {
+                            new OracleParameter("P_SENDER_GLN", OracleDbType.NVarChar,SenderGln, ParameterDirection.Input),
+                            new OracleParameter("P_BUYER_GLN", OracleDbType.NVarChar, BuyerGln, ParameterDirection.Input),
+                            new OracleParameter("P_DELIVERY_POINT_GLN", OracleDbType.NVarChar, DeliveryGln, ParameterDirection.Input),
+                            new OracleParameter("P_DELIVERY_POINT_NAME", OracleDbType.NVarChar, DeliveryAddress, ParameterDirection.Input),
+                            new OracleParameter("P_BUYER_NAME", OracleDbType.NVarChar, BuyerName, ParameterDirection.Input),
+                            new OracleParameter("P_SENDER_CUSTOMER_ID", OracleDbType.Number, LinkedSenderCustomer.Id, ParameterDirection.Input),
+                            new OracleParameter("P_BUYER_CUSTOMER_ID", OracleDbType.Number, LinkedBuyerCustomer.Id, ParameterDirection.Input),
+                            new OracleParameter("P_DELIVERY_POINT_CONTRACTOR_ID", OracleDbType.Number, LinkedDeliveryPointContractor.Id, ParameterDirection.Input),
+                        },
+                    Connection = OracleConnectionService.conn,
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = (AppConfig.Schema + ".") + "EDI_CHANGE_DELIVERY_POINT"
+                });
+                LoadData();
+            }
+            catch (Exception ex) { Utilites.Error(ex); }
         }
 
-        public void SenderCustomerSearch(object obj = null)
-        {
-        }
-
-        public void SenderCustomerResetInput(object obj = null)
-        {
-        }
-
-        public void ClientSearch(object obj = null)
-        {
-        }
-
-        public void ClientResetInput(object obj = null)
-        {
-        }
-
-        public void CommandServiceLoadData(object obj = null)
-        {
-        }
-
-        public void Remove(object obj = null)
-        {
-        }
+        public void Remove(object obj = null)              { }
 
         public void Edit(object obj = null)
         {
-            if((SenderCustomersList?.Count ?? 1) > 0) SenderCustomersList = DocumentRepository.GetList<Customer>(SqlService.GET_CUSTOMERS);             
-            if ((DeliveryPointContractorsList?.Count ?? 1) > 0) DeliveryPointContractorsList = DocumentRepository.GetList<Customer>(SqlService.GET_CONTRACTORS);
-            BuyerCustomersList = SenderCustomersList;
+            if(SelectedClient != null)
+            {
+                DeliveryAddress = SelectedClient.DELIVERY_POINT_NAME;
+                BuyerName = SelectedClient.BUYER_NAME;
 
-            if (!string.IsNullOrEmpty(SelectedClient.SENDER_CUSTOMER_ID))
-                SelectedSenderCustomer = SenderCustomersList.First(x=>x.Id == SelectedClient.SENDER_CUSTOMER_ID);
+                if (!string.IsNullOrEmpty(SelectedClient?.SENDER_CUSTOMER_ID))
+                {
+                    SenderGln = SelectedClient.SENDER_GLN;
+                    LinkedSenderCustomer = SenderCustomersList?.First(x => x.Id == SelectedClient?.SENDER_CUSTOMER_ID) ?? null;
+                    SelectedSenderCustomer = LinkedSenderCustomer;
+                }
+                else { SelectedSenderCustomer = null; LinkedSenderCustomer = null; }
 
-            if (!string.IsNullOrEmpty(SelectedClient.BUYER_CUSTOMER_ID))
-                SelectedBuyerCustomer = BuyerCustomersList.First(x => x.Id == SelectedClient.BUYER_CUSTOMER_ID);
+                if (!string.IsNullOrEmpty(SelectedClient?.BUYER_CUSTOMER_ID))
+                {
+                    BuyerGln = SelectedClient.BUYER_GLN;
+                    LinkedBuyerCustomer = SenderCustomersList?.First(x => x.Id == SelectedClient?.SENDER_CUSTOMER_ID) ?? null;
+                    SelectedBuyerCustomer = LinkedBuyerCustomer;
+                }
+                else { SelectedBuyerCustomer = null; LinkedBuyerCustomer = null; }
 
-            if (!string.IsNullOrEmpty(SelectedClient.DELIVERY_POINT_CONTRACTOR_ID))
-                SelectedDeliveryPointContractor = DeliveryPointContractorsList.First(x => x.Id == SelectedClient.DELIVERY_POINT_CONTRACTOR_ID);
+                if (!string.IsNullOrEmpty(SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID))
+                {
+                    DeliveryGln = SelectedClient.DELIVERY_POINT_GLN;
+                    LinkedDeliveryPointContractor = SenderCustomersList?.First(x => x.Id == SelectedClient?.SENDER_CUSTOMER_ID) ?? null;
+                    SelectedDeliveryPointContractor = LinkedDeliveryPointContractor;
+                }
+                else { SelectedDeliveryPointContractor = null; LinkedDeliveryPointContractor = null; }
+            }
         }
-        
 
         public void LoadData(object obj = null)
         {
             LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            ClientsList = DocumentRepository.GetList<Client>(SqlService.GET_CLIENTS);
-            ClientsGroupList = new ListCollectionView(ClientsList);
-            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("SENDER_GLN"));
-            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("BUYER_GLN"));
+            GetClients();
+            GetBuyers();
+            GetDelivery();
+        }
 
+        private void GetSenders() => SenderCustomersList = DocumentRepository.GetList<Customer>(SqlService.GET_CUSTOMERS);
+        private void GetDelivery() => DeliveryPointContractorsList = DocumentRepository.GetList<Customer>(SqlService.GET_CONTRACTORS);
+        private void GetBuyers()
+        {
+            GetSenders();
+            BuyerCustomersList = SenderCustomersList;
+        }
+        private void GetClients()
+        {
+            ClientsList = DocumentRepository.GetList<Client>(SqlService.GET_CLIENTS);
+            UpdateGroupView();
+        }
+
+        private void UpdateGroupView()
+        {
+            ClientsGroupList = new ListCollectionView(ClientsList);
+            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("SENDER_CUSTOMER"));
+            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("BUYER_CUSTOMER"));
         }
 
     }

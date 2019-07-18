@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace EdiClient.Model
 {
@@ -27,7 +28,7 @@ namespace EdiClient.Model
         public string DOC_DATETIME { get; set; }
         public string ACT_STATUS { get; set; }
         public string CONTRACTOR_MANE { get; set; }
-
+        
         public string DocumentType
         {
             get
@@ -48,7 +49,8 @@ namespace EdiClient.Model
         public bool IsOrdrsp => !string.IsNullOrEmpty(ORDRSP) && !IsFailed;
         public bool IsDesadv => !string.IsNullOrEmpty(DESADV) && !IsFailed;
         //public bool IsRecadv => !string.IsNullOrEmpty(RECADV) ? true : false;
-
+        
+        public int DetailsCount => Details?.Count ?? 0;
         public List<Detail> Details { get; set; }
     }
 }

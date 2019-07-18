@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
       xmlns:local="clr-namespace:EdiClient.View"
       xmlns:conv="clr-namespace:EdiClient.Services.Converters"
       mc:Ignorable="d" 
@@ -16,7 +17,7 @@
         <Style x:Key="ControlButtons">
             <Setter Property="Control.BorderBrush" Value="Transparent" />
             <Setter Property="Control.Background" Value="Transparent" />
-            <Setter Property="Control.Margin" Value="2,2" />
+            <Setter Property="Control.Margin" Value="5,0,0,0" />
             <Setter Property="Control.BorderThickness" Value="0" />
         </Style>
         
@@ -31,32 +32,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="190"/>
-                <ColumnDefinition Width="190"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <DatePicker Grid.Column="0" Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            
+        <StackPanel Orientation="Horizontal">
+            <DatePicker Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                          SelectedDateFormat="Long" DisplayDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                         VerticalContentAlignment="Center" FontSize="17"/>
 
-            <DatePicker Grid.Column="1" Name="DateToOrdersDatePicker" SelectedDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+            <DatePicker Name="DateToOrdersDatePicker" SelectedDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                         SelectedDateFormat="Long" DisplayDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  
                         VerticalContentAlignment="Center" FontSize="17" Style="{StaticResource ControlButtons}"/>
 
-            <Button Grid.Column="2" ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
+            <Button ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
                     Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}">
-                <Image Source="~\..\..\Images\prev-day.png" Margin="-1" >
+                <Image Source="~\..\..\Images\left.png" >
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -72,9 +61,9 @@
                 </Image>
             </Button>
 
-            <Button Grid.Column="3" ToolTip="Следующий день"  Style="{StaticResource ControlButtons}"
+            <Button ToolTip="Следующий день"  Style="{StaticResource ControlButtons}"
                     Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}">
-                <Image Source="~\..\..\Images\next-day.png" Margin="-1" >
+                <Image Source="~\..\..\Images\right.png" >
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -90,9 +79,9 @@
                 </Image>
             </Button>
            
-            <Button Grid.Column="4" ToolTip="Обновить" Style="{StaticResource ControlButtons}"
+            <Button ToolTip="Обновить" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Command="{Binding GetDocumentsCommand}">
-                <Image Source="~\..\..\Images\refresh-50.png" Margin="-1">
+                <Image Source="~\..\..\Images\refresh.png">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -108,9 +97,9 @@
                 </Image>
             </Button>
 
-            <Button Grid.Column="6" ToolTip="Создать документ в трейдере" Style="{StaticResource ControlButtons}"
+            <Button ToolTip="Создать документ в трейдере" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding SelectedDocument.IsReadyToTrader}" Command="{Binding ToTraderCommand}">
-                <Image Source="~\..\..\Images\to-trader-50.png" Margin="-1">
+                <Image Source="~\..\..\Images\add.png">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -126,9 +115,9 @@
                 </Image>
             </Button>
 
-            <Button Grid.Column="7" ToolTip="Отправить ответ на заказ" Style="{StaticResource ControlButtons}"
+            <Button ToolTip="Отправить ответ на заказ" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding SelectedDocument.IsReadyToOrdrsp}" Command="{Binding SendORDRSPCommand}">
-                <Image Source="~\..\..\Images\send-ordrsp-50.png" Margin="-1">
+                <Image Source="~\..\..\Images\upload.png">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -144,9 +133,9 @@
                 </Image>
             </Button>
 
-            <Button Grid.Column="8" ToolTip="Отправить уведомление об отгрузке" Style="{StaticResource ControlButtons}"
+            <Button ToolTip="Отправить уведомление об отгрузке" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding SelectedDocument.IsReadyToDesadv}" Command="{Binding SendDESADVCommand}">
-                <Image Source="~\..\..\Images\send-desadv-50.png" Margin="-1">
+                <Image Source="~\..\..\Images\car.png">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -162,8 +151,8 @@
                 </Image>
             </Button>
 
-            <Button Grid.Column="10" ToolTip="Забарать документы с платформы EDISOFT" Style="{StaticResource ControlButtons}" Command="{Binding GetEDIDOCCommand}">
-                <Image Source="~\..\..\Images\get-orders-50.png" Margin="-1">
+            <Button ToolTip="Забарать документы с платформы EDISOFT" Style="{StaticResource ControlButtons}" Command="{Binding GetEDIDOCCommand}">
+                <Image Source="~\..\..\Images\download.png">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -179,65 +168,60 @@
                 </Image>
             </Button>
 
-            <Label Grid.Column="11" Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
-        </Grid>
-
-
-
-        <DataGrid Name="DocumentsDataGrid"  PresentationTraceSources.TraceLevel="High"
+        </StackPanel>
+        
+            <Label Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
+        </StackPanel>
+        
+        <dxg:GridControl Name="DocumentsDataGrid"
                   ItemsSource="{Binding Path=Documents}"
                   SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                  SelectionMode="Single"
                   Grid.Column="0"                   
-                  Grid.Row="1" 
-                  Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False"  >
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReadyToTrader}" Value="False">
-                            <Setter Property="Background" Value="White"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsInTrader}" Value="True">
-                            <Setter Property="Background" Value="LightGray"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsReadyToOrdrsp}" Value="True">
-                            <Setter Property="Background" Value="#ede"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsOrdrsp}" Value="True">
-                            <Setter Property="Background" Value="CornflowerBlue"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsReadyToDesadv}" Value="True">
-                            <Setter Property="Background" Value="#dec"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsDesadv}" Value="True">
-                            <Setter Property="Background" Value="GreenYellow"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsFailed}" Value="True">
-                            <Setter Property="Background" Value="OrangeRed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ID}" Header="ID док."/>
-                <DataGridTextColumn Binding="{Binding CODE}" Header="Код"/>
-                <DataGridTextColumn Binding="{Binding ACT_STATUS}" Header="Статус"/>
-                <DataGridTextColumn Binding="{Binding CONTRACTOR_MANE}" Header="Заказчик"/>
-                <DataGridTextColumn Binding="{Binding ORDER_NUMBER}" Header="Заказ"/>
-                <DataGridTextColumn Binding="{Binding ORDER_DATE}" Header="Дата заказа"/>
-                <DataGridTextColumn Binding="{Binding DOC_DATETIME}" Header="Дата создания в трейдере"/>
-                <DataGridTextColumn Binding="{Binding EXPECTED_DELIVERY_DATE}" Header="Дата доставки"/>
-                <DataGridTextColumn Binding="{Binding ORDRSP}" Header=" Дата ответа на заказ"/>
-                <DataGridTextColumn Binding="{Binding DESADV}" Header="Дата увед. об отгрузке"/>
-                <DataGridTextColumn Binding="{Binding TOTAL_GROSS_AMOUNT, Converter={StaticResource MoneyStringConverter}}" Header="Сумма заказа"/>
-                <DataGridTextColumn Binding="{Binding Details.Count}" Header="Кол-во позиций"/>
-                <DataGridTextColumn Binding="{Binding REMARKS}" Width="*" Header="Пометки"/>
-            </DataGrid.Columns>
-
-        </DataGrid>
-
-        <DataGrid Name="DocumentDetailsDataGrid"  PresentationTraceSources.TraceLevel="High"     
+                  Grid.Row="1" >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="ID" Header="ID док."/>
+                <dxg:GridColumn FieldName="CODE" Header="Код"/>
+                <dxg:GridColumn FieldName="ACT_STATUS" Header="Статус"/>
+                <dxg:GridColumn FieldName="CONTRACTOR_MANE" Header="Заказчик"/>
+                <dxg:GridColumn FieldName="ORDER_NUMBER" Header="Заказ"/>
+                <dxg:GridColumn FieldName="ORDER_DATE" Header="Дата заказа"/>
+                <dxg:GridColumn FieldName="DOC_DATETIME" Header="Дата создания в трейдере"/>
+                <dxg:GridColumn FieldName="EXPECTED_DELIVERY_DATE" Header="Дата доставки"/>
+                <dxg:GridColumn FieldName="ORDRSP" Header=" Дата ответа на заказ"/>
+                <dxg:GridColumn FieldName="DESADV" Header="Дата увед. об отгрузке"/>
+                <dxg:GridColumn FieldName="TOTAL_GROSS_AMOUNT, Converter={StaticResource MoneyStringConverter" Header="Сумма заказа"/>
+                <dxg:GridColumn FieldName="Details.Count" Header="Кол-во позиций"/>
+                <dxg:GridColumn FieldName="REMARKS" Header="Пометки"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+        
+        
+<dxg:GridControl Name="DocumentDetailsDataGrid"  PresentationTraceSources.TraceLevel="High"     
+                              ItemsSource="{Binding Path=SelectedDocument.Details}"
+                              Grid.Column="0"                   
+                              Grid.Row="3" 
+                              Grid.IsSharedSizeScope="True" >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="ID_GOOD" Header="Наш id товара"/>
+                <dxg:GridColumn FieldName="EAN" Header="Штрих-код"/>
+                <dxg:GridColumn FieldName="BUYER_ITEM_CODE" Header="Код товара клиента"/>
+                <dxg:GridColumn FieldName="TAX_RATE" Header="%НДС"/>
+                <dxg:GridColumn FieldName="ITEM_DESCRIPTION" Header="Наименовение"/>
+                <dxg:GridColumn FieldName="GrossAmount" Header="Сумма с НДС"/>
+                <dxg:GridColumn FieldName="NetAmount" Header="Сумма"/>
+                <dxg:GridColumn FieldName="PRICE" Header="Цена к отправке"/>
+                <dxg:GridColumn FieldName="ORDERED_UNIT_GROSS_PRICE" Header="Цена в заказе"/>
+                <dxg:GridColumn FieldName="QUANTITY" Header="Кол-во к отправке"/>
+                <dxg:GridColumn FieldName="ORDERED_QUANTITY" Header="Кол-во в заказе"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+        <!--<DataGrid Name="DocumentDetailsDataGrid"  PresentationTraceSources.TraceLevel="High"     
                               ItemsSource="{Binding Path=SelectedDocument.Details}"
                               SelectionMode="Single"
                               Grid.Column="0"                   
@@ -267,7 +251,7 @@
                 <DataGridTextColumn Binding="{Binding QUANTITY}" FontWeight="Bold" Header="Кол-во к отправке"/>
                 <DataGridTextColumn Binding="{Binding ORDERED_QUANTITY}" Header="Кол-во в заказе"/>
             </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>-->
 
     </Grid>
 </Page> 

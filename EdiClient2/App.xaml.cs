@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows;
+using DevExpress.Xpf.Core;
 using EdiClient.AppSettings;
 using EdiClient.Services;
 
@@ -25,6 +26,8 @@ namespace EdiClient
             LogService.Log("========== END INIT APPLICATION ==========");
 
             AppConfig.EnableLogging = LogState; // и возвращаем то что было до принудительного включения
+            
+            
         }
         
     }

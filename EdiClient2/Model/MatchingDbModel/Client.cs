@@ -15,5 +15,12 @@ namespace EdiClient.Model.MatchingDbModel
         public string SENDER_CUSTOMER_ID { get; set; }
         public string BUYER_CUSTOMER_ID { get; set; }
         public string DELIVERY_POINT_CONTRACTOR_ID { get; set; }
+        public string SENDER_CUSTOMER { get; set; }
+        public string BUYER_CUSTOMER { get; set; }
+        public string DELIVERY_POINT_CONTRACTOR { get; set; }   
     }
 }
+
+
+
+    

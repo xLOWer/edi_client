@@ -25,7 +25,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26"/>
-            <RowDefinition Height="26"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="22"/>
         </Grid.RowDefinitions>
@@ -33,40 +33,47 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <Menu Name="TopMenu1" Grid.Column="0" Grid.Row="0" Grid.IsSharedSizeScope="True">
+            <MenuItem  x:Name="CommonSettings" Header="Настройки" Command="{Binding OpenCommonSettingsCommand}" >
+                <MenuItem.Icon>
+                    <Image Source="~\..\Images\config.png"/>
+                </MenuItem.Icon>
+            </MenuItem>
 
+            <MenuItem Header="Информация">
+                <MenuItem.Icon>
+                    <Image Source="~\..\Images\info.png"/>
+                </MenuItem.Icon>
 
-        <Menu Name="TopMenu1" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0"  Grid.IsSharedSizeScope="True">
-            <MenuItem Header="Настройки"  x:Name="CommonSettings" Command="{Binding OpenCommonSettingsCommand}" />
-            <MenuItem Header="О программе">
-                <MenuItem x:Name="License" Header="Лицензия" Click="License_Click" />
-                <MenuItem x:Name="About" Header="О программе" Click="About_Click"/>
+                <MenuItem x:Name="License" Header="Лицензия" Click="License_Click">
+                    <MenuItem.Icon>
+                        <Image Source="~\..\Images\license.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem x:Name="About" Header="О программе" Click="About_Click">
+                    <MenuItem.Icon>
+                        <Image Source="~\..\Images\info.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="26"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="390"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="250"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="2">
+            <Label Content="Выбранный клиент:"/>
             <ComboBox ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
                         SelectedIndex="0" BorderThickness="0" Background="Transparent" Grid.Column="0"
                         SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
-                        DisplayMemberPath="Name" x:Name="RelationshipsComboBox"
+                        DisplayMemberPath="Name" x:Name="RelationshipsComboBox" Width="600"
                         SelectedValuePath="Name"/>
 
-            <Button ToolTip="Обновить список контрагентов" Grid.Column="1" Margin="2,2" BorderBrush="Transparent" Background="Transparent" BorderThickness="0"
+                <Button ToolTip="Обновить список контрагентов" BorderBrush="Transparent" Background="Transparent" BorderThickness="0"
                     Command="{Binding RefreshRelationshipsCommand}" CommandParameter="{Binding ElementName=RelationshipsComboBox}">
-                <Image Source="~\..\Images\refresh-50.png" Margin="-1"/>                
-            </Button>
-            <!--<Label Content="- нажми если нет нужного клиента" Grid.Column="2"/>-->
-        </Grid>
-
-
+                    <Image Source="~\..\Images\refresh.png" Margin="-1"/>
+                </Button>
+            </StackPanel>
+            
 
         <TabControl Name="MainTabControl" Grid.Row="2" BorderBrush="Transparent" BorderThickness="0"
                     ItemsSource="{Binding Source={x:Static services:TabService.Tabs}}"
