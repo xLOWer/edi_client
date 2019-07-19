@@ -29,10 +29,11 @@ namespace EdiClient.View
             DataContext = Context;
             InitializeComponent();
         }
-
-        private void ClientsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
+        private void ClientsGridControlTableView_SelectedItemChanged(object sender, DevExpress.Xpf.Grid.SelectedItemChangedEventArgs e)
         {
             Context.Edit();
+
         }
     }
 }

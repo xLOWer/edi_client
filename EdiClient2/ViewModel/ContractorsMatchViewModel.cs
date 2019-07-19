@@ -32,16 +32,11 @@ namespace EdiClient.ViewModel
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string clientsearchtext { get; set; }
-        private string buyercustomersearchtext { get; set; }
-        private string sendercustomersearchtext { get; set; }
-        private string deliverypointcontractorsearchtext { get; set; }
         private Client selectedclient { get; set; }
         private List<Client> clientslist { get; set; }
         private List<Customer> sendercustomerslist { get; set; }
         private List<Customer> buyercustomerslist { get; set; }
         private List<Customer> deliverypointcontractorslist { get; set; }
-        private ListCollectionView clientsgrouplist { get; set; }
         private Customer linkeddeliverypointcontractor { get; set; }
         private Customer linkedbuyercustomer { get; set; }
         private Customer linkedsendercustomer { get; set; }
@@ -103,48 +98,7 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("DeliveryGln");
             }
         }
-
-
-        public string ClientSearchText
-        {
-            get { return clientsearchtext; }
-            set
-            {
-                clientsearchtext = value;
-                RaiseNotifyPropertyChanged("ClientSearchText");
-            }
-        }
-
-        public string BuyerCustomerSearchText
-        {
-            get { return buyercustomersearchtext; }
-            set
-            {
-                buyercustomersearchtext = value;
-                RaiseNotifyPropertyChanged("BuyerCustomerSearchText");
-            }
-        }
-
-        public string SenderCustomerSearchText
-        {
-            get { return sendercustomersearchtext; }
-            set
-            {
-                sendercustomersearchtext = value;
-                RaiseNotifyPropertyChanged("SenderCustomerSearchText");
-            }
-        }
-
-        public string DeliveryPointContractorSearchText
-        {
-            get { return deliverypointcontractorsearchtext; }
-            set
-            {
-                deliverypointcontractorsearchtext = value;
-                RaiseNotifyPropertyChanged("DeliveryPointContractorSearchText");
-            }
-        }
-
+        
         public Customer SelectedBuyerCustomer
         {
             get { return selectedbuyercustomer; }
@@ -194,17 +148,7 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("ClientsList");
             }
         }
-
-        public ListCollectionView ClientsGroupList
-        {
-            get { return clientsgrouplist; }
-            set
-            {
-                clientsgrouplist = value;
-                RaiseNotifyPropertyChanged("ClientsGroupList");
-            }
-        }
-
+        
         public List<Customer> SenderCustomersList
         {
             get { return sendercustomerslist; }
@@ -267,18 +211,8 @@ namespace EdiClient.ViewModel
 
         public CommandService SelectedDeliveryPointContractorClearCommand => new CommandService(SelectedDeliveryPointContractorClear);
         public CommandService SelectedBuyerCustomerClearCommand => new CommandService(SelectedBuyerCustomerClear);
-        public CommandService SelectedSenderCustomerClearCommand => new CommandService(SelectedSenderCustomerClear);
-
-        public CommandService DeliveryPointContractorSearchCommand => new CommandService(DeliveryPointContractorSearch);
-        public CommandService BuyerCustomerSearchCommand => new CommandService(BuyerCustomerSearch);
-        public CommandService SenderCustomerSearchCommand => new CommandService(SenderCustomerSearch);
-        public CommandService ClientSearchCommand => new CommandService(ClientSearch);
-
-        public CommandService DeliveryPointContractorResetInputCommand => new CommandService(DeliveryPointContractorResetInput);
-        public CommandService BuyerCustomerResetInputCommand => new CommandService(BuyerCustomerResetInput);
-        public CommandService SenderCustomerResetInputCommand => new CommandService(SenderCustomerResetInput);
-        public CommandService ClientResetInputCommand => new CommandService(ClientResetInput);
-
+        public CommandService SelectedSenderCustomerClearCommand => new CommandService(SelectedSenderCustomerClear);        
+        
         public CommandService LoadDataCommand => new CommandService(LoadData);
         public CommandService RemoveCommand => new CommandService(Remove);
         public CommandService EditCommand => new CommandService(Edit);
@@ -312,110 +246,7 @@ namespace EdiClient.ViewModel
             LinkedSenderCustomer = null;
             SelectedSenderCustomer = null;
         }
-        
-        public void BuyerCustomerSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            BuyerCustomerResetInput();
-            if (!String.IsNullOrEmpty(BuyerCustomerSearchText))
-            {
-                var searchList = BuyerCustomerSearchText.ToUpper().Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                    {
-                        var text = item ?? "";
-                        if (!String.IsNullOrEmpty(item))
-                            BuyerCustomersList
-                                = BuyerCustomersList.Where(x =>
-                                   (x.Id?.ToUpper()?.Contains(text) ?? false)
-                                || (x.Name?.ToUpper()?.Contains(text) ?? false)
-                                || (x.Address?.ToUpper()?.Contains(text) ?? false)
-                                ).ToList();
-                    }
-            }
-        });
-
-        public void SenderCustomerSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            SenderCustomerResetInput();
-            if (!String.IsNullOrEmpty(SenderCustomerSearchText))
-            {
-                var searchList = SenderCustomerSearchText.ToUpper().Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                    {
-                        var text = item ?? "";
-                        if (!String.IsNullOrEmpty(item))
-                            SenderCustomersList
-                                = SenderCustomersList.Where(x =>
-                                   (x.Id?.ToUpper()?.Contains(text) ?? false)
-                                || (x.Name?.ToUpper()?.Contains(text) ?? false)
-                                || (x.Address?.ToUpper()?.Contains(text) ?? false)
-                                ).ToList();
-                    }
-            }
-        });
-
-        public void ClientSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            ClientResetInput();
-            if (!String.IsNullOrEmpty(ClientSearchText))
-            {
-                var searchList = ClientSearchText.ToUpper().Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                    {
-                        var text = item ?? "";
-                        if (!String.IsNullOrEmpty(item))
-                            ClientsList
-                                = ClientsList.Where(x =>
-                                   (x.BUYER_CUSTOMER?.ToUpper()?.Contains(text) ?? false)
-                                || (x.BUYER_CUSTOMER_ID?.ToUpper()?.Contains(text) ?? false)
-                                || (x.BUYER_GLN?.ToUpper()?.Contains(text) ?? false)
-                                || (x.BUYER_NAME?.ToUpper()?.Contains(text) ?? false)                                
-                                || (x.DELIVERY_POINT_CONTRACTOR?.ToUpper()?.Contains(text) ?? false)
-                                || (x.DELIVERY_POINT_CONTRACTOR_ID?.ToUpper()?.Contains(text) ?? false)
-                                || (x.DELIVERY_POINT_GLN?.ToUpper()?.Contains(text) ?? false)
-                                || (x.DELIVERY_POINT_NAME?.ToUpper()?.Contains(text) ?? false)                                
-                                || (x.SENDER_CUSTOMER?.ToUpper()?.Contains(text) ?? false)
-                                || (x.SENDER_CUSTOMER_ID?.ToUpper()?.Contains(text) ?? false)
-                                || (x.SENDER_GLN?.ToUpper()?.Contains(text) ?? false)
-                                ).ToList();
-                    }
-            }
-            UpdateGroupView();
-        });
-
-        public void DeliveryPointContractorSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            DeliveryPointContractorResetInput();
-            if (!String.IsNullOrEmpty(DeliveryPointContractorSearchText))
-            {
-                var searchList = DeliveryPointContractorSearchText.ToUpper().Split(' ');
-                if (searchList.Count() > 0)
-                    foreach (var item in searchList)
-                    {
-                        var text = item ?? "";
-                        if (!String.IsNullOrEmpty(item))
-                            DeliveryPointContractorsList 
-                                = DeliveryPointContractorsList.Where(x =>
-                                (x.Address?.ToUpper()?.Contains(text) ?? false)
-                                || (x.Name?.ToUpper()?.Contains(text) ?? false)
-                                ||(x.Id?.ToUpper()?.Contains(text) ?? false)
-                                ).ToList();
-                    }
-            }
-        });
-
-        public void ClientResetInput(object obj = null) { GetClients(); }
-        public void DeliveryPointContractorResetInput(object obj = null) { GetDelivery(); }
-        public void BuyerCustomerResetInput(object obj = null) {GetBuyers(); }
-        public void SenderCustomerResetInput(object obj = null) { GetSenders(); }
-
-
+         
         public void Save(object obj = null)
         {
             LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
@@ -503,15 +334,8 @@ namespace EdiClient.ViewModel
         private void GetClients()
         {
             ClientsList = DocumentRepository.GetList<Client>(SqlService.GET_CLIENTS);
-            UpdateGroupView();
         }
-
-        private void UpdateGroupView()
-        {
-            ClientsGroupList = new ListCollectionView(ClientsList);
-            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("SENDER_CUSTOMER"));
-            ClientsGroupList.GroupDescriptions.Add(new PropertyGroupDescription("BUYER_CUSTOMER"));
-        }
+        
 
     }
 }

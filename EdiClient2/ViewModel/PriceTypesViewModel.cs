@@ -4,13 +4,8 @@ using EdiClient.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows;
-using System.Linq;
 using System.Data;
-using System.Threading.Tasks;
 using EdiClient.View;
-using System.Windows.Controls;
-using System.Windows.Media;
 using static EdiClient.Model.WebModel.RelationResponse;
 using EdiClient.AppSettings;
 using System.Reflection;
@@ -58,29 +53,6 @@ namespace EdiClient.ViewModel
             }
         }
           
-
-        private string priceTypeSearchText = "";
-        public string PriceTypeSearchText
-        {
-            get { return priceTypeSearchText; }
-            set
-            {
-                priceTypeSearchText = value;
-                RaiseNotifyPropertyChanged( "PriceTypeSearchText" );
-            }
-        }
-        
-        private string matchSearchText = "";
-        public string MatchSearchText
-        {
-            get { return matchSearchText; }
-            set
-            {
-                matchSearchText = value;
-                RaiseNotifyPropertyChanged( "MatchSearchText" );
-            }
-        }
-        
         private List<PriceType> priceTypeList = new List<PriceType>();
         public List<PriceType> PriceTypeList
         {
@@ -105,13 +77,9 @@ namespace EdiClient.ViewModel
 
         private bool HelpMode { get; set; } = false;
         
-        public CommandService MatchSearchCommand => new CommandService( MatchSearch );
-        public CommandService PriceTypeSearchCommand => new CommandService( PriceTypeSearch );
         public CommandService LoadDataCommand => new CommandService( LoadData );
         public CommandService MakeMatchingCommand => new CommandService( MakeMatching );
         public CommandService DisposeMatchingCommand => new CommandService( DisposeMatching );
-        public CommandService MatchResetInputCommand => new CommandService( MatchResetInput );
-        public CommandService PriceTypesResetInputCommand => new CommandService( PriceTypesResetInput );
 
         #endregion
 
@@ -185,57 +153,7 @@ namespace EdiClient.ViewModel
             }
             catch (Exception ex) { Utilites.Error( ex ); }
         }
-                        
-
-        public void MatchSearch(object obj = null) =>
-            Task.Factory.StartNew( () =>
-            {
-                LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-                MatchResetInput();
-                if (!String.IsNullOrEmpty(MatchSearchText))
-                {
-                    var searchList = MatchSearchText.Split(' ');
-                    if (searchList.Count() > 0)
-                        foreach (var item in searchList)
-                            if (!String.IsNullOrEmpty(item))
-                            {
-                                var text = item?.ToUpper()?.Trim(' ') ?? "";
-                                MatchList = MatchList.Where(
-                                    x => (x.CUSTOMER_GLN?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.ID_PRICE_TYPE?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.INSERT_DATETIME?.ToUpper()?.Contains(text) ?? false)
-                                      || (x.NAME?.ToUpper()?.Contains(text) ?? false)
-                                ).ToList();
-                            }
-                }
-            } );
-        
-
-        public void PriceTypeSearch(object obj = null) =>        
-            Task.Factory.StartNew( () =>
-            {
-                LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-                PriceTypesResetInput();
-                if (!String.IsNullOrEmpty( PriceTypeSearchText ))
-                {
-                    var searchList = PriceTypeSearchText.Split( ' ' );
-                    if (searchList.Count() > 0)                    
-                        foreach (var item in searchList)                        
-                            if (!String.IsNullOrEmpty( item ))
-                            {
-                                var text = item?.ToUpper()?.Trim( ' ' ) ?? "";
-                                PriceTypeList = PriceTypeList.Where(
-                                    x => (x.NAME?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
-                                      || (x.ID?.ToUpper().Trim( ' ' ).Contains( text ) ?? false)
-                                ).ToList();
-                            }
-                }
-            } );
-
-        
-        public void MatchResetInput(object obj = null) => MatchList = GetMatchList();
-        public void PriceTypesResetInput(object obj = null) => PriceTypeList = GetPriceTypes();
-        
+                  
         private List<PriceType> GetPriceTypes()
         {
             LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");

@@ -121,40 +121,7 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("NewCustomerItemCode");
             }
         }
-
-        private string goodSearchText = "";
-        public string GoodSearchText
-        {
-            get { return goodSearchText; }
-            set
-            {
-                goodSearchText = value;
-                RaiseNotifyPropertyChanged("GoodSearchText");
-            }
-        }
-
-        private string failedGoodSearchText = "";
-        public string FailedGoodSearchText
-        {
-            get { return failedGoodSearchText; }
-            set
-            {
-                failedGoodSearchText = value;
-                RaiseNotifyPropertyChanged("FailedGoodSearchText");
-            }
-        }
-
-        private string matchesSearchText = "";
-        public string MatchesSearchText
-        {
-            get { return matchesSearchText; }
-            set
-            {
-                matchesSearchText = value;
-                RaiseNotifyPropertyChanged("MatchesSearchText");
-            }
-        }
-
+        
         private List<Goods> fullGoodsList = new List<Goods>();
 
         private List<Goods> goodsList = new List<Goods>();
@@ -189,19 +156,10 @@ namespace EdiClient.ViewModel
                 RaiseNotifyPropertyChanged("MatchesList");
             }
         }
-
-        private bool HelpMode { get; set; } = false;
-
-        //public CommandService NewMatchingCommand => new CommandService(NewMatching);
-        public CommandService FailedGoodSearchCommand => new CommandService(FailedGoodSearch);
-        public CommandService MatchesSearchCommand => new CommandService(MatchesSearch);
-        public CommandService GoodSearchCommand => new CommandService(GoodSearch);
+        
         public CommandService LoadDataCommand => new CommandService(LoadData);
         public CommandService MakeMatchingCommand => new CommandService(MakeMatching);
         public CommandService DisposeMatchingCommand => new CommandService(DisposeMatching);
-        public CommandService FailedGoodResetInputCommand => new CommandService(FailedGoodResetInput);
-        public CommandService MatchesResetInputCommand => new CommandService(MatchesResetInput);
-        public CommandService GoodResetInputCommand => new CommandService(GoodResetInput);
 
         #endregion
         
@@ -278,86 +236,7 @@ namespace EdiClient.ViewModel
             }
             catch (Exception ex) { Utilites.Error(ex); }
         }
-        
-
-        public void FailedGoodResetInput(object obj = null) => FailedGoodsList = GetFailedGoods();
-        public void MatchesResetInput(object obj = null) => MatchesList = GetMatchesList();
-        public void GoodResetInput(object obj = null) => GoodsList = GetGoods();
-
-
-        public void FailedGoodSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            FailedGoodResetInput();
-               if (!String.IsNullOrEmpty(FailedGoodSearchText))
-               {
-                   var searchList = FailedGoodSearchText.Split(' ');
-                   if (searchList.Count() > 0)
-                       foreach (var item in searchList)
-                       {
-                           var text = item?.ToUpper()?.Trim(' ') ?? "";
-                           if (!String.IsNullOrEmpty(item))
-                               FailedGoodsList = FailedGoodsList.Where(
-                                   x => (x.ITEM_DESCRIPTION?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.ORDER_NUMBER?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.ORDER_DATE?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.BUYER_ITEM_CODE?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.EAN?.ToUpper()?.Contains(text) ?? false)
-                               ).ToList();
-                       }
-               }
-           });
-
-
-        public void MatchesSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            MatchesResetInput();
-               if (!String.IsNullOrEmpty(MatchesSearchText))
-               {
-                   var searchList = MatchesSearchText.Split(' ');
-                   if (searchList.Count() > 0)
-                       foreach (var item in searchList)
-                           if (!String.IsNullOrEmpty(item))
-                           {
-                               var text = item?.ToUpper()?.Trim(' ') ?? "";
-                               MatchesList = MatchesList.Where(
-                                   x => (x.NAME?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.ID_GOOD?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.CUSTOMER_ARTICLE?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.BAR_CODE?.ToUpper()?.Contains(text) ?? false)
-                                     || (x.INSERT_DATETIME?.ToUpper()?.Contains(text) ?? false)
-                               ).ToList();
-                           }
-               }
-           });
-
-
-        public void GoodSearch(object obj = null) => Task.Factory.StartNew(() =>
-        {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            GoodsList = fullGoodsList;
-               if (!String.IsNullOrEmpty(GoodSearchText))
-               {
-                   var searchList = GoodSearchText.Split(' ');
-                   if (searchList.Count() > 0)
-                       foreach (var item in searchList)
-                           if (!String.IsNullOrEmpty(item))
-                           {
-                               var text = item?.ToUpper()?.Trim(' ') ?? "";
-                               GoodsList = GoodsList.Where(
-                                   x => (x.NAME?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.ID?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.MANUFACTURER?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.CODE?.ToUpper().Trim(' ').Contains(text) ?? false)
-                                     || (x.BAR_CODE?.ToUpper().Trim(' ').Contains(text) ?? false)
-                               ).ToList();
-                           }
-               }
-           });
-
-
-
+                
         private List<Goods> GetGoods()
         {
             LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");

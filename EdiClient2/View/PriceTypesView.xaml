@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EdiClient.View"
+      xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PriceTypesView">
@@ -15,101 +16,62 @@
             <Setter Property="Control.BorderThickness" Value="0" />
         </Style>
     </Page.Resources>
-    
+
     <Grid x:Name="mainPriceTypesMatchGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
             <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="45"/>
-            </Grid.RowDefinitions>
-            <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\refresh.png" Margin="-1"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Name="LoadDataButton" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\refresh.png"/>
             </Button>
-            <Button Grid.Column="1" ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\link_add.png" Margin="-1"/>
+            <Button ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\link_add.png"/>
             </Button>
-            <Button Grid.Column="2" ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\link_del.png" Margin="-1"/>
+            <Button ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\link_del.png"/>
             </Button>
-        </Grid>
+        </StackPanel>
 
-        <Label Grid.Row="1" Content="Список доступных типов цен" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding PriceTypeSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding PriceTypeSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding PriceTypeResetInputCommand, IsAsync=True}"/>
-        </Grid>
+        <Label Grid.Row="1" Content="Список цен TRADER" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
 
-        <DataGrid Name="PriceTypesDataGrid" 
+        <dxg:GridControl Name="PriceTypesDataGrid" 
                       ItemsSource="{Binding Path=PriceTypeList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
                       SelectedItem="{Binding Path=SelectedPriceType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"   
-                      SelectionMode="Single"
-                      Grid.Row="3" 
-                      Grid.IsSharedSizeScope="True" 
-                      AutoGenerateColumns="False" 
-                      SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ID}" Width="SizeToCells" Header="Id"/>
-                <DataGridTextColumn Binding="{Binding NAME}" Width="SizeToCells" Header="Наименовение"/>
-                <DataGridTextColumn Binding="{Binding COEF}" Width="*" Header="Коэфф."/>
-                <DataGridTextColumn Binding="{Binding CURRENCY_NAME}" Width="SizeToCells" Header="Валюта"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                      Grid.Row="2" 
+                      AutoGenerateColumns="None"  >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="ID" Header="Id"/>
+                <dxg:GridColumn FieldName="NAME" Header="Наименовение"/>
+                <dxg:GridColumn FieldName="COEF" Header="Коэфф."/>
+                <dxg:GridColumn FieldName="CURRENCY_NAME" Header="Валюта"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
 
+        <Label Grid.Row="3" Content="Список сопоставленных цен" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
 
-
-        <Label Grid.Row="4" Content="Список сопоставленных цен" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-        <Grid Grid.Row="5" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding MatchSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding MatchSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс"  Margin="2" Command="{Binding  MatchResetInputCommand, IsAsync=True}"/>
-        </Grid>
-        <DataGrid Name="MatchDataGrid" 
+        <dxg:GridControl Name="MatchDataGrid" 
                       ItemsSource="{Binding Path=MatchList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
                       SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                      SelectionMode="Single"
-                      Grid.Row="6"
-                      Grid.IsSharedSizeScope="True" 
-                      AutoGenerateColumns="False" 
-                      SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding CUSTOMER_GLN}" Width="SizeToCells" Header="ГЛН"/>
-                <DataGridTextColumn Binding="{Binding ID_PRICE_TYPE}" Width="SizeToCells" Header="Id цены"/>
-                <DataGridTextColumn Binding="{Binding INSERT_DATETIME}" Width="SizeToCells" Header="Дата добавления"/>
-                <DataGridTextColumn Binding="{Binding NAME}" Width="*" Header="Наименование"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-
+                      Grid.Row="4"
+                      AutoGenerateColumns="None"   >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="CUSTOMER_GLN" Header="ГЛН"/>
+                <dxg:GridColumn FieldName="ID_PRICE_TYPE" Header="Id цены"/>
+                <dxg:GridColumn FieldName="INSERT_DATETIME" Header="Дата добавления"/>
+                <dxg:GridColumn FieldName="NAME" Header="Наименование"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
     </Grid>
 </Page>

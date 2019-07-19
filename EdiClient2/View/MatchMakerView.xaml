@@ -3,8 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
       xmlns:local="clr-namespace:EdiClient.View"
       mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
       Title="MatchMaker">
     <Page.Resources>
         <Style x:Key="ControlButtons">
@@ -19,139 +21,96 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
             <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <Grid Grid.Row="0" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="45"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="45"/>
-            </Grid.RowDefinitions>
-
+        
+        <StackPanel Orientation="Horizontal">
             <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\refresh.png" Margin="-1"/> </Button>
+                <Image Source="~\..\..\Images\refresh.png"/> 
+            </Button>
+            <Button ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\link_add.png"/> 
+            </Button>
+            <Button ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\link_del.png"/> 
+            </Button>
+        </StackPanel>
 
-            <Button Grid.Column="1" ToolTip="Связать" Command="{Binding MakeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\link_add.png" Margin="-1"/> </Button>
-
-            <Button Grid.Column="2" ToolTip="Отвязать" Command="{Binding DisposeMatchingCommand}" Style="{StaticResource ControlButtons}">
-                <Image Source="~\..\..\Images\link_del.png" Margin="-1"/> </Button>
-            
-        </Grid>
+        <Label Grid.Row="1" Content="Каталог товаров TRADER" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
 
 
+        <dxg:GridControl Name="GoodsDataGrid" 
+                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                        
+                      Grid.Row="2"                        
+                      AutoGenerateColumns="None" >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="ID" Header="Id"/>
+                <dxg:GridColumn FieldName="NAME" Header="Наименование"/>
+                <dxg:GridColumn FieldName="BAR_CODE" Header="Штрих-код"/>
+                <dxg:GridColumn FieldName="GOOD_SIZE" Header="Размерность"/>
+                <dxg:GridColumn FieldName="MANUFACTURER" Header="Производитель"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
 
-        <Label Grid.Row="1" Content="Наши товары" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding GoodSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding GoodSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс" Margin="2" Command="{Binding GoodResetInputCommand, IsAsync=True}"/>
-        </Grid>
+        <Label Grid.Row="3" Content="Не сопоставленные товары" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
 
-        <DataGrid Name="GoodsDataGrid" 
-                      ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                      SelectionMode="Single"
-                      Grid.Row="3" 
-                      Grid.IsSharedSizeScope="True" 
-                      AutoGenerateColumns="False" 
-                      SelectionUnit="FullRow">
+
+        <dxg:GridControl Name="FailedGoodDataGrid" 
+                      ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                        
+                      Grid.Row="4"                       
+                      AutoGenerateColumns="None"  >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="ITEM_DESCRIPTION" Header="Наименование"/>
+                <dxg:GridColumn FieldName="EAN" Header="Штрих-код"/>
+                <dxg:GridColumn FieldName="BUYER_ITEM_CODE" Header="Код покупателя"/>
+                <dxg:GridColumn FieldName="ORDER_NUMBER" Header="номер заказа"/>
+                <dxg:GridColumn FieldName="ORDER_DATE" Header="Дата заказа"/>
+                <dxg:GridColumn FieldName="ID_EDI_DOC" Header="ID edi-документа"/>
+                <dxg:GridColumn FieldName="SENDER_ILN" Header="отправитель edi-документа"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+        
+        <Label Grid.Row="5" Content="Товары имеющие связь с нашими" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+
+        <dxg:GridControl Name="MatchesDataGrid" 
+                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                    
+                  Grid.Row="6"  
+                  Margin="5"                   
+                  AutoGenerateColumns="None"  >
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="CUSTOMER_GLN" Header="ГЛН"/>
+                <dxg:GridColumn FieldName="CUSTOMER_ARTICLE" Header="Код покупателя"/>
+                <dxg:GridColumn FieldName="ID_GOOD" Header="Код товара"/>
+                <dxg:GridColumn FieldName="BAR_CODE" Header="Штрх-код"/>
+                <dxg:GridColumn FieldName="NAME" Header="Наименование"/>
+                <dxg:GridColumn FieldName="INSERT_DATETIME" Header="Дата создания связи"/>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+        
+        <!--<DataGrid 
+                  >
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ID}" Header="Id"/>
-                <DataGridTextColumn Binding="{Binding NAME}" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding BAR_CODE}" Header="Штрих-код"/>
-                <DataGridTextColumn Binding="{Binding GOOD_SIZE}" Header="Размерность"/>
-                <DataGridTextColumn Binding="{Binding MANUFACTURER}" Header="Производитель"/>
             </DataGrid.Columns>
-        </DataGrid>
-
-
-
-
-        <Label Grid.Row="4" Content="Не сопоставленные товары" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-
-        <Grid Grid.Row="5" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding FailedGoodSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1" Content="искать" Margin="2" Command="{Binding FailedGoodSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс"  Margin="2" Command="{Binding  FailedGoodResetInputCommand, IsAsync=True}"/>
-        </Grid>
-        <DataGrid Name="FailedGoodDataGrid" 
-                      ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                      SelectionMode="Single"
-                      Grid.Row="6"
-                      Grid.IsSharedSizeScope="True" 
-                      AutoGenerateColumns="False" 
-                      SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ITEM_DESCRIPTION}" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding EAN}" Header="Штрих-код"/>
-                <DataGridTextColumn Binding="{Binding BUYER_ITEM_CODE}" Header="Код покупателя"/>
-                <DataGridTextColumn Binding="{Binding ORDER_NUMBER}" Header="номер заказа"/>
-                <DataGridTextColumn Binding="{Binding ORDER_DATE}" Header="Дата заказа"/>
-                <DataGridTextColumn Binding="{Binding ID_EDI_DOC}" Header="ID edi-документа"/>
-                <DataGridTextColumn Binding="{Binding SENDER_ILN}" Header="отправитель edi-документа"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-
-        <Label Grid.Row="7" Content="Товары имеющие связь с нашими" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-
-        <Grid Grid.Row="8" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="2" Text="{Binding MatchesSearchText, IsAsync=True}"/>
-            <Button Grid.Column="1"  Content="искать" Margin="2"  Command="{Binding MatchesSearchCommand, IsAsync=True}"/>
-            <Button Grid.Column="2" Content="сброс" Margin="2"  Command="{Binding  MatchesResetInputCommand, IsAsync=True}"/>
-        </Grid>
-        <DataGrid Name="MatchesDataGrid" 
-                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, IsAsync=True}"
-                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"  
-                  SelectionMode="Single"
-                  Grid.Row="9"  
-                  Margin="5"
-                  Grid.IsSharedSizeScope="True" 
-                  AutoGenerateColumns="False" 
-                  SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding CUSTOMER_GLN}" Width="SizeToCells" Header="ГЛН"/>
-                <DataGridTextColumn Binding="{Binding CUSTOMER_ARTICLE}" Width="SizeToCells" Header="Код покупателя"/>
-                <DataGridTextColumn Binding="{Binding ID_GOOD}" Width="SizeToCells" Header="Код товара"/>
-                <DataGridTextColumn Binding="{Binding BAR_CODE}" Width="SizeToCells" Header="Штрх-код"/> 
-                <DataGridTextColumn Binding="{Binding NAME}" Width="*" Header="Наименование"/>
-                <DataGridTextColumn Binding="{Binding INSERT_DATETIME}" Width="*" Header="Дата создания связи"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>-->
 
 
     </Grid>

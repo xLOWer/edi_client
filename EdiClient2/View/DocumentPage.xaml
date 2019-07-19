@@ -177,11 +177,13 @@
                   ItemsSource="{Binding Path=Documents}"
                   SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                   Grid.Column="0"                   
-                  Grid.Row="1" >
+                  Grid.Row="1" 
+                  >
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="ID" Header="ID док."/>
                 <dxg:GridColumn FieldName="CODE" Header="Код"/>
                 <dxg:GridColumn FieldName="ACT_STATUS" Header="Статус"/>
+                <dxg:GridColumn FieldName="DocumentType" Header="Тип"/>
                 <dxg:GridColumn FieldName="CONTRACTOR_MANE" Header="Заказчик"/>
                 <dxg:GridColumn FieldName="ORDER_NUMBER" Header="Заказ"/>
                 <dxg:GridColumn FieldName="ORDER_DATE" Header="Дата заказа"/>
@@ -194,16 +196,15 @@
                 <dxg:GridColumn FieldName="REMARKS" Header="Пометки"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True"/>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
         
         
-<dxg:GridControl Name="DocumentDetailsDataGrid"  PresentationTraceSources.TraceLevel="High"     
+<dxg:GridControl Name="DocumentDetailsDataGrid"   
                               ItemsSource="{Binding Path=SelectedDocument.Details}"
                               Grid.Column="0"                   
-                              Grid.Row="3" 
-                              Grid.IsSharedSizeScope="True" >
+                              Grid.Row="3">
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="ID_GOOD" Header="Наш id товара"/>
                 <dxg:GridColumn FieldName="EAN" Header="Штрих-код"/>
@@ -218,7 +219,17 @@
                 <dxg:GridColumn FieldName="ORDERED_QUANTITY" Header="Кол-во в заказе"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True"/>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always">
+                    <!--<dxg:TableView.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasDiffrence}" Value="True"> <Setter Property="Background" Value="#ff8"/> </DataTrigger>
+                        <DataTrigger Binding="{Binding IsNotmatched}" Value="True"> <Setter Property="Background" Value="#ffe1c4"/> </DataTrigger>
+                        <DataTrigger Binding="{Binding IsFailed}" Value="True"> <Setter Property="Background" Value="#ff9696"/> </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+                    </dxg:TableView.RowStyle>-->
+                </dxg:TableView>
             </dxg:GridControl.View>
         </dxg:GridControl>
         <!--<DataGrid Name="DocumentDetailsDataGrid"  PresentationTraceSources.TraceLevel="High"     
