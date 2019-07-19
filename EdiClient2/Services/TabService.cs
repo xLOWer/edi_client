@@ -28,9 +28,13 @@ namespace EdiClient.Services
         public static void NewTab(Type view, string title = null)
         {
             if (view == null) return;
+            EdiClient.Services.LogService.Log($"[INIT-TabViewModel] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             var newTab = new TabViewModel();
-             newTab = new TabViewModel(view, title);
+            EdiClient.Services.LogService.Log($"[INIT-TabViewModel] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            newTab = new TabViewModel(view, title);
+            EdiClient.Services.LogService.Log($"[INIT-.Add(newTab)] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Tabs.Add(newTab);
+            EdiClient.Services.LogService.Log($"[INIT-Update] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Update();
         }
         

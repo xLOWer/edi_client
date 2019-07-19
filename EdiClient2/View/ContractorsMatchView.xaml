@@ -26,21 +26,26 @@
 
     <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="5*"/>
             <RowDefinition Height="4*"/>
-            <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
                 <Image Source="~\..\..\Images\refresh.png" />
             </Button>
-            <Button Name="AddDataButton" Grid.Column="1" ToolTip="Добавить новый" Command="{Binding AddNewCommand}" Style="{StaticResource ControlButtons}">
+            <Button Name="AddDataButton" Grid.Column="1" ToolTip="Добавить новую строку" Command="{Binding AddNewCommand}" Style="{StaticResource ControlButtons}">
                 <Image Source="~\..\..\Images\add.png" />
             </Button>
+            <Button ToolTip="Удалить выделенную строку" Command="{Binding RemoveCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\del.png" />
+            </Button>
+            <Button ToolTip="Сохранить изменения в выбранной строке" Command="{Binding SaveCommand}" Style="{StaticResource ControlButtons}">
+                <Image Source="~\..\..\Images\save.png" />
+            </Button>
         </StackPanel>
-        <dxg:GridControl Grid.Row="1" 
-                         Name="ClientsGridControlTableView" 
+        <dxg:GridControl Name="ClientsGridControlTableView" Grid.Row="1"                           
                          SelectedItemChanged="ClientsGridControlTableView_SelectedItemChanged"
                          ItemsSource="{Binding Path=ClientsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                          SelectedItem="{Binding Path=SelectedClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
@@ -60,30 +65,24 @@
                 </dxg:GridControlBand>                
             </dxg:GridControl.Bands>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
 
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="48"/>
-                <RowDefinition Height="28"/>
-                <RowDefinition Height="28"/>
-                <RowDefinition Height="28"/>
-                <RowDefinition Height="28"/>
+                <RowDefinition Height="26"/>
+                <RowDefinition Height="26"/>
+                <RowDefinition Height="26"/>
+                <RowDefinition Height="26"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <Button ToolTip="Удалить" Command="{Binding RemoveCommand}" Style="{StaticResource ControlButtons}">
-                    <Image Source="~\..\..\Images\del.png" />
-                </Button>
-                <Button ToolTip="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource ControlButtons}">
-                    <Image Source="~\..\..\Images\save.png" />
-                </Button>
-            </StackPanel>
-            
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <Label Content="Имя покупателя(для справки):"/>
                 <TextBox Text="{Binding BuyerName, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" BorderThickness="0" Background="#efefef" />
@@ -92,96 +91,107 @@
                                      Padding="10 2" BorderThickness="0" Background="#efefef" />
             </StackPanel>
             
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Button ToolTip="очистить" Command="{Binding SelectedSenderCustomerClearCommand}" Style="{StaticResource SearchButtons}">
-                    <Image Source="~\..\..\Images\del.png" Margin="3"/>
+                    <Image Source="~\..\..\Images\del.png"/>
                 </Button>
                 <Button ToolTip="применить" Command="{Binding ApplySenderCustomerCommand}" Style="{StaticResource SearchButtons}">
-                    <Image Source="~\..\..\Images\add.png" Margin="3"/>
+                    <Image Source="~\..\..\Images\add.png"/>
                 </Button>
-                <Label Content="Связанный клиент:" FontWeight="Bold" Width="150"/>
+                <Label Content="Связанный клиент:" FontWeight="Bold" Width="150" Margin="10 0 0 0"/>
                 <Label Content="GLN:"/>
                 <TextBox Text="{Binding SenderGln,Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" FontWeight="Bold" BorderThickness="0" Background="#efefef" />
                 <Label Content="{Binding LinkedSenderCustomer.FullName}" Margin="10 0 0 0"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Button ToolTip="очистить" Command="{Binding SelectedBuyerCustomerClearCommand}" Style="{StaticResource SearchButtons}">
-                    <Image Source="~\..\..\Images\del.png" Margin="3"/>
+                    <Image Source="~\..\..\Images\del.png"/>
                 </Button>
                 <Button ToolTip="применить" Command="{Binding ApplyBuyerCustomerCommand}" Style="{StaticResource SearchButtons}">
-                    <Image Source="~\..\..\Images\add.png" Margin="3"/>
+                    <Image Source="~\..\..\Images\add.png"/>
                 </Button>
-                <Label Content="Связанный покупатель:" FontWeight="Bold" Width="150"/>
+                <Label Content="Связанный покупатель:" FontWeight="Bold" Width="150" Margin="10 0 0 0"/>
                 <Label Content="GLN:"/>
                 <TextBox Text="{Binding BuyerGln,Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" FontWeight="Bold" BorderThickness="0" Background="#efefef" />
                 <Label Content="{Binding LinkedBuyerCustomer.FullName}" Margin="10 0 0 0"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Button ToolTip="очистить" Command="{Binding SelectedDeliveryContractorClearCommand}" Style="{StaticResource SearchButtons}">
-                    <Image Source="~\..\..\Images\del.png" Margin="3"/>
+                    <Image Source="~\..\..\Images\del.png"/>
                 </Button>
                 <Button ToolTip="применить" Command="{Binding ApplyDeliveryContractorCommand}" Style="{StaticResource SearchButtons}">
-                    <Image Source="~\..\..\Images\add.png" Margin="3"/>
+                    <Image Source="~\..\..\Images\add.png"/>
                 </Button>
-                <Label Content="Связанная точка:" FontWeight="Bold" Width="150"/>
+                <Label Content="Связанная точка:" FontWeight="Bold" Width="150" Margin="10 0 0 0"/>
                 <Label Content="GLN:"/>
                 <TextBox Text="{Binding DeliveryGln, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" FontWeight="Bold" BorderThickness="0" Background="#efefef" />
                 <Label Content="{Binding LinkedDeliveryPointContractor.FullName}" Margin="10 0 0 0"/>
             </StackPanel>
             
-            <TabControl Grid.Row="5">
+            <TabControl Grid.Row="4">
                 <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
                 <TabItem Header="Клиент">
                     <dxg:GridControl Name="wg" Grid.Row="1"
                                      ItemsSource="{Binding Path=CustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                     SelectedItem="{Binding Path=SelectedSenderCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                     AutoGenerateColumns="AddNew"
-                                     >
+                                     SelectedItem="{Binding Path=SelectedSenderCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                      
+                                     AutoGenerateColumns="None">
                         <dxg:GridControl.Columns>
                             <dxg:GridColumn FieldName="Id" Header="Id"/>
                             <dxg:GridColumn FieldName="Name" Header="Наименование" Width="350"/>
                             <dxg:GridColumn FieldName="Address" Header="Адрес" Width="450"/>
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                            <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </TabItem>
                 <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
                 <TabItem Header="Покупатель">
-                    <dxg:GridControl Name="wg2" 
+                    <dxg:GridControl Name="wg2" Grid.Row="1" 
                                       ItemsSource="{Binding Path=CustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                       SelectedItem="{Binding Path=SelectedBuyerCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                                      Grid.Row="1" >
+                                      AutoGenerateColumns="None">
                         <dxg:GridControl.Columns>
                             <dxg:GridColumn FieldName="Id" Header="Id"/>
                             <dxg:GridColumn FieldName="Name" Header="Наименование" Width="350"/>
                             <dxg:GridColumn FieldName="Address" Header="Адрес" Width="450"/>
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                            <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </TabItem>
                 <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
                 <TabItem Header="Точка">
 
-                    <dxg:GridControl Name="wg3" 
+                    <dxg:GridControl Name="wg3" Grid.Row="1"
                                       ItemsSource="{Binding Path=ContractorsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding Path=SelectedDeliveryPointContractor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                                      Grid.Row="1" >
+                                      SelectedItem="{Binding Path=SelectedDeliveryPointContractor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                         
+                                      AutoGenerateColumns="None">
                         <dxg:GridControl.Columns>
                             <dxg:GridColumn FieldName="Id" Header="Id"/>
                             <dxg:GridColumn FieldName="Name" Header="Наименование" Width="350"/>
                             <dxg:GridColumn FieldName="Address" Header="Адрес" Width="450"/>
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                            <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </TabItem>

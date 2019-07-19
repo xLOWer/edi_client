@@ -14,6 +14,7 @@ namespace EdiClient
     {
         public CommonSettingsWindow()
         {
+            DevExpress.Xpf.Core.ThemeManager.SetThemeName(this, "VS2017Light");
             InitializeComponent();
             ConfLoad();
         }

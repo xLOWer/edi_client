@@ -11,7 +11,7 @@ namespace EdiClient.Services
             var msg = $"Message: {ex.Message}\n\nSource: {ex.Source}\n\n{GetInnerExceptionMessage(ex)}\n\nTargetSite: {ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\nStackTrace: {ex.StackTrace}";                
             LogService.Log(msg);
             LogService.Log($"===============================");
-            MessageBox.Show( msg, "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error );
+            DevExpress.Xpf.Core.DXMessageBox.Show( msg, "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error );
         }
 
 
@@ -20,7 +20,7 @@ namespace EdiClient.Services
             LogService.Log($"===============================");
             LogService.Log($"[ОШИБКА] {text}");
             LogService.Log($"===============================");
-            MessageBox.Show( $"[ОШИБКА] {text}", "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error );
+            DevExpress.Xpf.Core.DXMessageBox.Show( $"[ОШИБКА] {text}", "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error );
         }
 
 

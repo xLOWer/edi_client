@@ -19,7 +19,7 @@
     
     <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="28"/>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="28"/>
@@ -59,7 +59,7 @@
                 <dxg:GridColumn FieldName="MANUFACTURER" Header="Производитель"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Never" ShowAutoFilterRow="True" ShowGroupPanel="False"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
 
@@ -81,7 +81,11 @@
                 <dxg:GridColumn FieldName="SENDER_ILN" Header="отправитель edi-документа"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
         
@@ -102,7 +106,11 @@
                 <dxg:GridColumn FieldName="INSERT_DATETIME" Header="Дата создания связи"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
         

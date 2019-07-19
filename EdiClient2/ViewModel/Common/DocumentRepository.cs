@@ -429,8 +429,8 @@ namespace EdiClient.ViewModel.Common
                     foreach (var doc in result)
                     {
                         doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
-                        foreach (var detail in doc.Details)                        
-                            detail.Doc = doc;                        
+                        //foreach (var detail in doc.Details)                        
+                        //    detail.Doc = doc;                        
                     }
             return result;
         }

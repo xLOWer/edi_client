@@ -26,6 +26,7 @@ namespace EdiClient.View
 
         public MatchMakerView()
         {
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             ThemeManager.SetThemeName(this, "VS2017Light");
             Context = new MatchMakerViewModel( this );
             DataContext = Context;

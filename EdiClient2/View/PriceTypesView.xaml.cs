@@ -25,6 +25,7 @@ namespace EdiClient.View
 
         public PriceTypesView()
         {
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             ThemeManager.SetThemeName(this, "VS2017Light");
             Context = new PriceTypesViewModel(this);
             DataContext = Context;

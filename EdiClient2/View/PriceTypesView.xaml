@@ -52,7 +52,11 @@
                 <dxg:GridColumn FieldName="CURRENCY_NAME" Header="Валюта"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
 
@@ -70,7 +74,11 @@
                 <dxg:GridColumn FieldName="NAME" Header="Наименование"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Always" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="False" 
+                               NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
     </Grid>

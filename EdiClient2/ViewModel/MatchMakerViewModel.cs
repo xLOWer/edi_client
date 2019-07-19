@@ -20,6 +20,7 @@ namespace EdiClient.ViewModel
     {
         public MatchMakerViewModel(MatchMakerView page)
         {
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             try
             {
                 _page = page;

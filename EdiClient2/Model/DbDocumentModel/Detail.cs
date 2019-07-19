@@ -40,8 +40,6 @@ namespace EdiClient.Model
         public bool IsNotmatched => QUANTITY is null || GrossAmount is null;
         //public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
         public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
-
-
-        public Document Doc { get; set; }
+        
     }
 }

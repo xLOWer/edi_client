@@ -16,6 +16,7 @@ namespace EdiClient.ViewModel
     {
         public PriceTypesViewModel(PriceTypesView page)
         {
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             try
             {
                 _page = page;

@@ -22,7 +22,7 @@
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="300"/>
         </Grid.RowDefinitions>
@@ -35,11 +35,11 @@
         <StackPanel Orientation="Horizontal">
             <DatePicker Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                          SelectedDateFormat="Long" DisplayDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                        VerticalContentAlignment="Center" FontSize="17"/>
+                        VerticalContentAlignment="Center"/>
 
             <DatePicker Name="DateToOrdersDatePicker" SelectedDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                         SelectedDateFormat="Long" DisplayDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  
-                        VerticalContentAlignment="Center" FontSize="17" Style="{StaticResource ControlButtons}"/>
+                        VerticalContentAlignment="Center" Style="{StaticResource ControlButtons}"/>
 
             <Button ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
                     Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}">
@@ -258,10 +258,12 @@
                 </dxg:TableView>
             </dxg:GridControl.View>
         </dxg:GridControl>
-        <dxg:GridControl Name="DocumentDetailsDataGrid"   
+        
+        
+        <dxg:GridControl Name="DocumentDetailsDataGrid" Grid.Row="3" 
                               ItemsSource="{Binding Path=SelectedDocument.Details}"
-                              Grid.Column="0"                   
-                              Grid.Row="3">
+                              Margin="0 10 0 0"
+                         AutoGenerateColumns="None">
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="ID_GOOD" Header="Наш id товара"/>
                 <dxg:GridColumn FieldName="EAN" Header="Штрих-код"/>
@@ -274,13 +276,11 @@
                 <dxg:GridColumn FieldName="ORDERED_UNIT_GROSS_PRICE" Header="Цена в заказе"/>
                 <dxg:GridColumn FieldName="QUANTITY" Header="Кол-во к отправке"/>
                 <dxg:GridColumn FieldName="ORDERED_QUANTITY" Header="Кол-во в заказе"/>
-                <dxg:GridColumn FieldName="IsFailed" Header="Нет связи с товаром"/>
-                <dxg:GridColumn FieldName="HasDiffrence" Header="Есть разница"/>
+                <!--<dxg:GridColumn FieldName="IsFailed" Header="Нет связи с товаром"/>
+                <dxg:GridColumn FieldName="HasDiffrence" Header="Есть разница"/>-->
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
-                               ShowSearchPanelMode="Never"
-                               ShowTotalSummary="False" 
                                ShowGroupPanel="False" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 

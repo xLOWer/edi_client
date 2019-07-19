@@ -13,7 +13,7 @@ namespace EdiClient.ViewModel
     {
         public DocumentListViewModel()
         {
-            LogService.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             DateFrom = DateTime.Today;
             DateTo = DateTime.Today.AddDays(1);
         }

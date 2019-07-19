@@ -20,6 +20,7 @@ namespace EdiClient.ViewModel
     {
         public ContractorsMatchViewModel()
         {
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
 
         }
 
@@ -259,7 +260,7 @@ namespace EdiClient.ViewModel
          
         public void Save(object obj = null)
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             
             try
             {
@@ -312,7 +313,7 @@ namespace EdiClient.ViewModel
 
         public void LoadData(object obj = null)
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            LogService.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             GetClients();
             GetCustomers();
             GetContractors();

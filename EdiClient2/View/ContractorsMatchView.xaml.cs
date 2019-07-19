@@ -26,14 +26,16 @@ namespace EdiClient.View
 
         public ContractorsMatchView()
         {
-            ThemeManager.SetThemeName(this, "VS2017Light");
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new ContractorsMatchViewModel( );
             DataContext = Context;
             InitializeComponent();
+            ThemeManager.SetThemeName(this, "VS2017Light");
         }
         
         private void ClientsGridControlTableView_SelectedItemChanged(object sender, DevExpress.Xpf.Grid.SelectedItemChangedEventArgs e)
         {
+            EdiClient.Services.LogService.Log($"[CLIENT-MATCH] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context.Edit();
 
         }

@@ -17,11 +17,18 @@ namespace EdiClient.ViewModel.Common
 
         public MainViewModel()
         {
-            LogService.Log($"[MAIN] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            TabService.NewTab( typeof(DocumentPage  ), "Документы" );
-            TabService.NewTab( typeof(MatchMakerView), "Связи товаров" );
-            TabService.NewTab( typeof(PriceTypesView), "Связи цен");
-            TabService.NewTab(typeof(ContractorsMatchView), "Связи точек доставки");
+            try
+            {
+                EdiClient.Services.LogService.Log($"[INIT-DocumentPage] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+                TabService.NewTab(typeof(DocumentPage), "Документы");
+                EdiClient.Services.LogService.Log($"[INIT-MatchMakerView] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+                TabService.NewTab(typeof(MatchMakerView), "Связи товаров");
+                EdiClient.Services.LogService.Log($"[INIT-PriceTypesView] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+                TabService.NewTab(typeof(PriceTypesView), "Связи цен");
+                EdiClient.Services.LogService.Log($"[INIT-ContractorsMatchView] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+                TabService.NewTab(typeof(ContractorsMatchView), "Связи точек доставки");
+            }
+            catch(Exception ex) { EdiClient.Services.Utilites.Error(ex); }
         }
 
         public void OpenCommonSettings(object o)
@@ -40,7 +47,7 @@ namespace EdiClient.ViewModel.Common
 
         public void RefreshRelationships(object o)
         {
-            LogService.Log($"[MAIN] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
                 EdiService.UpdateData();
 

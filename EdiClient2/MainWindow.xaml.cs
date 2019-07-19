@@ -17,6 +17,7 @@ namespace EdiClient
 
         public MainWindow()
         {
+            DevExpress.Xpf.Core.ThemeManager.SetThemeName(this, "VS2017Light");
             InitializeComponent();            
             TabService.Configure(ref mainWindow, ref MainTabControl);
             Context = new MainViewModel();
@@ -27,7 +28,7 @@ namespace EdiClient
 
         private void License_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(@"Продукт защищён лицензией MIT.
+            DevExpress.Xpf.Core.DXMessageBox.Show(@"Продукт защищён лицензией MIT.
 
 Copyright (c) 2019 Шишло Дмитрий
 
@@ -63,7 +64,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($@"EDI клиент {Assembly.GetExecutingAssembly().GetName().Version.ToString()}
+            DevExpress.Xpf.Core.DXMessageBox.Show($@"EDI клиент {Assembly.GetExecutingAssembly().GetName().Version.ToString()}
 Разработана Шишло Дмитрием
 Программист ООО ""ВИРЭЙ""
 Владивосток
