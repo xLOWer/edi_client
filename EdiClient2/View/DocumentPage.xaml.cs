@@ -1,4 +1,5 @@
-﻿using EdiClient.ViewModel;
+﻿using DevExpress.Xpf.Core;
+using EdiClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace EdiClient.View
 
         public DocumentPage()
         {
+            ThemeManager.SetThemeName(this, "VS2017Light");
             Context = new DocumentListViewModel();
             DataContext = Context;
             InitializeComponent();

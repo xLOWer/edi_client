@@ -27,8 +27,8 @@
     <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
-            <RowDefinition Height="3*"/>
             <RowDefinition Height="4*"/>
+            <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -46,17 +46,17 @@
                          SelectedItem="{Binding Path=SelectedClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                          AutoGenerateColumns="None">
             <dxg:GridControl.Bands>
-                <dxg:GridControlBand Header="Информация из платформы" VisibleIndex="0" HorizontalHeaderContentAlignment="Center">
-                    <dxg:GridColumn FieldName="BUYER_NAME" Header="Покупатель" HorizontalHeaderContentAlignment="Center" BestFitMode="Smart"/>
-                    <dxg:GridColumn FieldName="DELIVERY_POINT_NAME" Header="Точка"  HorizontalHeaderContentAlignment="Center" BestFitMode="Smart"/>
-                    <dxg:GridColumn FieldName="SENDER_GLN" Header="Клиент" HorizontalHeaderContentAlignment="Center"/>
-                    <dxg:GridColumn FieldName="BUYER_GLN" Header="Покупатель " HorizontalHeaderContentAlignment="Center"/>
-                    <dxg:GridColumn FieldName="DELIVERY_POINT_GLN" Header="Точка"  HorizontalHeaderContentAlignment="Center"/>
+                <dxg:GridControlBand Header="Информация из платформы" VisibleIndex="0">
+                    <dxg:GridColumn FieldName="BUYER_NAME" Header="Покупатель" BestFitMode="Smart"/>
+                    <dxg:GridColumn FieldName="DELIVERY_POINT_NAME" Header="Точка"  BestFitMode="Smart"/>
+                    <dxg:GridColumn FieldName="SENDER_GLN" Header="Клиент" GroupIndex="0"/>
+                    <dxg:GridColumn FieldName="BUYER_GLN" Header="Покупатель" GroupIndex="1"/>
+                    <dxg:GridColumn FieldName="DELIVERY_POINT_GLN" Header="Точка" />
                 </dxg:GridControlBand>
-                <dxg:GridControlBand Header="Заполняемая информация" VisibleIndex="1" HorizontalHeaderContentAlignment="Center">
-                    <dxg:GridColumn FieldName="SENDER_CUSTOMER" Header="Клиент" GroupIndex="0" IsEnabled="False" HorizontalHeaderContentAlignment="Center"/>
-                    <dxg:GridColumn FieldName="BUYER_CUSTOMER" Header="Покупатель" GroupIndex="1" HorizontalHeaderContentAlignment="Center"/>
-                    <dxg:GridColumn FieldName="DELIVERY_POINT_CONTRACTOR" Header="Точка" BestFitMode="Smart" HorizontalHeaderContentAlignment="Center"/>
+                <dxg:GridControlBand Header="Заполняемая информация" VisibleIndex="1">
+                    <dxg:GridColumn FieldName="SENDER_CUSTOMER" Header="Клиент"/>
+                    <dxg:GridColumn FieldName="BUYER_CUSTOMER" Header="Покупатель"/>
+                    <dxg:GridColumn FieldName="DELIVERY_POINT_CONTRACTOR" Header="Точка" BestFitMode="Smart"/>
                 </dxg:GridControlBand>                
             </dxg:GridControl.Bands>
             <dxg:GridControl.View>
@@ -96,6 +96,9 @@
                 <Button ToolTip="очистить" Command="{Binding SelectedSenderCustomerClearCommand}" Style="{StaticResource SearchButtons}">
                     <Image Source="~\..\..\Images\del.png" Margin="3"/>
                 </Button>
+                <Button ToolTip="применить" Command="{Binding ApplySenderCustomerCommand}" Style="{StaticResource SearchButtons}">
+                    <Image Source="~\..\..\Images\add.png" Margin="3"/>
+                </Button>
                 <Label Content="Связанный клиент:" FontWeight="Bold" Width="150"/>
                 <Label Content="GLN:"/>
                 <TextBox Text="{Binding SenderGln,Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -106,6 +109,9 @@
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Button ToolTip="очистить" Command="{Binding SelectedBuyerCustomerClearCommand}" Style="{StaticResource SearchButtons}">
                     <Image Source="~\..\..\Images\del.png" Margin="3"/>
+                </Button>
+                <Button ToolTip="применить" Command="{Binding ApplyBuyerCustomerCommand}" Style="{StaticResource SearchButtons}">
+                    <Image Source="~\..\..\Images\add.png" Margin="3"/>
                 </Button>
                 <Label Content="Связанный покупатель:" FontWeight="Bold" Width="150"/>
                 <Label Content="GLN:"/>
@@ -118,6 +124,9 @@
                 <Button ToolTip="очистить" Command="{Binding SelectedDeliveryContractorClearCommand}" Style="{StaticResource SearchButtons}">
                     <Image Source="~\..\..\Images\del.png" Margin="3"/>
                 </Button>
+                <Button ToolTip="применить" Command="{Binding ApplyDeliveryContractorCommand}" Style="{StaticResource SearchButtons}">
+                    <Image Source="~\..\..\Images\add.png" Margin="3"/>
+                </Button>
                 <Label Content="Связанная точка:" FontWeight="Bold" Width="150"/>
                 <Label Content="GLN:"/>
                 <TextBox Text="{Binding DeliveryGln, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -129,7 +138,7 @@
                 <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
                 <TabItem Header="Клиент">
                     <dxg:GridControl Name="wg" Grid.Row="1"
-                                     ItemsSource="{Binding Path=SenderCustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                     ItemsSource="{Binding Path=CustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                      SelectedItem="{Binding Path=SelectedSenderCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                      AutoGenerateColumns="AddNew"
                                      >
@@ -146,7 +155,7 @@
                 <!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
                 <TabItem Header="Покупатель">
                     <dxg:GridControl Name="wg2" 
-                                      ItemsSource="{Binding Path=BuyerCustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                      ItemsSource="{Binding Path=CustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                       SelectedItem="{Binding Path=SelectedBuyerCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                                       Grid.Row="1" >
                         <dxg:GridControl.Columns>
@@ -163,7 +172,7 @@
                 <TabItem Header="Точка">
 
                     <dxg:GridControl Name="wg3" 
-                                      ItemsSource="{Binding Path=DeliveryPointContractorsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                      ItemsSource="{Binding Path=ContractorsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                       SelectedItem="{Binding Path=SelectedDeliveryPointContractor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                                       Grid.Row="1" >
                         <dxg:GridControl.Columns>

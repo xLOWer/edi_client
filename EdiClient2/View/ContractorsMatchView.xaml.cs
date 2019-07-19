@@ -1,4 +1,5 @@
-﻿using EdiClient.ViewModel;
+﻿using DevExpress.Xpf.Core;
+using EdiClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,6 +26,7 @@ namespace EdiClient.View
 
         public ContractorsMatchView()
         {
+            ThemeManager.SetThemeName(this, "VS2017Light");
             Context = new ContractorsMatchViewModel( );
             DataContext = Context;
             InitializeComponent();

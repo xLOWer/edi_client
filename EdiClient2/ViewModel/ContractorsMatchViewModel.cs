@@ -34,9 +34,8 @@ namespace EdiClient.ViewModel
 
         private Client selectedclient { get; set; }
         private List<Client> clientslist { get; set; }
-        private List<Customer> sendercustomerslist { get; set; }
-        private List<Customer> buyercustomerslist { get; set; }
-        private List<Customer> deliverypointcontractorslist { get; set; }
+        private List<Customer> customerslist { get; set; }
+        private List<Customer> contractorslist { get; set; }
         private Customer linkeddeliverypointcontractor { get; set; }
         private Customer linkedbuyercustomer { get; set; }
         private Customer linkedsendercustomer { get; set; }
@@ -149,33 +148,24 @@ namespace EdiClient.ViewModel
             }
         }
         
-        public List<Customer> SenderCustomersList
+        public List<Customer> CustomersList
         {
-            get { return sendercustomerslist; }
+            get { return customerslist; }
             set
             {
-                sendercustomerslist = value;
-                RaiseNotifyPropertyChanged("SenderCustomersList");
+                customerslist = value;
+                RaiseNotifyPropertyChanged("CustomersList");
             }
         }
+        
 
-        public List<Customer> BuyerCustomersList
+        public List<Customer> ContractorsList
         {
-            get { return buyercustomerslist; }
+            get { return contractorslist; }
             set
             {
-                buyercustomerslist = value;
-                RaiseNotifyPropertyChanged("BuyerCustomersList");
-            }
-        }
-
-        public List<Customer> DeliveryPointContractorsList
-        {
-            get { return deliverypointcontractorslist; }
-            set
-            {
-                deliverypointcontractorslist = value;
-                RaiseNotifyPropertyChanged("DeliveryPointContractorsList");
+                contractorslist = value;
+                RaiseNotifyPropertyChanged("ContractorsList");
             }
         }
 
@@ -219,7 +209,27 @@ namespace EdiClient.ViewModel
         public CommandService SaveCommand => new CommandService(Save);
         public CommandService AddNewCommand => new CommandService(AddNew);
 
+        public CommandService ApplySenderCustomerCommand => new CommandService(ApplySenderCustomer);
+        public CommandService ApplyBuyerCustomerCommand => new CommandService(ApplyBuyerCustomer);
+        public CommandService ApplyDeliveryContractorCommand => new CommandService(ApplyDeliveryContractor);
+
+
         #endregion
+
+        private void ApplySenderCustomer(object obj = null)
+        {
+            LinkedSenderCustomer = SelectedSenderCustomer;
+        }
+
+        private void ApplyBuyerCustomer(object obj = null)
+        {
+            LinkedBuyerCustomer = SelectedBuyerCustomer;
+        }
+
+        private void ApplyDeliveryContractor(object obj = null)
+        {
+            LinkedDeliveryPointContractor = SelectedDeliveryPointContractor;
+        }
 
         private void AddNew(object obj = null)
         {
@@ -250,27 +260,21 @@ namespace EdiClient.ViewModel
         public void Save(object obj = null)
         {
             LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-
-            double eval1 = double.Parse(SenderGln);
-
-            LinkedSenderCustomer = SelectedSenderCustomer;
-            LinkedBuyerCustomer = SelectedBuyerCustomer;
-            LinkedDeliveryPointContractor = SelectedDeliveryPointContractor;
-
+            
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
                 {
                     Parameters =
                         {
-                            new OracleParameter("P_SENDER_GLN", OracleDbType.NVarChar,SenderGln, ParameterDirection.Input),
-                            new OracleParameter("P_BUYER_GLN", OracleDbType.NVarChar, BuyerGln, ParameterDirection.Input),
-                            new OracleParameter("P_DELIVERY_POINT_GLN", OracleDbType.NVarChar, DeliveryGln, ParameterDirection.Input),
-                            new OracleParameter("P_DELIVERY_POINT_NAME", OracleDbType.NVarChar, DeliveryAddress, ParameterDirection.Input),
-                            new OracleParameter("P_BUYER_NAME", OracleDbType.NVarChar, BuyerName, ParameterDirection.Input),
-                            new OracleParameter("P_SENDER_CUSTOMER_ID", OracleDbType.Number, LinkedSenderCustomer.Id, ParameterDirection.Input),
-                            new OracleParameter("P_BUYER_CUSTOMER_ID", OracleDbType.Number, LinkedBuyerCustomer.Id, ParameterDirection.Input),
-                            new OracleParameter("P_DELIVERY_POINT_CONTRACTOR_ID", OracleDbType.Number, LinkedDeliveryPointContractor.Id, ParameterDirection.Input),
+                            new OracleParameter("P_SENDER_GLN", OracleDbType.NVarChar,SenderGln ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_BUYER_GLN", OracleDbType.NVarChar, BuyerGln ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_DELIVERY_POINT_GLN", OracleDbType.NVarChar, DeliveryGln ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_DELIVERY_POINT_NAME", OracleDbType.NVarChar, DeliveryAddress ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_BUYER_NAME", OracleDbType.NVarChar, BuyerName ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_SENDER_CUSTOMER_ID", OracleDbType.Number, LinkedSenderCustomer?.Id ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_BUYER_CUSTOMER_ID", OracleDbType.Number, LinkedBuyerCustomer?.Id ?? "", ParameterDirection.Input),
+                            new OracleParameter("P_DELIVERY_POINT_CONTRACTOR_ID", OracleDbType.Number, LinkedDeliveryPointContractor?.Id ?? "", ParameterDirection.Input),
                         },
                     Connection = OracleConnectionService.conn,
                     CommandType = CommandType.StoredProcedure,
@@ -285,34 +289,24 @@ namespace EdiClient.ViewModel
 
         public void Edit(object obj = null)
         {
-            if(SelectedClient != null)
+            if (SelectedClient != null)
             {
-                DeliveryAddress = SelectedClient.DELIVERY_POINT_NAME;
-                BuyerName = SelectedClient.BUYER_NAME;
+                DeliveryAddress = SelectedClient?.DELIVERY_POINT_NAME ?? "";
+                BuyerName = SelectedClient?.BUYER_NAME ?? "";
 
-                if (!string.IsNullOrEmpty(SelectedClient?.SENDER_CUSTOMER_ID))
-                {
-                    SenderGln = SelectedClient.SENDER_GLN;
-                    LinkedSenderCustomer = SenderCustomersList?.First(x => x.Id == SelectedClient?.SENDER_CUSTOMER_ID) ?? null;
-                    SelectedSenderCustomer = LinkedSenderCustomer;
-                }
-                else { SelectedSenderCustomer = null; LinkedSenderCustomer = null; }
+                SenderGln = SelectedClient?.SENDER_GLN ?? "";
+                BuyerGln = SelectedClient?.BUYER_GLN ?? "";
+                DeliveryGln = SelectedClient?.DELIVERY_POINT_GLN ?? "";
 
-                if (!string.IsNullOrEmpty(SelectedClient?.BUYER_CUSTOMER_ID))
-                {
-                    BuyerGln = SelectedClient.BUYER_GLN;
-                    LinkedBuyerCustomer = SenderCustomersList?.First(x => x.Id == SelectedClient?.SENDER_CUSTOMER_ID) ?? null;
-                    SelectedBuyerCustomer = LinkedBuyerCustomer;
-                }
-                else { SelectedBuyerCustomer = null; LinkedBuyerCustomer = null; }
+                LinkedSenderCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.SENDER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
+                SelectedSenderCustomer = LinkedSenderCustomer ?? null;
 
-                if (!string.IsNullOrEmpty(SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID))
-                {
-                    DeliveryGln = SelectedClient.DELIVERY_POINT_GLN;
-                    LinkedDeliveryPointContractor = SenderCustomersList?.First(x => x.Id == SelectedClient?.SENDER_CUSTOMER_ID) ?? null;
-                    SelectedDeliveryPointContractor = LinkedDeliveryPointContractor;
-                }
-                else { SelectedDeliveryPointContractor = null; LinkedDeliveryPointContractor = null; }
+                LinkedBuyerCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.BUYER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
+                SelectedBuyerCustomer = LinkedBuyerCustomer ?? null;
+
+                LinkedDeliveryPointContractor = ContractorsList?.Where(x => x.Id == (SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID ?? "a")).FirstOrDefault() ?? null;
+                SelectedDeliveryPointContractor = LinkedDeliveryPointContractor ?? null;
+
             }
         }
 
@@ -320,17 +314,12 @@ namespace EdiClient.ViewModel
         {
             LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             GetClients();
-            GetBuyers();
-            GetDelivery();
+            GetCustomers();
+            GetContractors();
         }
 
-        private void GetSenders() => SenderCustomersList = DocumentRepository.GetList<Customer>(SqlService.GET_CUSTOMERS);
-        private void GetDelivery() => DeliveryPointContractorsList = DocumentRepository.GetList<Customer>(SqlService.GET_CONTRACTORS);
-        private void GetBuyers()
-        {
-            GetSenders();
-            BuyerCustomersList = SenderCustomersList;
-        }
+        private void GetCustomers() => CustomersList = DocumentRepository.GetList<Customer>(SqlService.GET_CUSTOMERS);
+        private void GetContractors() => ContractorsList = DocumentRepository.GetList<Customer>(SqlService.GET_CONTRACTORS);
         private void GetClients()
         {
             ClientsList = DocumentRepository.GetList<Client>(SqlService.GET_CLIENTS);

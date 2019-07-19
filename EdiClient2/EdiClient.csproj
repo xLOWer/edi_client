@@ -32,7 +32,7 @@
     <SuiteName>EDI_CLIENT</SuiteName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>3.0.3.%2a</ApplicationVersion>
+    <ApplicationVersion>3.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>false</BootstrapperEnabled>
@@ -204,8 +204,8 @@
     <Compile Include="Model\WebModel\OrganizationInfo.cs" />
     <Compile Include="Model\WebModel\RelationResponse.cs" />
     <Compile Include="Services\AutoHandlerService.cs" />
-    <Compile Include="Services\Converters\ToDateTime.cs" />
-    <Compile Include="Services\Converters\ToMoneyString.cs" />
+    <Compile Include="Services\Converters\StringToDateConverter.cs" />
+    <Compile Include="Services\Converters\StringToDoubleConverter.cs" />
     <Compile Include="Services\DbService.cs" />
     <Compile Include="Services\EdiService.cs" />
     <Compile Include="Services\LogService.cs" />
