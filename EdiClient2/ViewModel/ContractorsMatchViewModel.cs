@@ -40,9 +40,6 @@ namespace EdiClient.ViewModel
         private Customer linkeddeliverypointcontractor { get; set; }
         private Customer linkedbuyercustomer { get; set; }
         private Customer linkedsendercustomer { get; set; }
-        private Customer selectedbuyercustomer { get; set; }
-        private Customer selectedsendercustomer { get; set; }
-        private Customer selecteddeliverypointcontractor { get; set; }
 
         private string sendergln { get; set; }
         private string buyergln { get; set; }
@@ -99,36 +96,6 @@ namespace EdiClient.ViewModel
             }
         }
         
-        public Customer SelectedBuyerCustomer
-        {
-            get { return selectedbuyercustomer; }
-            set
-            {
-                selectedbuyercustomer = value;
-                RaiseNotifyPropertyChanged("SelectedBuyerCustomer");
-            }
-        }
-
-        public Customer SelectedSenderCustomer
-        {
-            get { return selectedsendercustomer; }
-            set
-            {
-                selectedsendercustomer = value;
-                RaiseNotifyPropertyChanged("SelectedSenderCustomer");
-            }
-        }
-
-        public Customer SelectedDeliveryPointContractor
-        {
-            get { return selecteddeliverypointcontractor; }
-            set
-            {
-                selecteddeliverypointcontractor = value;
-                RaiseNotifyPropertyChanged("SelectedDeliveryPointContractor");
-            }
-        }
-
         public Client SelectedClient
         {
             get { return selectedclient; }
@@ -209,29 +176,10 @@ namespace EdiClient.ViewModel
         public CommandService EditCommand => new CommandService(Edit);
         public CommandService SaveCommand => new CommandService(Save);
         public CommandService AddNewCommand => new CommandService(AddNew);
-
-        public CommandService ApplySenderCustomerCommand => new CommandService(ApplySenderCustomer);
-        public CommandService ApplyBuyerCustomerCommand => new CommandService(ApplyBuyerCustomer);
-        public CommandService ApplyDeliveryContractorCommand => new CommandService(ApplyDeliveryContractor);
-
+        
 
         #endregion
-
-        private void ApplySenderCustomer(object obj = null)
-        {
-            LinkedSenderCustomer = SelectedSenderCustomer;
-        }
-
-        private void ApplyBuyerCustomer(object obj = null)
-        {
-            LinkedBuyerCustomer = SelectedBuyerCustomer;
-        }
-
-        private void ApplyDeliveryContractor(object obj = null)
-        {
-            LinkedDeliveryPointContractor = SelectedDeliveryPointContractor;
-        }
-
+        
         private void AddNew(object obj = null)
         {
             SelectedDeliveryPointContractorClear();
@@ -243,19 +191,16 @@ namespace EdiClient.ViewModel
         private void SelectedDeliveryPointContractorClear(object obj = null)
         {
             LinkedDeliveryPointContractor = null;
-            SelectedDeliveryPointContractor = null;
         }
 
         private void SelectedBuyerCustomerClear(object obj = null)
         {
             LinkedBuyerCustomer = null;
-            SelectedBuyerCustomer = null;
         }
 
         private void SelectedSenderCustomerClear(object obj = null)
         {
             LinkedSenderCustomer = null;
-            SelectedSenderCustomer = null;
         }
          
         public void Save(object obj = null)
@@ -300,13 +245,10 @@ namespace EdiClient.ViewModel
                 DeliveryGln = SelectedClient?.DELIVERY_POINT_GLN ?? "";
 
                 LinkedSenderCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.SENDER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
-                SelectedSenderCustomer = LinkedSenderCustomer ?? null;
 
                 LinkedBuyerCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.BUYER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
-                SelectedBuyerCustomer = LinkedBuyerCustomer ?? null;
 
                 LinkedDeliveryPointContractor = ContractorsList?.Where(x => x.Id == (SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID ?? "a")).FirstOrDefault() ?? null;
-                SelectedDeliveryPointContractor = LinkedDeliveryPointContractor ?? null;
 
             }
         }

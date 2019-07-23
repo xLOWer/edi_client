@@ -12,7 +12,6 @@
         <Style x:Key="ControlButtons">
             <Setter Property="Control.BorderBrush" Value="Transparent" />
             <Setter Property="Control.Background" Value="Transparent" />
-            <Setter Property="Control.Margin" Value="2,2" />
             <Setter Property="Control.BorderThickness" Value="0" />
         </Style>
     </Page.Resources>
@@ -59,7 +58,11 @@
                 <dxg:GridColumn FieldName="MANUFACTURER" Header="Производитель"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" AllowSorting="True" ShowSearchPanelMode="Never" ShowAutoFilterRow="True" ShowGroupPanel="False"/>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               AllowSorting="True" 
+                               ShowSearchPanelMode="Always" 
+                               ShowAutoFilterRow="True" 
+                               ShowGroupPanel="False"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
 
@@ -83,6 +86,7 @@
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
                                ShowGroupPanel="False" 
+                               ShowSearchPanelMode="Always" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 
                                NavigationStyle="Row"/>
@@ -110,6 +114,7 @@
                                ShowGroupPanel="False" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 
+                               ShowSearchPanelMode="Always" 
                                NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>

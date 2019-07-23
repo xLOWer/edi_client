@@ -181,8 +181,9 @@
                 <dxg:GridColumn FieldName="CODE" Header="Код"/>
                 <dxg:GridColumn FieldName="ACT_STATUS" Header="Статус"/>
                 <dxg:GridColumn FieldName="DocumentType" Header="Тип"/>
-                <dxg:GridColumn FieldName="CONTRACTOR_MANE" Header="Заказчик"/>
-                <dxg:GridColumn FieldName="ORDER_NUMBER" Header="Заказ"/>
+                <dxg:GridColumn FieldName="CONTRACTOR_MANE" Header="Точка"/>
+                <dxg:GridColumn FieldName="DELIVERY_POINT_ILN" Header="Точка/GLN"/>
+                <dxg:GridColumn FieldName="BUYER_ILN" Header="Покупатель/GLN"/>
                 <dxg:GridColumn FieldName="ORDER_DATE" Header="Дата заказа">
                     <dxg:GridColumn.DisplayTemplate>
                         <ControlTemplate>
@@ -225,7 +226,7 @@
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
-                               ShowSearchPanelMode="Never"
+                               ShowSearchPanelMode="Always"
                                ShowGroupPanel="False" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 
@@ -281,7 +282,8 @@
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
-                               ShowGroupPanel="False" 
+                               ShowSearchPanelMode="Always"
+                               ShowGroupPanel="True" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 
                                NavigationStyle="Row" >

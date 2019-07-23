@@ -12,14 +12,13 @@
         <Style x:Key="ControlButtons">
             <Setter Property="Control.BorderBrush" Value="Transparent" />
             <Setter Property="Control.Background" Value="Transparent" />
-            <Setter Property="Control.Margin" Value="2,2" />
             <Setter Property="Control.BorderThickness" Value="0" />
         </Style>
     </Page.Resources>
 
     <Grid x:Name="mainPriceTypesMatchGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="28"/>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="28"/>
@@ -54,6 +53,7 @@
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
                                ShowGroupPanel="False" 
+                               ShowSearchPanelMode="Always" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 
                                NavigationStyle="Row"/>
@@ -76,6 +76,7 @@
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
                                ShowGroupPanel="False" 
+                               ShowSearchPanelMode="Always" 
                                ShowAutoFilterRow="True"  
                                AllowEditing="False" 
                                NavigationStyle="Row"/>
