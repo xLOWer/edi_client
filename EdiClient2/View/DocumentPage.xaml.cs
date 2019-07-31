@@ -33,5 +33,14 @@ namespace EdiClient.View
             DataContext = Context;
             InitializeComponent();
         }
+
+        private void DocumentsDataGrid_CustomColumnSort(object sender, DevExpress.Xpf.Grid.CustomColumnSortEventArgs e)
+        {
+            if (Convert.ToDouble(e.Value1) > Convert.ToDouble(e.Value2))
+                e.Result = 1;
+            else
+                e.Result = Convert.ToDouble(e.Value1) == Convert.ToDouble(e.Value2) ? 0 : -1;
+            e.Handled = true;
+        }
     }
 }

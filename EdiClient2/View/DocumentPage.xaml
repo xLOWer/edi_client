@@ -4,6 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+      xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
+      xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
       xmlns:local="clr-namespace:EdiClient.View"
       xmlns:conv="clr-namespace:EdiClient.Services.Converters"
       mc:Ignorable="d" 
@@ -24,24 +26,29 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="300"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
             
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        
         <StackPanel Orientation="Horizontal">
-            <DatePicker Name="DateFromOrdersDatePicker" SelectedDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                         SelectedDateFormat="Long" DisplayDate="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                        VerticalContentAlignment="Center"/>
-
-            <DatePicker Name="DateToOrdersDatePicker" SelectedDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                        SelectedDateFormat="Long" DisplayDate="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  
-                        VerticalContentAlignment="Center" Style="{StaticResource ControlButtons}"/>
-
-            <Button ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
+                <dxe:DateEdit Name="DateFromOrdersDatePicker" Margin="0 0 10 0"      Padding="10 0 10 0"                        
+                              DateTime="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        VerticalContentAlignment="Center"
+                              MaskUseAsDisplayFormat="True"
+                              Mask="d MMM y"/>
+                <dxe:DateEdit Name="DateToOrdersDatePicker"    Margin="0 0 10 0"    Padding="10 0 10 0"                              
+                              DateTime="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        VerticalContentAlignment="Center"
+                              MaskUseAsDisplayFormat="True"
+                              Mask="d MMM y"/>
+                <Button ToolTip="Предыдущий день" Style="{StaticResource ControlButtons}"
                     Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}">
                 <Image Source="~\..\..\Images\left.png" >
                     <Image.Style>
@@ -170,137 +177,239 @@
         
             <Label Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
         </StackPanel>
-        
-        <dxg:GridControl Name="DocumentsDataGrid" ShowBorder="False" Background="Red"
-                  ItemsSource="{Binding Path=Documents}"
-                  SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                  Grid.Column="0"                   
-                  Grid.Row="1" >
-            <dxg:GridControl.Columns>
-                <dxg:GridColumn FieldName="ID" Header="ID док."/>
-                <dxg:GridColumn FieldName="CODE" Header="Код"/>
-                <dxg:GridColumn FieldName="ACT_STATUS" Header="Статус"/>
-                <dxg:GridColumn FieldName="DocumentType" Header="Тип"/>
-                <dxg:GridColumn FieldName="CONTRACTOR_MANE" Header="Точка"/>
-                <dxg:GridColumn FieldName="DELIVERY_POINT_ILN" Header="Точка/GLN"/>
-                <dxg:GridColumn FieldName="BUYER_ILN" Header="Покупатель/GLN"/>
-                <dxg:GridColumn FieldName="ORDER_DATE" Header="Дата заказа">
-                    <dxg:GridColumn.DisplayTemplate>
-                        <ControlTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource  StringToDateConverter}}"/>
-                        </ControlTemplate>
-                    </dxg:GridColumn.DisplayTemplate>
-                </dxg:GridColumn>
-                <dxg:GridColumn FieldName="DOC_DATETIME" Header="Дата создания в трейдере">
-                    <dxg:GridColumn.DisplayTemplate>
-                        <ControlTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource  StringToDateConverter}}"/>
-                        </ControlTemplate>
-                    </dxg:GridColumn.DisplayTemplate>
-                </dxg:GridColumn>
-                <dxg:GridColumn FieldName="EXPECTED_DELIVERY_DATE" Header="Дата доставки">
-                    <dxg:GridColumn.DisplayTemplate>
-                        <ControlTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource  StringToDateConverter}}"/>
-                        </ControlTemplate>
-                    </dxg:GridColumn.DisplayTemplate>
-                </dxg:GridColumn>
-                <dxg:GridColumn FieldName="ORDRSP" Header=" Дата ответа на заказ">
-                    <dxg:GridColumn.DisplayTemplate>
-                        <ControlTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource  StringToDateConverter}}"/>
-                        </ControlTemplate>
-                    </dxg:GridColumn.DisplayTemplate>
-                </dxg:GridColumn>
-                <dxg:GridColumn FieldName="DESADV" Header="Дата увед. об отгрузке">
-                    <dxg:GridColumn.DisplayTemplate>
-                        <ControlTemplate>
-                            <TextBlock Text="{Binding Value, Converter={StaticResource  StringToDateConverter}}"/>
-                        </ControlTemplate>
-                    </dxg:GridColumn.DisplayTemplate>
-                </dxg:GridColumn>
-                <dxg:GridColumn FieldName="TOTAL_GROSS_AMOUNT" Header="Сумма заказа" />
-                <dxg:GridColumn FieldName="DetailsCount" Header="Кол-во позиций"/>
-                <dxg:GridColumn FieldName="REMARKS" Header="Пометки"/>
-                <dxg:GridColumn FieldName="IsFailed" Header="Есть несопоставленное"/>
-            </dxg:GridControl.Columns>
-            <dxg:GridControl.View>
-                <dxg:TableView AllowPerPixelScrolling="True" 
-                               ShowSearchPanelMode="Always"
-                               ShowGroupPanel="False" 
-                               ShowAutoFilterRow="True"  
-                               AllowEditing="False" 
-                               NavigationStyle="Row">
-                    <dxg:TableView.FormatConditions>
 
-                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsFailed] == True">
-                            <dxg:Format Background="OrangeRed"/>
-                        </dxg:FormatCondition>
-                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsOrdrsp] == True">
-                            <dxg:Format Background="CornflowerBlue"/>
-                        </dxg:FormatCondition>
-                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsReadyToDesadv] == True">
-                            <dxg:Format Background="#dec"/>
-                        </dxg:FormatCondition>
-                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsDesadv] == True">
-                            <dxg:Format Background="GreenYellow"/>
-                        </dxg:FormatCondition>
-                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsReadyToTrader] == True">
-                            <dxg:Format Background="White"/>
-                        </dxg:FormatCondition>                        
-                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsInTrader] == LightGray">
-                            <dxg:Format Background="#ffe1c4"/>
-                        </dxg:FormatCondition>                        
-                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsReadyToOrdrsp] == True">
-                            <dxg:Format Background="#ede"/>
-                        </dxg:FormatCondition>
-                        
-                    </dxg:TableView.FormatConditions>
-                </dxg:TableView>
-            </dxg:GridControl.View>
-        </dxg:GridControl>
-        
-        
-        <dxg:GridControl Name="DocumentDetailsDataGrid" Grid.Row="3" 
-                              ItemsSource="{Binding Path=SelectedDocument.Details}"
-                              Margin="0 10 0 0"
-                         AutoGenerateColumns="None">
-            <dxg:GridControl.Columns>
-                <dxg:GridColumn FieldName="ID_GOOD" Header="Наш id товара"/>
-                <dxg:GridColumn FieldName="EAN" Header="Штрих-код"/>
-                <dxg:GridColumn FieldName="BUYER_ITEM_CODE" Header="Код товара клиента"/>
-                <dxg:GridColumn FieldName="TAX_RATE" Header="%НДС"/>
-                <dxg:GridColumn FieldName="ITEM_DESCRIPTION" Header="Наименовение"/>
-                <dxg:GridColumn FieldName="GrossAmount" Header="Сумма с НДС"/>
-                <dxg:GridColumn FieldName="NetAmount" Header="Сумма"/>
-                <dxg:GridColumn FieldName="PRICE" Header="Цена к отправке"/>
-                <dxg:GridColumn FieldName="ORDERED_UNIT_GROSS_PRICE" Header="Цена в заказе"/>
-                <dxg:GridColumn FieldName="QUANTITY" Header="Кол-во к отправке"/>
-                <dxg:GridColumn FieldName="ORDERED_QUANTITY" Header="Кол-во в заказе"/>
-                <!--<dxg:GridColumn FieldName="IsFailed" Header="Нет связи с товаром"/>
-                <dxg:GridColumn FieldName="HasDiffrence" Header="Есть разница"/>-->
-            </dxg:GridControl.Columns>
+
+
+        <dxg:GridControl Name="DocumentsDataGrid" ShowBorder="False" Background="Red"
+                          ItemsSource="{Binding Path=Documents}"
+                          SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                          Grid.Column="0"                   
+                          Grid.Row="1"
+                         CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
+
+            <dxg:GridControl.Bands>
+                <dxg:GridControlBand Header="Шапка документа" AllowBestFit="True">
+                    <dxg:GridColumn ReadOnly="True" FieldName="ID" Header="ID док." Width="50" SortMode="Custom"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="CODE" Header="Код" Width="90"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="ORDER_NUMBER" Header="Номер заказа" Width="90"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="ACT_STATUS" Header="Статус" Width="50"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="DocumentType" Header="Тип"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="DELIVERY_POINT_ILN" Header="Точка/GLN" Width="95"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="BUYER_ILN" Header="Покупатель/GLN" Width="95"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="ORDER_DATE" Header="Дата заказа" Width="80"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="EXPECTED_DELIVERY_DATE" Header="Дата доставки" Width="90"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="REMARKS" Header="Пометки"/>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand AllowBestFit="True">
+                    <dxg:GridColumn ReadOnly="True" FieldName="CONTRACTOR_MANE" Header="Точка" Width="Auto"/>
+                </dxg:GridControlBand>
+                
+                <dxg:GridControlBand Header="В заказе" AllowBestFit="True">
+                    <dxg:GridColumn ReadOnly="True" FieldName="DetailsCount" Header="Позиций" Width="70" SortMode="Custom"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="Details_OrderedLinesCount" Header="Товара" Width="70" SortMode="Custom"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="TOTAL_GROSS_AMOUNT" Header="Сумма" UnboundType="Decimal" Width="110" SortMode="Custom">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="К отправке" AllowBestFit="True">
+                    <dxg:GridColumn FieldName="Details_DeliveryLinesCount" Header="Позиций" Width="70" SortMode="Custom"/>
+                    <dxg:GridColumn FieldName="Details_DeliveryPositionCount" Header="Товара" Width="70" SortMode="Custom"/>
+                    <dxg:GridColumn FieldName="Details_DeliveryGrossSumm" Header="Сумма" UnboundType="Decimal" Width="110" SortMode="Custom">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+                
+                <!--<dxg:GridControlBand Header="DEBUG">
+                <dxg:GridColumn FieldName="IsFailed"/>
+                <dxg:GridColumn FieldName="IsDesadv"/>
+                <dxg:GridColumn FieldName="IsReadyToDesadv"/>
+                <dxg:GridColumn FieldName="IsOrdrsp"/>
+                <dxg:GridColumn FieldName="IsReadyToOrdrsp"/>
+                <dxg:GridColumn FieldName="IsInTrader"/>
+                <dxg:GridColumn FieldName="IsReadyToTrader"/>
+                <dxg:GridColumn FieldName="IsEmptyContractorLink"/>
+                </dxg:GridControlBand>-->
+            </dxg:GridControl.Bands>   
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 
                                ShowSearchPanelMode="Always"
                                ShowGroupPanel="True" 
                                ShowAutoFilterRow="True"  
-                               AllowEditing="False" 
-                               NavigationStyle="Row" >
+                               AllowEditing="True" 
+                               NavigationStyle="Cell"
+                               GroupSummaryDisplayMode="AlignByColumns">
+                    
                     <dxg:TableView.FormatConditions>
-                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsFailed] == True">
-                            <dxg:Format Background="OrangeRed"/>
+
+                        
+                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsEmptyContractorLink] == True">
+                            <dxg:Format Background="#e36b6b"/>
                         </dxg:FormatCondition>
-                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsNotmatched] == True">
+                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsFailed] == True">
+                            <dxg:Format Background="#de4f35"/>
+                        </dxg:FormatCondition>
+                        
+                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsDesadv] == True">
+                            <dxg:Format Background="GreenYellow"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsReadyToDesadv] == True">
+                            <dxg:Format Background="#dec"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsOrdrsp] == True">
+                            <dxg:Format Background="CornflowerBlue"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition ApplyToRow="True" Expression="[IsReadyToOrdrsp] == True">
+                            <dxg:Format Background="#ede"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsInTrader] == LightGray">
                             <dxg:Format Background="#ffe1c4"/>
                         </dxg:FormatCondition>
-                        <dxg:FormatCondition ApplyToRow="True" Expression="[HasDiffrence] == True">
-                            <dxg:Format Background="#ff8"/>
+                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsReadyToTrader] == True">
+                            <dxg:Format Background="LightGray"/>
                         </dxg:FormatCondition>
+
+                        <dxg:FormatCondition FieldName="Details_DeliveryLinesCount" Expression="[Details_DeliveryLinesCount] != [DetailsCount] and [IsInTrader] == True">
+                            <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition FieldName="DetailsCount" Expression="[Details_DeliveryLinesCount] != [DetailsCount] and [IsInTrader] == True">
+                            <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                        </dxg:FormatCondition>
+
+                        <dxg:FormatCondition FieldName="Details_DeliveryPositionCount" Expression="[Details_DeliveryPositionCount] != [Details_OrderedLinesCount] and [IsInTrader] == True" >
+                            <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition FieldName="Details_OrderedLinesCount" Expression="[Details_DeliveryPositionCount] != [Details_OrderedLinesCount] and [IsInTrader] == True" >
+                            <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                        </dxg:FormatCondition>
+
+                        <dxg:FormatCondition FieldName="TOTAL_GROSS_AMOUNT" Expression="[TOTAL_GROSS_AMOUNT] != [Details_DeliveryGrossSumm] and [IsInTrader] == True" >
+                            <dxg:Format Background="#ffe8db" FontWeight="Bold" Foreground="#a33b00"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition FieldName="Details_DeliveryGrossSumm" Expression="[TOTAL_GROSS_AMOUNT] != [Details_DeliveryGrossSumm] and [IsInTrader] == True" >
+                            <dxg:Format Background="#ffe8db" FontWeight="Bold" Foreground="#a33b00"/>
+                        </dxg:FormatCondition>
+                    </dxg:TableView.FormatConditions>     
+                    
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            
+            <dxg:GridControl.GroupSummary>
+                <dxg:GridSummaryItem ShowInColumn="REMARKS" SummaryType="Count"/>
+
+                <dxg:GridSummaryItem ShowInColumn="DetailsCount" FieldName="DetailsCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                <dxg:GridSummaryItem ShowInColumn="Details_OrderedLinesCount" FieldName="Details_OrderedLinesCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                <dxg:GridSummaryItem ShowInColumn="TOTAL_GROSS_AMOUNT" FieldName="TOTAL_GROSS_AMOUNT" SummaryType="Sum" DisplayFormat=" {0:c2}"/>
+
+                <dxg:GridSummaryItem ShowInColumn="Details_DeliveryLinesCount" FieldName="Details_DeliveryLinesCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                <dxg:GridSummaryItem ShowInColumn="Details_DeliveryPositionCount" FieldName="Details_DeliveryPositionCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                <dxg:GridSummaryItem ShowInColumn="Details_DeliveryGrossSumm" FieldName="Details_DeliveryGrossSumm" SummaryType="Sum" DisplayFormat=" {0:c2}"/>
+
+            </dxg:GridControl.GroupSummary>
+            
+        </dxg:GridControl>
+
+        <GridSplitter Grid.Row="2"
+                      Height="3"
+                      ShowsPreview="False"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"/>
+
+        <dxg:GridControl Name="DocumentDetailsDataGrid" Grid.Row="3" 
+                              ItemsSource="{Binding Path=SelectedDocument.Details}"
+                              Margin="0 10 0 0"
+                         AutoGenerateColumns="None"
+                         CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
+            <dxg:GridControl.Bands>
+
+                <dxg:GridControlBand Header="Заказано" AllowBestFit="True">
+                    <dxg:GridColumn ReadOnly="True" FieldName="ID_GOOD" Header="Наш id товара"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="EAN" Header="Штрих-код"/>
+                    <!--<dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <dxe:BarCodeEdit EditValue="{Binding Value}">
+                                <dxe:BarCodeEdit.StyleSettings>
+                                    <dxe:EAN13StyleSettings/>
+                                </dxe:BarCodeEdit.StyleSettings>
+                            </dxe:BarCodeEdit>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>-->
+                    <dxg:GridColumn ReadOnly="True" FieldName="BUYER_ITEM_CODE" Header="Код товара клиента"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="TAX_RATE" Header="%НДС" UnboundType="Decimal" SortMode="Custom">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="P" MaskUseAsDisplayFormat="True"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn ReadOnly="True" FieldName="ITEM_DESCRIPTION" Header="Наименовение"/>
+
+                    <dxg:GridColumn ReadOnly="True" FieldName="ORDERED_UNIT_GROSS_PRICE" Header="Цена" UnboundType="Decimal" SortMode="Custom">
+                    <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn ReadOnly="True" FieldName="ORDERED_QUANTITY" Header="Кол-во" SortMode="Custom"/>
+                </dxg:GridControlBand>
+
+                <dxg:GridControlBand Header="К отравке" AllowBestFit="True">
+                    <dxg:GridColumn ReadOnly="True" FieldName="QUANTITY" Header="Кол-во" SortMode="Custom"/>
+                    <dxg:GridColumn ReadOnly="True" FieldName="PRICE" Header="Цена" UnboundType="Decimal" SortMode="Custom">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                    </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn ReadOnly="True" FieldName="GrossAmount" Header="Сумма с НДС" UnboundType="Decimal" SortMode="Custom">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn ReadOnly="True" FieldName="NetAmount" Header="Сумма" UnboundType="Decimal" SortMode="Custom">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
+
+            </dxg:GridControl.Bands>
+            
+            <dxg:GridControl.View>
+                <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowSearchPanelMode="Always"
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="True" 
+                               NavigationStyle="Cell" >
+                    <dxg:TableView.FormatConditions>
+
+                        <dxg:FormatCondition FieldName="QUANTITY" Expression="[QUANTITY] != [ORDERED_QUANTITY]">
+                            <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition FieldName="ORDERED_QUANTITY" Expression="[QUANTITY] != [ORDERED_QUANTITY]">
+                            <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                        </dxg:FormatCondition>
+
+                        <dxg:FormatCondition FieldName="PRICE" Expression="[ORDERED_UNIT_GROSS_PRICE] != [PRICE]" >
+                            <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                        </dxg:FormatCondition>
+                        <dxg:FormatCondition FieldName="ORDERED_UNIT_GROSS_PRICE" Expression="[ORDERED_UNIT_GROSS_PRICE] != [PRICE]" >
+                            <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                        </dxg:FormatCondition>
+                                           
+                        <dxg:FormatCondition ApplyToRow="True"  Expression="[IsFailed] == True">
+                            <dxg:Format Background="#e69c9c"/>
+                        </dxg:FormatCondition>   
+
                     </dxg:TableView.FormatConditions>
                 </dxg:TableView>
             </dxg:GridControl.View>
         </dxg:GridControl>
+
+            
     </Grid>
 </Page> 
 

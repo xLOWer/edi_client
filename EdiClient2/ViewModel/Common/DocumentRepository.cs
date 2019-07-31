@@ -170,7 +170,6 @@ namespace EdiClient.ViewModel.Common
             return commands;
         }
 
-
         internal static DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
         {
             LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
@@ -185,28 +184,29 @@ namespace EdiClient.ViewModel.Common
             if (details.Count > 0)
                 foreach (var detail in details)
                 {
-                    PackingSequence.Add(new DocumentDespatchAdviceDespatchAdviceConsignmentLine()
-                    {
-                        LineItem = new DocumentDespatchAdviceDespatchAdviceConsignmentLineLineItem()
+                    if (detail?.QUANTITY != "0")
+                        PackingSequence.Add(new DocumentDespatchAdviceDespatchAdviceConsignmentLine()
                         {
-                            LineNumber = detail?.LINE_NUMBER ?? "",
-                            EAN = detail?.EAN ?? "",
-                            BuyerItemCode = detail?.BUYER_ITEM_CODE ?? "",
-                            SupplierItemCode = detail?.ID_GOOD ?? "",
-                            ItemDescription = detail?.ITEM_DESCRIPTION ?? "",
-                            OrderedQuantity = detail?.ORDERED_QUANTITY,
-                            QuantityDespatched = detail?.QUANTITY,
-                            //ItemSize = detail?.GOOD_SIZE ?? "", 
-                            UnitOfMeasure = "PCE",
-                            UnitNetPrice = detail?.PRICE,
-                            TaxRate = detail?.TAX_RATE.ToString(),
-                            UnitGrossPrice = detail.UnitGrossPrice.ToString(),
-                            NetAmount = detail.NetAmount.ToString(),
-                            GrossAmount = detail.GrossAmount.ToString(),
-                            TaxAmount = detail.TaxAmount.ToString()
+                            LineItem = new DocumentDespatchAdviceDespatchAdviceConsignmentLineLineItem()
+                            {
+                                LineNumber = detail?.LINE_NUMBER ?? "",
+                                EAN = detail?.EAN ?? "",
+                                BuyerItemCode = detail?.BUYER_ITEM_CODE ?? "",
+                                SupplierItemCode = detail?.ID_GOOD ?? "",
+                                ItemDescription = detail?.ITEM_DESCRIPTION ?? "",
+                                OrderedQuantity = detail?.ORDERED_QUANTITY,
+                                QuantityDespatched = detail?.QUANTITY,
+                                //ItemSize = detail?.GOOD_SIZE ?? "", 
+                                UnitOfMeasure = "PCE",
+                                UnitNetPrice = detail?.PRICE,
+                                TaxRate = detail?.TAX_RATE.ToString(),
+                                UnitGrossPrice = detail.UnitGrossPrice.ToString(),
+                                NetAmount = detail.NetAmount.ToString(),
+                                GrossAmount = detail.GrossAmount.ToString(),
+                                TaxAmount = detail.TaxAmount.ToString()
+                            }
                         }
-                    }
-                    );
+                        );
                 }
             Consignment.PackingSequence = PackingSequence ?? new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
 
@@ -298,28 +298,29 @@ namespace EdiClient.ViewModel.Common
                 if (doc.Details.Count > 0)
                     foreach (var detail in doc.Details)
                     {
-                        lines.Add(new Line()
-                        {
-                            LineItem = new DocumentOrderResponseLineLineItem()
+                        if (detail?.QUANTITY != "0")
+                            lines.Add(new Line()
                             {
-                                LineNumber = detail?.LINE_NUMBER ?? "",
-                                EAN = detail?.EAN ?? "",
-                                BuyerItemCode = detail?.BUYER_ITEM_CODE ?? "",
-                                SupplierItemCode = detail?.ID_GOOD ?? "",
-                                ItemDescription = detail?.ITEM_DESCRIPTION ?? "",
-                                OrderedQuantity = detail?.ORDERED_QUANTITY,
-                                QuantityToBeDelivered = detail?.QUANTITY,
-                                AllocatedDelivered = detail?.QUANTITY,
-                                QuantityDifference = detail?.UnitsDifference.ToString(),
-                                UnitOfMeasure = "PCE",
-                                OrderedUnitNetPrice = detail?.PRICE.ToString() ?? "",
-                                TaxRate = detail?.TAX_RATE.ToString(),
-                                OrderedUnitGrossPrice = detail?.UnitGrossPrice.ToString(),
-                                NetAmount = detail?.NetAmount.ToString(),
-                                GrossAmount = detail?.GrossAmount.ToString(),
-                                TaxAmount = detail?.TaxAmount.ToString()
-                            }
-                        });
+                                LineItem = new DocumentOrderResponseLineLineItem()
+                                {
+                                    LineNumber = detail?.LINE_NUMBER ?? "",
+                                    EAN = detail?.EAN ?? "",
+                                    BuyerItemCode = detail?.BUYER_ITEM_CODE ?? "",
+                                    SupplierItemCode = detail?.ID_GOOD ?? "",
+                                    ItemDescription = detail?.ITEM_DESCRIPTION ?? "",
+                                    OrderedQuantity = detail?.ORDERED_QUANTITY,
+                                    QuantityToBeDelivered = detail?.QUANTITY,
+                                    AllocatedDelivered = detail?.QUANTITY,
+                                    QuantityDifference = detail?.UnitsDifference.ToString(),
+                                    UnitOfMeasure = "PCE",
+                                    OrderedUnitNetPrice = detail?.PRICE.ToString() ?? "",
+                                    TaxRate = detail?.TAX_RATE.ToString(),
+                                    OrderedUnitGrossPrice = detail?.UnitGrossPrice.ToString(),
+                                    NetAmount = detail?.NetAmount.ToString(),
+                                    GrossAmount = detail?.GrossAmount.ToString(),
+                                    TaxAmount = detail?.TaxAmount.ToString()
+                                }
+                            });
                     }
 
                 orderLines.Lines = lines ?? new List<Line>();
@@ -388,7 +389,7 @@ namespace EdiClient.ViewModel.Common
             LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
-
+            
             if (order == null) { Utilites.Error("При отправке ответа на заказ: заказ = null"); return; }
             if (order.DocumentParties == null) { Utilites.Error("При отправке ответа на заказ: отсутсвуют части документа(DocumentParties)"); return; }
             if (order.DocumentParties?.Receiver == null) { Utilites.Error("При отправке ответа на заказ: отсутствует отправитель"); return; }
@@ -396,7 +397,7 @@ namespace EdiClient.ViewModel.Common
             if (SelectedRelationship == null) { Utilites.Error("При отправке ответа на заказ: не выбран покупатель"); return; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
             if (order.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Utilites.Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
-
+            
             var sendOrder = XmlService<DocumentOrderResponse>.Serialize(order);
             EdiService.Send(SelectedRelationship.partnerIln, "ORDRSP", "", "", "T", "", sendOrder, 20);
             DbService.ExecuteCommand(new OracleCommand()
@@ -407,8 +408,8 @@ namespace EdiClient.ViewModel.Common
                         },
                 Connection = OracleConnectionService.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfig.Schema+".") + "EDI_MAKE_ORDRSP"
-            });            
+                CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_ORDRSP"
+            });
         }
         
         internal static List<Detail> GetDocumentDetails(string Id)

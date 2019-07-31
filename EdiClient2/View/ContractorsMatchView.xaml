@@ -83,7 +83,7 @@
                 <TextBox Text="{Binding SenderGln,Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" FontWeight="Bold" BorderThickness="0" Background="#efefef" />
 
-                <dxg:LookUpEdit Width="450"
+                <dxg:LookUpEdit Width="850"
                                 ItemsSource="{Binding Path=CustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                 SelectedItem="{Binding Path=LinkedSenderCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 DisplayMember="FullName"
@@ -102,8 +102,8 @@
                 <Label Content="GLN:"/>
                 <TextBox Text="{Binding BuyerGln,Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" FontWeight="Bold" BorderThickness="0" Background="#efefef" />
-                <dxg:LookUpEdit Width="450"
-                                ItemsSource="{Binding Path=ContractorsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                <dxg:LookUpEdit Width="850"
+                                ItemsSource="{Binding Path=CustomersList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                 SelectedItem="{Binding Path=LinkedBuyerCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 DisplayMember="FullName"
                                 ImmediatePopup="True">
@@ -122,7 +122,7 @@
                 <TextBox Text="{Binding DeliveryGln, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                      Padding="10 2" FontWeight="Bold" BorderThickness="0" Background="#efefef" />
 
-                <dxg:LookUpEdit Width="450"
+                <dxg:LookUpEdit Width="850"
                                 ItemsSource="{Binding Path=ContractorsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                 SelectedItem="{Binding Path=LinkedDeliveryPointContractor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 DisplayMember="FullName"

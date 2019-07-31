@@ -105,7 +105,6 @@
                 <dxg:GridColumn FieldName="CUSTOMER_GLN" Header="ГЛН"/>
                 <dxg:GridColumn FieldName="CUSTOMER_ARTICLE" Header="Код покупателя"/>
                 <dxg:GridColumn FieldName="ID_GOOD" Header="Код товара"/>
-                <dxg:GridColumn FieldName="BAR_CODE" Header="Штрх-код"/>
                 <dxg:GridColumn FieldName="NAME" Header="Наименование"/>
                 <dxg:GridColumn FieldName="INSERT_DATETIME" Header="Дата создания связи"/>
             </dxg:GridControl.Columns>

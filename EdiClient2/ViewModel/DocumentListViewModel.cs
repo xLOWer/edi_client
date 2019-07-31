@@ -129,14 +129,12 @@ namespace EdiClient.ViewModel
         {
             DateFrom = DateFrom.AddDays(1);
             DateTo = DateTo.AddDays(1);
-            ((DatePicker)o).UpdateLayout();
         }
 
         public void PrevDay(object o = null)
         {
             DateFrom = DateFrom.AddDays(-1);
             DateTo = DateTo.AddDays(-1);
-            ((DatePicker)o).UpdateLayout();
         }
     }
 }
