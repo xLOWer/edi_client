@@ -48,9 +48,9 @@ namespace EdiClient.Model
         }
 
         public bool IsFailed => FAILED == "1";
-        public bool IsReadyToTrader => !IsInTrader && !IsOrdrsp && !IsDesadv && !IsEmptyContractorLink;
-        public bool IsReadyToOrdrsp => IsInTrader && !IsDesadv && int.Parse(ACT_STATUS) == 3;
-        public bool IsReadyToDesadv => IsOrdrsp && int.Parse(ACT_STATUS) == 4;
+        public bool IsReadyToTrader => !IsInTrader && !IsOrdrsp && !IsDesadv && !IsEmptyContractorLink && !IsFailed;
+        public bool IsReadyToOrdrsp => IsInTrader && !IsDesadv && !IsOrdrsp && int.Parse(ACT_STATUS) >= 3 && !IsFailed;
+        public bool IsReadyToDesadv => IsInTrader && !IsDesadv && IsOrdrsp && int.Parse(ACT_STATUS) >= 4 && !IsFailed;
 
         public bool IsEmptyContractorLink => string.IsNullOrEmpty(CONTRACTOR_MANE) && !IsFailed;
 

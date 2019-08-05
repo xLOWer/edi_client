@@ -96,7 +96,7 @@ namespace EdiClient.ViewModel
             {
                 selectedFailedGood = value;
                 RaiseNotifyPropertyChanged("SelectedFailedGood");
-                GoodsList = fullGoodsList.Where(x => x.BAR_CODE.Trim().ToUpper() == SelectedFailedGood.EAN.Trim().ToUpper()).ToList();
+                //GoodsList = fullGoodsList.Where(x => x.BAR_CODE.Trim().ToUpper() == SelectedFailedGood.EAN.Trim().ToUpper()).ToList();
             }
         }
 
@@ -246,7 +246,6 @@ namespace EdiClient.ViewModel
             var result = DbService<Goods>.DocumentSelect(new List<string> { sql });
             return result;
         }
-        
 
         private List<FailedGoods> GetFailedGoods()
         {

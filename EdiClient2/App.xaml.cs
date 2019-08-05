@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using EdiClient.AppSettings;
@@ -14,6 +16,16 @@ namespace EdiClient
     {
         public App()
         {
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("ru-RU");
+
+            // The following line provides localization for the application's user interface.  
+            Thread.CurrentThread.CurrentUICulture = culture;
+
+            // The following line provides localization for data formats.  
+            Thread.CurrentThread.CurrentCulture = culture;
+            
+
+
             // Хитронаёбочка. Чтобы регистрировать каждое включение программы.
             //                Может такие логи вести сразу в базу?
             bool? LogState = AppConfig.EnableLogging; //запоминаем что в логинге

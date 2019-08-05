@@ -9,7 +9,7 @@
       xmlns:local="clr-namespace:EdiClient.View"
       xmlns:conv="clr-namespace:EdiClient.Services.Converters"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="800" Localization.Attributes=""
       Title="OrdersListView">
     <Page.Resources>
         <conv:StringToDoubleConverter x:Key="StringToDoubleConverter" />        
@@ -83,23 +83,26 @@
                     </Image.Style>
                 </Image>
             </Button>
-           
-            <Button ToolTip="Обновить" Style="{StaticResource ControlButtons}"
+
+                <Button ToolTip="Обновить" Style="{StaticResource ControlButtons}"
                     IsEnabled="{Binding IsCanRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Command="{Binding GetDocumentsCommand}">
-                <Image Source="~\..\..\Images\refresh.png">
-                    <Image.Style>
-                        <Style TargetType="{x:Type Image}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="False">
-                                    <Setter Property="Opacity" Value="0.3"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsCanRefresh}" Value="True">
-                                    <Setter Property="Opacity" Value="1"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Image.Style>
-                </Image>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="~\..\..\Images\refresh.png">
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCanRefresh}" Value="False">
+                                            <Setter Property="Opacity" Value="0.3"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsCanRefresh}" Value="True">
+                                            <Setter Property="Opacity" Value="1"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                        <Label Content="Обновить" Margin="10 0 0 0"/>
+                    </StackPanel>                    
             </Button>
 
             <Button ToolTip="Создать документ в трейдере" Style="{StaticResource ControlButtons}"
@@ -180,12 +183,12 @@
 
 
 
-        <dxg:GridControl Name="DocumentsDataGrid" ShowBorder="False" Background="Red"
+        <dxg:GridControl Name="DocumentsDataGrid" ShowBorder="False"
                           ItemsSource="{Binding Path=Documents}"
                           SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                           Grid.Column="0"                   
                           Grid.Row="1"
-                         CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
+                          CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
 
             <dxg:GridControl.Bands>
                 <dxg:GridControlBand Header="Шапка документа" AllowBestFit="True">
@@ -322,7 +325,6 @@
 
         <dxg:GridControl Name="DocumentDetailsDataGrid" Grid.Row="3" 
                               ItemsSource="{Binding Path=SelectedDocument.Details}"
-                              Margin="0 10 0 0"
                          AutoGenerateColumns="None"
                          CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
             <dxg:GridControl.Bands>

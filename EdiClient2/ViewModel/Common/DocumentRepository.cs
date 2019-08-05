@@ -39,13 +39,26 @@ namespace EdiClient.ViewModel.Common
                                      , "", "", "").Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList();
 
             if (NewOrders.Count() > 0)
+            {
+                foreach (var order in GetDocuments(dateFrom, dateTo))
+                {
+                    NewOrders.RemoveAll(x => x.documentNumber == order.ORDER_NUMBER);
+                }
+                
                 foreach (var order in NewOrders)
-                    InsertIncomingIntoDatabase(EdiService.Receive<DocumentOrder>(
-                                                                SelectedRelationship.partnerIln,
-                                                                SelectedRelationship.documentType,
-                                                                order.trackingId,
-                                                                SelectedRelationship.documentStandard,
-                                                                "").First());
+                {
+                    
+                        var document = EdiService.Receive<DocumentOrder>(
+                                                                    SelectedRelationship.partnerIln,
+                                                                    SelectedRelationship.documentType,
+                                                                    order.trackingId,
+                                                                    SelectedRelationship.documentStandard,
+                                                                    "").First();
+                        InsertIncomingIntoDatabase(document);
+                    
+                        
+                }
+            }
         }
 
         private static string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
