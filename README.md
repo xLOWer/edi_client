@@ -1,2 +1,10 @@
-# edi_client
-WERA, edi client app
+# Модуль интеграции EDI для ООО "ВИРЭЙ"
+
+## Минимальные требования к железу
+- Процессор Intel C2D E8400 / Phenom II 840
+- ОЗУ 512Mb
+
+## Требования к ПО
+- Windows XP/7/8/10
+- .NET Framework >=4.0
+- Клиент ORACLE >= 11
