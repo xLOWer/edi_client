@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows;
 using EdiClient.Services;
 using EdiClient.ViewModel.Common;
@@ -17,7 +14,6 @@ namespace EdiClient
 
         public MainWindow()
         {
-            DevExpress.Xpf.Core.ThemeManager.SetThemeName(this, "VS2017Light");
             InitializeComponent();            
             TabService.Configure(ref mainWindow, ref MainTabControl);
             Context = new MainViewModel();

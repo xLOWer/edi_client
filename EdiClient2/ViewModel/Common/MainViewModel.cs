@@ -2,33 +2,79 @@
 using EdiClient.Services;
 using System.ComponentModel;
 using EdiClient.AppSettings;
-using System.Windows.Controls;
-using System.Linq;
 using System;
-using System.Reflection;
+using DevExpress.Xpf.Editors;
 
 namespace EdiClient.ViewModel.Common
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        public CommandService OpenCommonSettingsCommand => new CommandService( OpenCommonSettings );
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public CommandService OpenCommonSettingsCommand => new CommandService( OpenCommonSettings );
         public CommandService RefreshRelationshipsCommand => new CommandService(RefreshRelationships);
+        public CommandService MatcherPriceOpenCommand => new CommandService(MatcherPriceOpen);
+        public CommandService MatcherGoodsOpenCommand => new CommandService(MatcherGoodsOpen);
+        public CommandService MatcherDeliveryPointsOpenCommand => new CommandService(MatcherDeliveryPointsOpen);
+        public CommandService DocumentsOpenCommand => new CommandService(DocumentsOpen);
+        
+        private bool _IsNightTheme;
+        public bool IsNightTheme
+        {
+            get => _IsNightTheme;
+            set
+            {
+                _IsNightTheme = value;
+                if (value)
+                    AppConfig.ThemeName = "MetropolisDark";
+                else
+                    AppConfig.ThemeName = "MetropolisLight";                
+            }
+        }
+
+        public void DocumentsOpen(object o = null)
+        {
+            try
+            {
+                TabService.NewTab(new DocumentPage(), "Документы");
+            }
+            catch (Exception ex) { Utilites.Error(ex); }
+        }
+
+        public void MatcherPriceOpen(object o = null)
+        {
+            try
+            {
+                TabService.NewTab(new PriceTypesView(), "Связи цен");
+            }
+            catch (Exception ex) { Utilites.Error(ex); }
+        }
+
+        public void MatcherGoodsOpen(object o = null)
+        {
+            try
+            {
+                TabService.NewTab(new MatchMakerView(), "Связи товаров");
+            }
+            catch (Exception ex) { Utilites.Error(ex); }
+        }
+
+        public void MatcherDeliveryPointsOpen(object o = null)
+        {
+            try
+            {
+                TabService.NewTab(new ContractorsMatchView(), "Связи точек доставки");
+            }
+            catch (Exception ex) { Utilites.Error(ex); }
+        }
 
         public MainViewModel()
         {
             try
             {
-                EdiClient.Services.LogService.Log($"[INIT-DocumentPage] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-                TabService.NewTab(typeof(DocumentPage), "Документы");
-                EdiClient.Services.LogService.Log($"[INIT-MatchMakerView] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-                TabService.NewTab(typeof(MatchMakerView), "Связи товаров");
-                EdiClient.Services.LogService.Log($"[INIT-PriceTypesView] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-                TabService.NewTab(typeof(PriceTypesView), "Связи цен");
-                EdiClient.Services.LogService.Log($"[INIT-ContractorsMatchView] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-                TabService.NewTab(typeof(ContractorsMatchView), "Связи точек доставки");
+                TabService.NewTab(new DocumentPage(), "Документы");
             }
-            catch(Exception ex) { EdiClient.Services.Utilites.Error(ex); }
+            catch(Exception ex) { Utilites.Error(ex); }
         }
 
         public void OpenCommonSettings(object o)
@@ -47,11 +93,11 @@ namespace EdiClient.ViewModel.Common
 
         public void RefreshRelationships(object o)
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
                 EdiService.UpdateData();
 
-            (o as ComboBox).ItemsSource = EdiService.Relationships;
+            (o as ComboBoxEdit).ItemsSource = EdiService.Relationships;
         }
     }
 }

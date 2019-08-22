@@ -1,9 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.Reflection;
+﻿using System.Globalization;
 using System.Threading;
 using System.Windows;
-using DevExpress.Xpf.Core;
 using EdiClient.AppSettings;
 using EdiClient.Services;
 
@@ -31,15 +28,15 @@ namespace EdiClient
             bool? LogState = AppConfig.EnableLogging; //запоминаем что в логинге
             AppConfig.EnableLogging = true; // принудительно вырубаем его
 
-            LogService.Log("========== START INIT APPLICATION ==========");
+            Utilites.Logger.Log("========== START INIT APPLICATION ==========");
             AppConfigHandler.Load();
             AppConfigHandler.ConfigureEdi();
             AppConfigHandler.ConfigureOracle();
-            LogService.Log("========== END INIT APPLICATION ==========");
+            Utilites.Logger.Log("========== END INIT APPLICATION ==========");
 
             AppConfig.EnableLogging = LogState; // и возвращаем то что было до принудительного включения
             
-        }
+        }        
         
     }
 }

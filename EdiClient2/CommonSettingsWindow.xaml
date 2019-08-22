@@ -4,7 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdiClient"
-        xmlns:conf="clr-namespace:EdiClient.AppSettings"
+        xmlns:conf="clr-namespace:EdiClient.AppSettings"        
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
+        xmlns:settings="clr-namespace:EdiClient.AppSettings"
+        dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
         mc:Ignorable="d"
         Title="Настройки" Height="370" Width="600" Closed="WindowClosed">
     <Grid>
@@ -41,10 +44,10 @@
                     <TextBox x:Name="AutoHandlerPeriod" Grid.Column="1" Grid.Row="1" Margin="4"/>-->
 
                     <CheckBox x:Name="EnableLogging" Content="Логирование" 
-                              Grid.Column="1" Grid.Row="2" Margin="4" VerticalAlignment="Center"/>
+                              Grid.Column="1" Grid.Row="1" Margin="4" VerticalAlignment="Center"/>
 
-                    <TextBox x:Name="LogPath" Margin="4" Grid.Column="1" Grid.Row="3"/>
-                    <Button Margin="4" Padding="10,0,10,2" Content="Открыть папку лога" Grid.Column="0" Grid.Row="3" Click="Button_Click"/>
+                    <TextBox x:Name="LogPath" Margin="4" Grid.Column="1" Grid.Row="0"/>
+                    <Button Margin="4" Padding="10,0,10,2" Content="Открыть папку лога" Grid.Column="0" Grid.Row="0" Click="Button_Click"/>
 
                 </Grid>
             </TabItem>
@@ -89,13 +92,13 @@
                     <Label Content="SID" Grid.Column="0" Grid.Row="5" Margin="4"/>
                     <TextBox x:Name="DbSID" Grid.Column="1" Grid.Row="5" Margin="4"/>
 
-                    <Label Content="Польз-ль трейдера" Grid.Column="0" Grid.Row="6" Margin="4"/>
-                    <TextBox x:Name="TraderUserName" Grid.Column="1" Grid.Row="6" Margin="4"/>
+                    <!--<Label Content="Польз-ль трейдера" Grid.Column="0" Grid.Row="6" Margin="4"/>
+                    <TextBox x:Name="TraderUserName" Grid.Column="1" Grid.Row="6" Margin="4"/>-->
 
-                    <Label Content="Пароль польз-ля трейдера" Grid.Column="0" Grid.Row="7" Margin="4"/>
-                    <PasswordBox x:Name="TraderUserPassword" Grid.Column="1" Grid.Row="7" Margin="4" PasswordChar="*"/>
+                    <!--<Label Content="Пароль польз-ля трейдера" Grid.Column="0" Grid.Row="7" Margin="4"/>
+                    <PasswordBox x:Name="TraderUserPassword" Grid.Column="1" Grid.Row="7" Margin="4" PasswordChar="*"/>-->
 
-                    <Button Content="Проверить данные пользователя в трейдере" Grid.Column="1" Grid.Row="8" Margin="4" Click="Button_Click_1"/>
+                    <Button Content="Проверить соединение" Grid.Column="1" Grid.Row="7" Margin="4" Click="Button_Click_1"/>
                 </Grid>
             </TabItem>
 
@@ -128,11 +131,8 @@
                     <Label Content="GLN" Grid.Column="0" Grid.Row="3" Margin="4"/>
                     <TextBox x:Name="EdiGLN" Grid.Column="1" Grid.Row="3" Margin="4"/>
 
-                    <Label Content="Email" Grid.Column="0" Grid.Row="4" Margin="4"/>
-                    <TextBox x:Name="EdiEmail" Grid.Column="1" Grid.Row="4" Margin="4"/>
-
-                    <Label Content="URL Сервиса" Grid.Column="0" Grid.Row="5" Margin="4"/>
-                    <TextBox x:Name="EdiUrl" Grid.Column="1" Grid.Row="5" Margin="4"/>
+                    <Label Content="URL Сервиса" Grid.Column="0" Grid.Row="4" Margin="4"/>
+                    <TextBox x:Name="EdiUrl" Grid.Column="1" Grid.Row="4" Margin="4"/>
                 </Grid>
             </TabItem>
 

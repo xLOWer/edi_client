@@ -16,18 +16,18 @@ namespace EdiClient.AppSettings
 
         public static void ConfigureEdi()
         {
-            LogService.Log("[EdiService]");
+            Utilites.Logger.Log("[EdiService]");
             try { EdiService.Configure(); }
             catch (Exception ex) { Utilites.Error(ex); }
         }
 
         public static void ConfigureOracle()
         {
-            LogService.Log("[OracleConnectionService]");
-            try { OracleConnectionService.Configure(); }
+            Utilites.Logger.Log("[Connection]");
+            try { DbService.Connection.Configure(); }
             catch (Exception ex) { Utilites.Error(ex); }
-            LogService.Log("\t\tClientVersion " + OracleConnectionService.conn.ClientVersion);
-            LogService.Log("\t\tServer " + OracleConnectionService.conn.Server);
+            Utilites.Logger.Log("\t\tClientVersion " + DbService.Connection.conn.ClientVersion);
+            Utilites.Logger.Log("\t\tServer " + DbService.Connection.conn.Server);
         }
 
         public static void Load()
@@ -40,7 +40,7 @@ namespace EdiClient.AppSettings
 
             Read();
 
-            LogService.Log($"\t\tconf_dir {directoryPath}\\{dirName}");
+            Utilites.Logger.Log($"\t\tconf_dir {directoryPath}\\{dirName}");
         }
 
 
@@ -52,7 +52,7 @@ namespace EdiClient.AppSettings
 
         public static void Read()
         {
-            LogService.Log("[APPCONFIG]");
+            Utilites.Logger.Log("[APPCONFIG]");
             var newLoadedConfig = new Model.Common.AppConfig();
             XmlSerializer xml = new XmlSerializer(typeof(Model.Common.AppConfig));
             using (var stream = XmlReader.Create(fullPath))
@@ -67,18 +67,17 @@ namespace EdiClient.AppSettings
             AppConfig.DbPort = !string.IsNullOrEmpty(newLoadedConfig.DbPort) ? newLoadedConfig.DbPort : AppConfig.DbPort;
             AppConfig.DbSID = !string.IsNullOrEmpty(newLoadedConfig.DbSID) ? newLoadedConfig.DbSID : AppConfig.DbSID;
 
-            AppConfig.TraderUserName = !string.IsNullOrEmpty(newLoadedConfig.TraderUserName) ? newLoadedConfig.TraderUserName : AppConfig.TraderUserName;
-            AppConfig.TraderUserPassword = !string.IsNullOrEmpty(newLoadedConfig.TraderUserPassword) ? newLoadedConfig.TraderUserPassword : AppConfig.TraderUserPassword;
+            //AppConfig.TraderUserName = !string.IsNullOrEmpty(newLoadedConfig.TraderUserName) ? newLoadedConfig.TraderUserName : AppConfig.TraderUserName;
+            //AppConfig.TraderUserPassword = !string.IsNullOrEmpty(newLoadedConfig.TraderUserPassword) ? newLoadedConfig.TraderUserPassword : AppConfig.TraderUserPassword;
 
             AppConfig.EdiTimeout = !string.IsNullOrEmpty(newLoadedConfig.EdiTimeout.ToString()) ? newLoadedConfig.EdiTimeout : AppConfig.EdiTimeout;
             AppConfig.EdiUser = !string.IsNullOrEmpty(newLoadedConfig.EdiUser) ? newLoadedConfig.EdiUser : AppConfig.EdiUser;
             AppConfig.EdiPassword = !string.IsNullOrEmpty(newLoadedConfig.EdiPassword) ? newLoadedConfig.EdiPassword : AppConfig.EdiPassword;
             AppConfig.EdiGLN = !string.IsNullOrEmpty(newLoadedConfig.EdiGLN) ? newLoadedConfig.EdiGLN : AppConfig.EdiGLN;
-            AppConfig.EdiEmail = !string.IsNullOrEmpty(newLoadedConfig.EdiEmail) ? newLoadedConfig.EdiEmail : AppConfig.EdiEmail;
             AppConfig.EdiUrl = !string.IsNullOrEmpty(newLoadedConfig.EdiUrl) ? newLoadedConfig.EdiUrl : AppConfig.EdiUrl;
 
-            AppConfig.EnableAutoHandler = newLoadedConfig.EnableAutoHandler ?? AppConfig.EnableAutoHandler;
-            AppConfig.AutoHandlerPeriod = !string.IsNullOrEmpty(newLoadedConfig.AutoHandlerPeriod.ToString()) ? newLoadedConfig.AutoHandlerPeriod : AppConfig.AutoHandlerPeriod;
+            //AppConfig.EnableAutoHandler = newLoadedConfig.EnableAutoHandler ?? AppConfig.EnableAutoHandler;
+            //AppConfig.AutoHandlerPeriod = !string.IsNullOrEmpty(newLoadedConfig.AutoHandlerPeriod.ToString()) ? newLoadedConfig.AutoHandlerPeriod : AppConfig.AutoHandlerPeriod;
             AppConfig.EnableLogging = newLoadedConfig.EnableLogging ?? AppConfig.EnableLogging;
 
             AppConfig.Schema = !string.IsNullOrEmpty(newLoadedConfig.Schema) ? newLoadedConfig.Schema : AppConfig.Schema;
@@ -88,10 +87,10 @@ namespace EdiClient.AppSettings
             AppConfig.ProxyUserPassword = !string.IsNullOrEmpty(newLoadedConfig.ProxyUserPassword) ? newLoadedConfig.ProxyUserPassword : AppConfig.ProxyUserPassword;
 
 
-            LogService.Log("\t\tDbUserName " + AppConfig.DbUserName);
-            LogService.Log("\t\tDbHost " + AppConfig.DbHost);
-            LogService.Log("\t\tEdiUser " + AppConfig.EdiUser);
-            LogService.Log("\t\tEdiGLN " + AppConfig.EdiGLN);
+            Utilites.Logger.Log("\t\tDbUserName " + AppConfig.DbUserName);
+            Utilites.Logger.Log("\t\tDbHost " + AppConfig.DbHost);
+            Utilites.Logger.Log("\t\tEdiUser " + AppConfig.EdiUser);
+            Utilites.Logger.Log("\t\tEdiGLN " + AppConfig.EdiGLN);
         }
 
 

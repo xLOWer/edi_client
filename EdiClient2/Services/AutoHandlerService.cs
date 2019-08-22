@@ -19,29 +19,29 @@ namespace EdiClient.Services
                 // если doc не сфэйлиный и готов к созданию в трейдере то добавим в трейдер
                 if (doc.IsReadyToTrader && !doc.IsInTrader && !doc.IsFailed) DocumentRepository.CreateTraderDocument(doc.ID);
                 // если doc не сфэйлиный и готов к отправке как ответ на заказ то отправляем его
-                if (doc.IsReadyToOrdrsp && doc.IsInTrader && !doc.IsFailed) DocumentRepository.SendOrdrsp(doc);
+                //if (doc.IsReadyToOrdrsp && doc.IsInTrader && !doc.IsFailed) DocumentRepository.SendOrdrsp(doc);
                 // если doc не сфэйлиный и готов к отправке как уведомление об отгрузки то отправляем его
-                if (doc.IsReadyToDesadv && doc.IsInTrader && doc.IsOrdrsp && !doc.IsFailed) DocumentRepository.SendDesadv(doc);
+                //if (doc.IsReadyToDesadv && doc.IsInTrader && doc.IsOrdrsp && !doc.IsFailed) DocumentRepository.SendDesadv(doc);
             }
         }
 
         internal static void RegisterAutoHandler()
         {
-            if (AppConfig.EdiTimeout != null)
-                if (AppConfig.EdiTimeout > 0)
-                {
-                    Task.Factory.StartNew(() =>
-                    {
-                        while (true)
-                        {
-                            if (AppConfig.EnableAutoHandler == true
-                                || AppConfig.EdiTimeout != null
-                                || AppConfig.EdiTimeout <= 0) { break; }
-                            Process();
-                            Thread.Sleep((int)AppConfig.EdiTimeout * 1000 * 60);
-                        }
-                    });
-                }
+            //if (AppConfig.EdiTimeout != null)
+            //    if (AppConfig.EdiTimeout > 0)
+            //    {
+            //        Task.Factory.StartNew(() =>
+            //        {
+            //            while (true)
+            //            {
+            //                if (AppConfig.EnableAutoHandler == true
+            //                    || AppConfig.EdiTimeout != null
+            //                    || AppConfig.EdiTimeout <= 0) { break; }
+            //                Process();
+            //                Thread.Sleep((int)AppConfig.EdiTimeout * 1000 * 60);
+            //            }
+            //        });
+            //    }
         }
     }
 }

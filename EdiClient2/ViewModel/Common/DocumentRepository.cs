@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using EdiClient.AppSettings;
 using EdiClient.Services;
+using static EdiClient.Services.Utilites;
+using System.Threading.Tasks;
 
 namespace EdiClient.ViewModel.Common
 {
@@ -27,7 +29,7 @@ namespace EdiClient.ViewModel.Common
         /// <returns>Список полученных заказов</returns>
         public static void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) return;
             if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
 
@@ -42,34 +44,40 @@ namespace EdiClient.ViewModel.Common
             {
                 foreach (var order in GetDocuments(dateFrom, dateTo))
                 {
-                    NewOrders.RemoveAll(x => x.documentNumber == order.ORDER_NUMBER);
+                    NewOrders.RemoveAll(x => x.documentNumber == order.ORDER_NUMBER);                   
                 }
-                
+
+                Utilites.tasks = new Task[NewOrders.Count()];
+                int i = 0;
                 foreach (var order in NewOrders)
                 {
-                    
-                        var document = EdiService.Receive<DocumentOrder>(
-                                                                    SelectedRelationship.partnerIln,
-                                                                    SelectedRelationship.documentType,
-                                                                    order.trackingId,
-                                                                    SelectedRelationship.documentStandard,
-                                                                    "").First();
-                        InsertIncomingIntoDatabase(document);
-                    
-                        
+                    Utilites.tasks[i] = GetOrder(SelectedRelationship.partnerIln, SelectedRelationship.documentType, order.trackingId, SelectedRelationship.documentStandard);
+                    Utilites.tasks[i++].Start();
                 }
+                
+                Task.WaitAny(Utilites.tasks);
             }
         }
+
+        private static Task GetOrder(string partnerIln, string documentType, string trackingId, string documentStandard)
+        {             
+            return new Task(() =>
+            {
+                var document = EdiService.Receive<DocumentOrder>(partnerIln, documentType, trackingId, documentStandard, "").First();
+                InsertIncomingIntoDatabase(document);                
+            });
+        }
+
 
         private static string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
 
         public static void UpdateFailedDetails(string P_EDI_DOC_ID)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
             DbService.ExecuteCommand(new OracleCommand()
             {
-                Connection = OracleConnectionService.conn,
+                Connection = DbService.Connection.conn,
                 Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, P_EDI_DOC_ID, ParameterDirection.Input) },
                 CommandType = CommandType.StoredProcedure,
                 CommandText = (AppConfig.Schema+".") + "EDI_REFRESH_DOC_DETAILS"
@@ -82,8 +90,8 @@ namespace EdiClient.ViewModel.Common
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
         internal static void CreateTraderDocument(string orderID)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
             var commands = new List<OracleCommand>()
                 {
                         new OracleCommand()
@@ -91,9 +99,9 @@ namespace EdiClient.ViewModel.Common
                             Parameters =
                             {
                                 new OracleParameter("P_ID", OracleDbType.VarChar, orderID, ParameterDirection.Input),
-                                new OracleParameter("P_USERNAME", OracleDbType.VarChar, AppConfig.TraderUserName, ParameterDirection.Input)
+                                new OracleParameter("P_USERNAME", OracleDbType.VarChar, "", ParameterDirection.Input)
                             },
-                            Connection = OracleConnectionService.conn,
+                            Connection = DbService.Connection.conn,
                             CommandType = CommandType.StoredProcedure,
                             CommandText = (AppConfig.Schema+".") + "EDI_MOVE_ORDER"
                         }
@@ -108,7 +116,7 @@ namespace EdiClient.ViewModel.Common
         /// <param name="orders">Список заказов</param>
         private static void InsertIncomingIntoDatabase(DocumentOrder order)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             List<OracleCommand> commands = new List<OracleCommand>();
             var coms = XmlOrdersToDatabase(order);
             if (coms != null && coms.Count > 0)
@@ -127,7 +135,7 @@ namespace EdiClient.ViewModel.Common
         /// <returns>Список сформированных команд</returns>
         private static List<OracleCommand> XmlOrdersToDatabase(DocumentOrder order)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (order == null) return new List<OracleCommand>();
             List<OracleCommand> commands = new List<OracleCommand>();
 
@@ -146,7 +154,7 @@ namespace EdiClient.ViewModel.Common
                         new OracleParameter("P_REMARKS", OracleDbType.NVarChar, order?.OrderHeader?.Remarks ?? "", ParameterDirection.Input),
                         new OracleParameter("P_TOTAL_GROSS_AMOUNT", OracleDbType.NVarChar, order?.OrderSummary?.TotalGrossAmount ?? "", ParameterDirection.Input)
                     },
-                Connection = OracleConnectionService.conn,
+                Connection = DbService.Connection.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = (AppConfig.Schema+".") + "Edi_ADD_ORDER"
             });
@@ -174,7 +182,7 @@ namespace EdiClient.ViewModel.Common
                             new OracleParameter("P_SUPPLIER_ITEM_CODE", OracleDbType.NVarChar, line?.LineItem?.SupplierItemCode ?? "", ParameterDirection.Input),
                             new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
                         },
-                        Connection = OracleConnectionService.conn,
+                        Connection = DbService.Connection.conn,
                         CommandType = CommandType.StoredProcedure,
                         CommandText = (AppConfig.Schema+".") + "Edi_ADD_ORDER_DETAIL"
                     });
@@ -185,7 +193,7 @@ namespace EdiClient.ViewModel.Common
 
         internal static DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
             var PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
 
@@ -273,7 +281,7 @@ namespace EdiClient.ViewModel.Common
         /// <param name="advice">отправляемый заказ</param>
         internal static void SendDesadv(Document doc)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
 
@@ -293,7 +301,7 @@ namespace EdiClient.ViewModel.Common
                         {
                             new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
                         },
-                Connection = OracleConnectionService.conn,
+                Connection = DbService.Connection.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = (AppConfig.Schema+".") + "EDI_MAKE_DESADV"
             });
@@ -399,7 +407,7 @@ namespace EdiClient.ViewModel.Common
         /// <param name="order">отправляемый заказ</param>
         internal static void SendOrdrsp(Document doc)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
             
@@ -419,7 +427,7 @@ namespace EdiClient.ViewModel.Common
                         {
                             new OracleParameter("P_ID", OracleDbType.Number, doc.ID, ParameterDirection.Input)
                         },
-                Connection = OracleConnectionService.conn,
+                Connection = DbService.Connection.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_ORDRSP"
             });
@@ -427,17 +435,17 @@ namespace EdiClient.ViewModel.Common
         
         internal static List<Detail> GetDocumentDetails(string Id)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var sql = SqlService.GET_ORDER_DETAILS(Id);
-            var result = DbService<Detail>.DocumentSelect(sql);
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            var sql = DbService.Sqls.GET_ORDER_DETAILS(Id);
+            var result = DbService.DocumentSelect<Detail>(sql);
             return result;
         }
 
         internal static List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var sql = SqlService.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
-            var result = DbService<Document>.DocumentSelect(sql);
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            var sql = DbService.Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
+            var result = DbService.DocumentSelect<Document>(sql);
             if (result != null)
                 if (result.Count > 0)
                     foreach (var doc in result)
@@ -446,20 +454,21 @@ namespace EdiClient.ViewModel.Common
                         //foreach (var detail in doc.Details)                        
                         //    detail.Doc = doc;                        
                     }
+            Utilites.LoadedDocsCount = result.Count.ToString();
             return result;
         }
         
         internal static List<DocumentReceivingAdvice> GetRecadv()
         {
-            LogService.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             return new List<DocumentReceivingAdvice>();
         }
 
         public static List<T> GetList<T>(string sql)
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки"); return null; }
-            var result = DbService<T>.DocumentSelect(new List<string> { sql }).Cast<T>().ToList();
+            var result = DbService.DocumentSelect<T>(new List<string> { sql }).Cast<T>().ToList();
             return result;
         }
     }

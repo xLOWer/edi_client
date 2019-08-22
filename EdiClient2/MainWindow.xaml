@@ -3,11 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxl="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
         xmlns:local="clr-namespace:EdiClient"
         xmlns:services="clr-namespace:EdiClient.Services"
         xmlns:settings="clr-namespace:EdiClient.AppSettings"
-        mc:Ignorable="d" Name="mainWindow"
-        Height="Auto" Width="Auto" WindowState="Maximized">
+        dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
+        mc:Ignorable="d" 
+        Name="mainWindow"
+        Height="Auto"
+        Width="Auto" 
+        WindowState="Maximized" >
     <Window.Resources>
         <Style x:Key="lname">
             <Setter Property="Control.Margin" Value="0" />
@@ -21,137 +29,104 @@
             <Setter Property="Control.FontSize" Value="12" />
         </Style>
     </Window.Resources>
+    
+    
+    
+    <dxl:LayoutControl Orientation="Vertical" Margin="-12">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="26"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="22"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <dxb:BarContainerControl Name="TopMenu1" ContainerType="Top" Height="26">
+            <dxb:MainMenuControl Caption="Main Menu">
 
-        <Menu Name="TopMenu1" Grid.Column="0" Grid.Row="0" Grid.IsSharedSizeScope="True">
-            <MenuItem  x:Name="CommonSettings" Header="Настройки" Command="{Binding OpenCommonSettingsCommand}" >
-                <MenuItem.Icon>
-                    <Image Source="~\..\Images\config.png"/>
-                </MenuItem.Icon>
-            </MenuItem>
+                <dxb:BarButtonItem x:Name="Documents" Content="Документы" Command="{Binding DocumentsOpenCommand}"/>
+                <dxb:BarButtonItem x:Name="MatcherPrice" Content="Цены" Command="{Binding MatcherPriceOpenCommand}"/>
+                <dxb:BarButtonItem x:Name="MatcherGoods" Content="Товары" Command="{Binding MatcherGoodsOpenCommand}"/>
+                <dxb:BarButtonItem x:Name="MatcherDeliveryPoints" Content="Точки доставки" Command="{Binding MatcherDeliveryPointsOpenCommand}"/>
 
-            <MenuItem Header="Информация">
-                <MenuItem.Icon>
-                    <Image Source="~\..\Images\info.png"/>
-                </MenuItem.Icon>
+            </dxb:MainMenuControl>
+        </dxb:BarContainerControl>
 
-                <MenuItem x:Name="License" Header="Лицензия" Click="License_Click">
-                    <MenuItem.Icon>
-                        <Image Source="~\..\Images\license.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
+        <dxl:LayoutControl Orientation="Horizontal" Height="52" Margin="-11">
+            <dxe:ComboBoxEdit x:Name="RelationshipsComboBox"
+                      ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
+                      SelectedIndex="0" 
+                      SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
+                      DisplayMember="Name"  
+                      Width="600"
+                      ValueMember="Name"/>
+            <dx:SimpleButton Glyph="~\..\Images\refresh.png" x:Name="SimpleButton_RefreshRelationships"
+                             ToolTip="Обновить список контрагентов" 
+                             Command="{Binding RefreshRelationshipsCommand}" 
+                             CommandParameter="{Binding ElementName=RelationshipsComboBox}" Width="32"/>
+        </dxl:LayoutControl>
 
-                <MenuItem x:Name="About" Header="О программе" Click="About_Click">
-                    <MenuItem.Icon>
-                        <Image Source="~\..\Images\info.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-
-            </MenuItem>
-        </Menu>
-
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="2">
-            <Label Content="Выбранный клиент:"/>
-            <ComboBox ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
-                        SelectedIndex="0" BorderThickness="0" Background="Transparent" Grid.Column="0"
-                        SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
-                        DisplayMemberPath="Name" x:Name="RelationshipsComboBox" Width="600"
-                        SelectedValuePath="Name"/>
-
-                <Button ToolTip="Обновить список контрагентов" BorderBrush="Transparent" Background="Transparent" BorderThickness="0"
-                    Command="{Binding RefreshRelationshipsCommand}" CommandParameter="{Binding ElementName=RelationshipsComboBox}">
-                    <Image Source="~\..\Images\refresh.png" Margin="-1"/>
-                </Button>
-            </StackPanel>
-            
-
-        <TabControl Name="MainTabControl" Grid.Row="2" BorderBrush="Transparent" BorderThickness="0"
+        <dx:DXTabControl Name="MainTabControl" Height="Auto"
                     ItemsSource="{Binding Source={x:Static services:TabService.Tabs}}"
-                        SelectedIndex="0">
-            <TabControl.ItemTemplate>
+                        SelectedIndex="0"
+                        AllowDrop="True"
+                        >
+            <dx:DXTabControl.ItemHeaderTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Height="21" Width="Auto">
-                        <TextBlock Width="Auto" Text="{Binding Title}"/>
-                    </StackPanel>
+                    <TextBlock Width="Auto" Text="{Binding Title}"/>
                 </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
+            </dx:DXTabControl.ItemHeaderTemplate>
+            <dx:DXTabControl.ItemTemplate>
                 <DataTemplate>
-                    <Frame Content="{Binding Content}" Width="Auto" Height="Auto" NavigationUIVisibility="Hidden"/>
+                    <Frame Content="{Binding View.Content}" Width="Auto" Height="Auto" NavigationUIVisibility="Hidden"/>
                 </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+            </dx:DXTabControl.ItemTemplate>
 
-        <StatusBar Grid.Row="3" >
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="пользователь: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.DbUserName)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
+            <dx:DXTabControl.View>
+                <dx:TabControlScrollView AllowHideTabItems="True"
+                                         HideButtonShowMode="InAllTabs"                                          
+                                         AllowScrollOnMouseWheel="True"
+                                         AllowKeyboardNavigation="True"
+                                         ShowHeaderMenu="True"
+                                         ShowHiddenTabItemsInHeaderMenu="True"
+                                         ShowDisabledTabItemsInHeaderMenu="True"
+                                         ShowVisibleTabItemsInHeaderMenu="False"/>
+            </dx:DXTabControl.View>
+        </dx:DXTabControl>
 
-            <Separator/>
+        <dxb:BarContainerControl ContainerType="Bottom" Height="26">
+            <dxb:StatusBarControl Caption="Status Bar">
 
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="хост: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.DbHost)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
 
-            <Separator/>
+                <dxb:BarStaticItem Content="Хост:" ShowBorder="False"/>
+                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.DbHost), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
+                <dxb:BarItemSeparator/>
 
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="EDI GLN: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.EdiGLN)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
+                <dxb:BarStaticItem Content="EDI GLN:" ShowBorder="False"/>
+                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.EdiGLN), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
+                <dxb:BarItemSeparator/>
 
-            <Separator/>
+                <dxb:BarStaticItem Content="EDI GLN:" ShowBorder="False"/>
+                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.EdiGLN), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
+                <dxb:BarItemSeparator/>
 
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Польз-ль трейдера: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.TraderUserName)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
+                <dxb:BarStaticItem Content="Логирование:" ShowBorder="False"/>
+                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.EnableLogging), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
+                <dxb:BarItemSeparator/>
 
-            <Separator/>
+                <dxb:BarStaticItem Content="Документов:  " ShowBorder="False"/>
+                <dxb:BarStaticItem Content="{Binding Path=(services:Utilites.LoadedDocsCount), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
+                <dxb:BarItemSeparator/>
 
-            <!--<StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Логирование: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.EnableLogging)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
 
-            <Separator/>
-            
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Автообработка: " Style="{StaticResource lname}"/>
-                    <Label Content="{Binding Path=(settings:AppConfig.EnableAutoHandler)}" Style="{StaticResource lvalue}"/>
-                </StackPanel>
-            </StatusBarItem>
-            
-            <Separator/>-->
-            
-            <StatusBarItem>
-                <Label Content=""/>
-            </StatusBarItem>
+                <dxb:BarStaticItem Content="{Binding Path=(services:Utilites.Time)}" Alignment="Far"/>
+                <dxb:BarButtonItem x:Name="CommonSettings" Content="Настройки" Command="{Binding OpenCommonSettingsCommand}" Glyph="~\..\Images\config.png" Alignment="Far"/>
+                <dxb:BarButtonItem x:Name="License" Content="Лицензия" ItemClick="License_Click" Glyph="~\..\Images\license.png" Alignment="Far"/>
+                <dxb:BarButtonItem x:Name="About" Content="О программе" ItemClick="About_Click" Glyph="~\..\Images\info.png" Alignment="Far"/>
 
-        </StatusBar>
+                <!--<dxb:BarItemSeparator Alignment="Far"/>
+                <dxb:BarEditItem  Content="темная тема" Alignment="Far" EditValue="{Binding IsNightTheme}">
+                    <dxb:BarEditItem.EditSettings>
+                        <dxe:CheckEditSettings/>
+                    </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>-->
 
-    </Grid>
+
+            </dxb:StatusBarControl>
+        </dxb:BarContainerControl>
+
+        </dxl:LayoutControl>
 </Window>

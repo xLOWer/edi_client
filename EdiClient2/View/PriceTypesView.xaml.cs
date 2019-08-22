@@ -1,18 +1,5 @@
-﻿using DevExpress.Xpf.Core;
-using EdiClient.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using EdiClient.ViewModel;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace EdiClient.View
 {
@@ -25,8 +12,7 @@ namespace EdiClient.View
 
         public PriceTypesView()
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            ThemeManager.SetThemeName(this, "VS2017Light");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new PriceTypesViewModel(this);
             DataContext = Context;
             InitializeComponent();

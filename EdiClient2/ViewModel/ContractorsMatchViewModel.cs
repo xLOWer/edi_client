@@ -20,7 +20,7 @@ namespace EdiClient.ViewModel
     {
         public ContractorsMatchViewModel()
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
 
         }
 
@@ -205,7 +205,7 @@ namespace EdiClient.ViewModel
          
         public void Save(object obj = null)
         {
-            LogService.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             
             try
             {
@@ -222,7 +222,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_BUYER_CUSTOMER_ID", OracleDbType.Number, LinkedBuyerCustomer?.Id ?? "", ParameterDirection.Input),
                             new OracleParameter("P_DELIVERY_POINT_CONTRACTOR_ID", OracleDbType.Number, LinkedDeliveryPointContractor?.Id ?? "", ParameterDirection.Input),
                         },
-                    Connection = OracleConnectionService.conn,
+                    Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfig.Schema + ".") + "EDI_CHANGE_DELIVERY_POINT"
                 });
@@ -255,17 +255,17 @@ namespace EdiClient.ViewModel
 
         public void LoadData(object obj = null)
         {
-            LogService.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             GetClients();
             GetCustomers();
             GetContractors();
         }
 
-        private void GetCustomers() => CustomersList = DocumentRepository.GetList<Customer>(SqlService.GET_CUSTOMERS);
-        private void GetContractors() => ContractorsList = DocumentRepository.GetList<Customer>(SqlService.GET_CONTRACTORS);
+        private void GetCustomers() => CustomersList = DocumentRepository.GetList<Customer>(DbService.Sqls.GET_CUSTOMERS);
+        private void GetContractors() => ContractorsList = DocumentRepository.GetList<Customer>(DbService.Sqls.GET_CONTRACTORS);
         private void GetClients()
         {
-            ClientsList = DocumentRepository.GetList<Client>(SqlService.GET_CLIENTS);
+            ClientsList = DocumentRepository.GetList<Client>(DbService.Sqls.GET_CLIENTS);
         }
         
 

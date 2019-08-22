@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using Devart.Data.Oracle;
 using System.Collections.Generic;
+using EdiClient.AppSettings;
+using DevExpress.Xpf.Core;
 
 namespace EdiClient.Services
 {
@@ -15,12 +17,12 @@ namespace EdiClient.Services
         /// <param name="commands">Команды</param>
         internal static void ExecuteCommand(List<OracleCommand> commands)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log("\t\tcount=" + commands.Count.ToString());
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log("\t\tcount=" + commands.Count.ToString());
             foreach (var command in commands)
             {
-                command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.Check();
+                command.Connection = DbService.Connection.conn;
+                DbService.Connection.Check();
                 command.ExecuteNonQuery();
             }
         }
@@ -28,11 +30,11 @@ namespace EdiClient.Services
 
         internal static void ExecuteCommand(OracleCommand command)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (command)
             {
-                OracleConnectionService.Check();
-                command.Connection = OracleConnectionService.conn;
+                DbService.Connection.Check();
+                command.Connection = DbService.Connection.conn;
                 var res = command.ExecuteNonQuery();                
             }
         }
@@ -43,13 +45,13 @@ namespace EdiClient.Services
         /// <returns>DataTable с резльтатом запроса</returns>
         internal static DataTable Select(string Sql)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             DataTable DataGridItems = ObjToDataTable(typeof(string));
             using (OracleCommand command = new OracleCommand())
             {
-                command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.Check();
-                OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
+                command.Connection = DbService.Connection.conn;
+                DbService.Connection.Check();
+                OracleDataAdapter adapter = new OracleDataAdapter(Sql, DbService.Connection.conn);
                 OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
@@ -60,11 +62,11 @@ namespace EdiClient.Services
 
         internal static void Insert(string Sql)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (OracleCommand command = new OracleCommand(Sql))
             {
-                command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.Check();
+                command.Connection = DbService.Connection.conn;
+                DbService.Connection.Check();
                 command.ExecuteNonQuery();
                 
             }
@@ -72,14 +74,14 @@ namespace EdiClient.Services
 
         internal static void Insert(List<string> Sqls)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             int c = Sqls.Count();
             for (int i = 1; i <= c; ++i)
             {
                 using (OracleCommand command = new OracleCommand(Sqls[i - 1]))
                 {
-                    command.Connection = OracleConnectionService.conn;
-                    OracleConnectionService.Check();
+                    command.Connection = DbService.Connection.conn;
+                    DbService.Connection.Check();
                     command.ExecuteNonQuery();
                     
                 }
@@ -89,22 +91,22 @@ namespace EdiClient.Services
 
         internal static string SelectSingleValue(string Sql)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             OracleDataReader reader;
             string retVal = "";
             using (OracleCommand command = new OracleCommand())
             {
-                command.Connection = OracleConnectionService.conn;
+                command.Connection = DbService.Connection.conn;
                 command.CommandType = CommandType.Text;
                 command.CommandText = Sql;
-                OracleConnectionService.conn.Open();
+                DbService.Connection.conn.Open();
                 reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
                     retVal = reader[0].ToString();
                 }
-                OracleConnectionService.conn.Close();
+                DbService.Connection.conn.Close();
             }
             return retVal;
         }
@@ -117,26 +119,112 @@ namespace EdiClient.Services
             dt.AcceptChanges();
             return dt;
         }
-    }
 
-    internal static partial class DbService<TModel>
-    {
-        internal static List<TModel> DocumentSelect(string Sql)
+        internal static class Sqls
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log("\t\t"+Sql);
+            internal static string DatesBetween(DateTime Date)
+                => $" BETWEEN {OracleDateFormat(Date)} AND {OracleDateFormat(Date)} ";
+
+            internal static string DatesBetween(DateTime DateFrom, DateTime DateTo)
+                => $" BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)} ";
+
+            internal static string OracleDateFormat(DateTime Date) => $" TO_DATE('{Date.Day}/{Date.Month}/{Date.Year}','DD/MM/YYYY') ";
+
+            internal static string Sql_DateRange(string tableName, string fieldName, string sign, DateTime date1)
+                => $"{tableName}.{fieldName} = {OracleDateFormat(date1)}\n";
+
+            internal static string Sql_DateRange(string shortTableName, string fieldName, string sign, DateTime date1, DateTime date2)
+                => $"{shortTableName}.{fieldName} {DatesBetween(date1, date2)}\n";
+
+            internal static string ToOracleDate(DateTime Date)
+            {
+                var day = Date.Day < 10 ? $"0{Date.Day}" : Date.Day.ToString();
+                var mouth = Date.Month < 10 ? $"0{Date.Month}" : Date.Month.ToString();
+                return $"{day}.{mouth}. {Date.Year} {Date.Hour}:{Date.Minute}:{Date.Second}";
+            }
+
+            internal static string GET_FAILED_DETAILS(string SENDER_ILN) =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_FAILED_DETAILS WHERE SENDER_ILN={SENDER_ILN}";
+
+            internal static string GET_GOODS =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_GOODS";
+
+            internal static string GET_MATCHED(string CUSTOMER_GLN) =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+
+            internal static string GET_MATCHED_PRICE_TYPES(string CUSTOMER_GLN) =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+
+            internal static string GET_ORDERS(string SENDER_ILN, DateTime DateFrom, DateTime DateTo) =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
+
+            internal static string GET_ORDER_DETAILS(string ID_EDI_DOC) =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
+
+            internal static string GET_PRICE_TYPES =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_PRICE_TYPES";
+
+            internal static string GET_CLIENTS =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_DELIVERY_POINTS";
+
+            internal static string GET_CUSTOMERS =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_CUSTOMERS";
+
+            internal static string GET_CONTRACTORS =>
+                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_CONTRACTORS";
+
+        }
+
+
+        internal static class Connection
+        {
+            internal static OracleConnection conn { get; set; }
+            internal static string Timeout => conn?.ConnectionTimeout.ToString() ?? "ошибка";
+
+            internal static void Configure()
+            {
+                if (!string.IsNullOrEmpty(AppConfig.connString) ||
+                    !String.IsNullOrEmpty(AppConfig.DbUserName) ||
+                    !String.IsNullOrEmpty(AppConfig.DbUserPassword) ||
+                    !String.IsNullOrEmpty(AppConfig.DbSID) ||
+                    !String.IsNullOrEmpty(AppConfig.DbPort) ||
+                    !String.IsNullOrEmpty(AppConfig.DbHost))
+                {
+                    conn = new OracleConnection(AppConfig.connString);
+                    //DbService.SelectSingleValue("alter session set nls_numeric_characters = ',.'");
+                }
+                else
+                    DXMessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");
+            }
+
+            internal static void Open() => conn.Open();
+            internal static void Close() => conn.Close();
+
+            internal static void Check()
+            {
+                if (conn.State != System.Data.ConnectionState.Open)
+                    conn.Open();
+            }
+
+        }
+
+
+        internal static List<TModel> DocumentSelect<TModel>(string Sql)
+        {
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log("\t\t" + Sql);
             List<TModel> Documents = new List<TModel>();
-            DataTable DataGridItems = ObjToDataTable(typeof(TModel));
+            DataTable DataGridItems = ObjToDataTable<TModel>(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
             {
-                command.Connection = OracleConnectionService.conn;
-                OracleConnectionService.Check();
-                OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
+                command.Connection = DbService.Connection.conn;
+                DbService.Connection.Check();
+                OracleDataAdapter adapter = new OracleDataAdapter(Sql, DbService.Connection.conn);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
             }
 
-            Documents = ToListof(DataGridItems).ToList();
+            Documents = ToListof<TModel>(DataGridItems).ToList();
             return Documents;
         }
         /*
@@ -151,60 +239,60 @@ namespace EdiClient.Services
             return inst;
         }*/
 
-        internal static List<TModel> ToListof(DataTable dt)
+        internal static List<TModel> ToListof<TModel>(DataTable dt)
         {
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
             var columnNames = dt.Columns.Cast<DataColumn>()
-                .Select( c => c.ColumnName )
+                .Select(c => c.ColumnName)
                 .ToList();
-            var objectProperties = typeof( TModel ).GetProperties( flags );
-            var targetList = dt.AsEnumerable().Select( dataRow =>
+            var objectProperties = typeof(TModel).GetProperties(flags);
+            var targetList = dt.AsEnumerable().Select(dataRow =>
             {
                 var instanceOfT = Activator.CreateInstance<TModel>();
 
-                foreach (var properties in objectProperties.Where( properties => columnNames.Contains( properties.Name ) && dataRow[properties.Name] != DBNull.Value ))
+                foreach (var properties in objectProperties.Where(properties => columnNames.Contains(properties.Name) && dataRow[properties.Name] != DBNull.Value))
                 {
-                    properties.SetValue( instanceOfT, dataRow[properties.Name], null );
+                    properties.SetValue(instanceOfT, dataRow[properties.Name], null);
                 }
                 return instanceOfT;
-            } ).ToList();
+            }).ToList();
 
             return targetList;
         }
 
 
-        internal static DataTable ObjToDataTable(Type type)
+        internal static DataTable ObjToDataTable<TModel>(Type type)
         {
             var dt = new DataTable();
             foreach (var info in type.GetProperties())
-                dt.Columns.Add( info.Name );
+                dt.Columns.Add(info.Name);
             dt.AcceptChanges();
             return dt;
         }
 
-        internal static List<TModel> DocumentSelect(List<string> Sqls)
+        internal static List<TModel> DocumentSelect<TModel>(List<string> Sqls)
         {
-            LogService.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            LogService.Log("\t\tSqls.Count=" + Sqls.Count.ToString());
+            Utilites.Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log("\t\tSqls.Count=" + Sqls.Count.ToString());
             List<TModel> Documents = new List<TModel>();
-            DataTable DataGridItems = ObjToDataTable(typeof(TModel));
+            DataTable DataGridItems = ObjToDataTable<TModel>(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
             {
                 foreach (var Sql in Sqls)
                 {
-                    command.Connection = OracleConnectionService.conn;
-                    OracleConnectionService.Check();
-                    OracleDataAdapter adapter = new OracleDataAdapter(Sql, OracleConnectionService.conn);
+                    command.Connection = DbService.Connection.conn;
+                    DbService.Connection.Check();
+                    OracleDataAdapter adapter = new OracleDataAdapter(Sql, DbService.Connection.conn);
                     OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                     DataGridItems.Clear();
                     adapter.Fill(DataGridItems);
                 }
             }
 
-            Documents = ToListof(DataGridItems).ToList();
+            Documents = ToListof<TModel>(DataGridItems).ToList();
             return Documents;
         }
-
-
     }
+
+
 }

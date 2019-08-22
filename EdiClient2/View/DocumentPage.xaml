@@ -1,10 +1,12 @@
-﻿<Page x:Class="EdiClient.View.DocumentPage"
+﻿ <Page x:Class="EdiClient.View.DocumentPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
       xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
+        xmlns:settings="clr-namespace:EdiClient.AppSettings"
+        dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
       xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
       xmlns:local="clr-namespace:EdiClient.View"
       xmlns:conv="clr-namespace:EdiClient.Services.Converters"
@@ -178,7 +180,7 @@
 
         </StackPanel>
         
-            <Label Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>
+            <!--<Label Content="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right"/>-->
         </StackPanel>
 
 
@@ -297,13 +299,31 @@
                         <dxg:FormatCondition FieldName="Details_DeliveryGrossSumm" Expression="[TOTAL_GROSS_AMOUNT] != [Details_DeliveryGrossSumm] and [IsInTrader] == True" >
                             <dxg:Format Background="#ffe8db" FontWeight="Bold" Foreground="#a33b00"/>
                         </dxg:FormatCondition>
-                    </dxg:TableView.FormatConditions>     
+                    </dxg:TableView.FormatConditions>
+                    
+                    <dxg:TableView.GroupRowStyle>
+                        <Style TargetType="{x:Type dxg:GroupRowControl}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GroupLevel}" Value="0">
+                                    <Setter Property="Background" Value="#d9e7ff" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GroupLevel}" Value="1">
+                                    <Setter Property="Background" Value="#c2d8ff" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding GroupLevel}" Value="1">
+                                    <Setter Property="Background" Value="#abc9ff" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </dxg:TableView.GroupRowStyle>
                     
                 </dxg:TableView>
             </dxg:GridControl.View>
             
             <dxg:GridControl.GroupSummary>
-                <dxg:GridSummaryItem ShowInColumn="REMARKS" SummaryType="Count"/>
+                <dxg:GridSummaryItem FieldName="ID" ShowInColumn="ID" SummaryType="Count"/>
+                <dxg:GridSummaryItem FieldName="CODE" ShowInColumn="CODE" SummaryType="Count"/>
+                <dxg:GridSummaryItem FieldName="REMARKS" ShowInColumn="REMARKS" SummaryType="Count"/>
 
                 <dxg:GridSummaryItem ShowInColumn="DetailsCount" FieldName="DetailsCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
                 <dxg:GridSummaryItem ShowInColumn="Details_OrderedLinesCount" FieldName="Details_OrderedLinesCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>

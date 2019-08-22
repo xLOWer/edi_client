@@ -1,4 +1,5 @@
 ﻿using Devart.Data.Oracle;
+using DevExpress.Xpf.Core;
 using EdiClient.AppSettings;
 using EdiClient.Services;
 using System;
@@ -14,7 +15,6 @@ namespace EdiClient
     {
         public CommonSettingsWindow()
         {
-            DevExpress.Xpf.Core.ThemeManager.SetThemeName(this, "VS2017Light");
             InitializeComponent();
             ConfLoad();
         }
@@ -36,23 +36,15 @@ namespace EdiClient
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             ConfSave();
-            bool failFlag = false;
-            var connstr = $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {AppConfig.DbHost})(PORT = {AppConfig.DbPort}))(CONNECT_DATA = " +
-                          $"(SERVER = DEDICATED)(SERVICE_NAME = {AppConfig.DbSID})));Password={AppConfig.TraderUserPassword};User ID={AppConfig.TraderUserName}";
-
             try
             {
-                using (var conn = new OracleConnection(connstr))
-                {                    
+                using (var conn = new OracleConnection(AppConfig.connString))
+                {
                     conn.Open();
                 }
+                DXMessageBox.Show($"OK!");
             }
-            catch (Exception ex) { failFlag = true;  }
-
-            if(failFlag)
-                Utilites.Error($"Пользователь {AppConfig.TraderUserName}: нет доступа!");
-            else
-                MessageBox.Show($"Пользователь {AppConfig.TraderUserName}: OK!");
+            catch (Exception ex) { Utilites.Error(ex); }            
         }
 
 
@@ -66,14 +58,13 @@ namespace EdiClient
             DbPort.Text = AppConfig.DbPort;
             DbSID.Text = AppConfig.DbSID;
 
-            TraderUserName.Text = AppConfig.TraderUserName;
-            TraderUserPassword.Password = AppConfig.TraderUserPassword;
+            //TraderUserName.Text = AppConfig.TraderUserName;
+            //TraderUserPassword.Password = AppConfig.TraderUserPassword;
 
             EdiTimeout.Text = AppConfig.EdiTimeout.ToString();
             EdiUser.Text = AppConfig.EdiUser;
             EdiPassword.Password = AppConfig.EdiPassword;
             EdiGLN.Text = AppConfig.EdiGLN;
-            EdiEmail.Text = AppConfig.EdiEmail;
             EdiUrl.Text = AppConfig.EdiUrl;
 
             //EnableAutoHandler.IsChecked = AppConfig.EnableAutoHandler;
@@ -97,14 +88,13 @@ namespace EdiClient
             AppConfig.DbPort = DbPort.Text;
             AppConfig.DbSID = DbSID.Text;
 
-            AppConfig.TraderUserName = TraderUserName.Text;
-            AppConfig.TraderUserPassword = TraderUserPassword.Password;
+            //AppConfig.TraderUserName = TraderUserName.Text;
+            //AppConfig.TraderUserPassword = TraderUserPassword.Password;
 
             AppConfig.EdiTimeout = int.Parse(EdiTimeout.Text);
             AppConfig.EdiUser = EdiUser.Text;
             AppConfig.EdiPassword = EdiPassword.Password;
             AppConfig.EdiGLN = EdiGLN.Text;
-            AppConfig.EdiEmail = EdiEmail.Text;
             AppConfig.EdiUrl = EdiUrl.Text;
 
             //AppConfig.EnableAutoHandler = EnableAutoHandler.IsChecked ?? false;

@@ -13,7 +13,7 @@ namespace EdiClient.ViewModel
     {
         public DocumentListViewModel()
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             DateFrom = DateTime.Today;
             DateTo = DateTime.Today.AddDays(1);
         }
@@ -102,7 +102,7 @@ namespace EdiClient.ViewModel
 
         public void ActionInTime(Action act)
         {
-            LogService.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
+            Utilites.Logger.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -117,7 +117,7 @@ namespace EdiClient.ViewModel
             {
                 watch.Stop();
                 Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
-                Utilites.Time = Time;
+                Utilites.Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
             }
             NotifyPropertyChanged("Documents");
             NotifyPropertyChanged("DateFrom");

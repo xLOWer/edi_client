@@ -43,7 +43,7 @@ namespace EdiClient.Services
 
         internal static void UpdateData()
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
             var rl = GetRelationships() ?? new List<Relation>();
             /* // для дебага
@@ -51,7 +51,7 @@ namespace EdiClient.Services
             foreach(var r in rl)            
                 ss += $"{r.relationId}\t{r.partnerIln}\t{r.partnerName}\t{r.documentType}\t{r.documentVersion}\t{r.documentStandard}\t{r.documentTest}\t{r.direction}\t{r.description}\t{r.test}\t{r.form}\r\n";
             */
-            if (rl.Count == 0) { LogService.Log($"\t\tGetRelationships() return null"); return; }
+            if (rl.Count == 0) { Utilites.Logger.Log($"\t\tGetRelationships() return null"); return; }
             var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
             //var rels = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
 
@@ -120,18 +120,10 @@ namespace EdiClient.Services
             return result;
         }
 
-        /// <summary>
-        /// С помощью данного метода можно узнать информацию о компании, заведенной на платформе Эдисофт по одному из параметров: ИНН, КПП, ОГРН, GUID.
-        /// </summary>
-        /// <param name="inn">ИНН</param>
-        /// <param name="kpp">КПП</param>
-        /// <param name="ogrn">ОГРН</param>
-        /// <param name="fnsId">ФНСИД</param>
-        /// <param name="gln">GLN</param>
-        /// <returns></returns>
+
         internal static OrganizationInfo OrganizationInfo(string inn, string kpp, string ogrn, string fnsId, string gln)
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
             XmlSerializer serializer = new XmlSerializer(typeof(OrganizationInfo));
 
@@ -149,7 +141,7 @@ namespace EdiClient.Services
 
         internal static List<Relation> GetRelationships(int timeout = 5000)
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(RelationResponse));
             retRes returnedResult = null;
             try
@@ -173,48 +165,29 @@ namespace EdiClient.Services
             return null;
         }
 
-        /// <summary>
-        /// Метод, обеспечивающий получение документов. Документ, имеющий статус «Прочтённый» (Read), забрать нельзя.
-        /// </summary>
-        /// <param name="partnerILN">ID партнера, которому был послан документ.</param>
-        /// <param name="documentType">Тип документа(напр.INVOICE).</param>
-        /// <param name="trackingId">Идентификатор документа в ПЛАТФОРМЕ EDISOFT.</param>
-        /// <param name="documentStandard">Стандарт документа(напр.EDIFACT, XML).</param>
-        /// <param name="changeDocumentStatus">Изменить статус документа(установить прочитанным) – не работает</param>
-        /// <param name="timeout">Таймаут на выполнение вызова метода(мс). Тип : Integer</param>
-        /// <returns></returns>
+
         internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(TModel));
             retRes returnedResult = null;
 
             returnedResult = Client?.receive(Name, Password, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
-
+            
             if (returnedResult == null) Utilites.Error("Нет соединения с edisoft");
 
             if (returnedResult?.res == "00000000")
-                return XmlService<TModel>.Deserialize(returnedResult.cnt);
+                return Utilites.XmlService<TModel>.Deserialize(returnedResult.cnt);
             else
                 MessageBox.Show(ResponseErrorHandler(returnedResult));
 
             return null;
         }
 
-        /// <summary>
-        /// Данный метод используется для отправки документов.
-        /// </summary>
-        /// <param name="partnerILN">ID партнера, которому будет посылаться документ.</param>
-        /// <param name="documentType">Тип документа (напр.INVOICE).</param>
-        /// <param name="documentVersion">Версия спецификации (напр.EDISOFTV0R1).</param>
-        /// <param name="documentStandard">Стандарт документа (напр.EDIFACT, XML).</param>
-        /// <param name="documentTest">Статус документа (T – тест, P – продуктивный).</param>
-        /// <param name="controlNumber">Контрольный номер документа</param>
-        /// <param name="documentContent">Содержание документа</param>
-        /// <param name="timeout">Таймаут на выполнение вызова метода(мс)</param>
+
         internal static void Send(string partnerILN, string documentType, string documentVersion, string documentStandard, string documentTest, string controlNumber, string documentContent, int timeout = 5000)
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
 
             returnedResult = Client.send(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
@@ -227,7 +200,7 @@ namespace EdiClient.Services
 
         internal static List<DocumentInfo> ListMBAll(bool getBinaryData = false)
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
@@ -243,21 +216,7 @@ namespace EdiClient.Services
             return null;
         }
 
-        /// <summary>
-        /// Метод возвращает статус документов, которые были доставлены пользователю ПЛАТФОРМЫ EDISOFT
-        /// </summary>
-        /// <param name="partnerILN">ID партнера, от которого был получен документ</param>
-        /// <param name="documentType">Тип документа (напр. INVOICE).</param>
-        /// <param name="documentVersion">Версия спецификации (напр. EDISOFTV0R1).</param>
-        /// <param name="documentStandard">Стандарт документа (напр. EDIFACT,XML).</param>
-        /// <param name="documentTest">Статус документа (T – тест, P – продуктивный).</param>
-        /// <param name="dateFrom">Дата с</param>
-        /// <param name="dateTo">Дата до</param>
-        /// <param name="itemFrom">???</param>
-        /// <param name="itemTo">???</param>
-        /// <param name="documentStatus">Статус документа N – только новые док-ты R – только прочтенные документы    Любое другое или пустое вернёт все</param>
-        /// <param name="timeout">Таймаут на выполнение вызова метода (мс)</param>
-        /// <returns>Cтатус документов</returns>
+
         internal static List<DocumentInfo> ListMBEx(string partnerILN
             , string documentType
             , string documentVersion
@@ -270,7 +229,7 @@ namespace EdiClient.Services
             , string documentStatus
             , int timeout = 5000)
         {
-            LogService.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 

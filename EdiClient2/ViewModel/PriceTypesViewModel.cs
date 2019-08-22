@@ -16,7 +16,7 @@ namespace EdiClient.ViewModel
     {
         public PriceTypesViewModel(PriceTypesView page)
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             try
             {
                 _page = page;
@@ -108,7 +108,7 @@ namespace EdiClient.ViewModel
         
         public void MakeMatching(object obj = null)
         {
-            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error( "Не выбран покупатель" ); return; }
             if (SelectedPriceType == null) { Utilites.Error( "Не выбран тип цены" ); return; }
 
@@ -121,7 +121,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
                             new OracleParameter("ID_PRICE_TYPE", OracleDbType.NVarChar, SelectedMatch.ID_PRICE_TYPE, ParameterDirection.Input),
                         },
-                    Connection = OracleConnectionService.conn,
+                    Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_PRICE_LINK"
                 });
@@ -134,7 +134,7 @@ namespace EdiClient.ViewModel
         
         public void DisposeMatching(object obj = null)
         {
-            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedMatch == null) { Utilites.Error( "Не выбран пункт с сопоставлением" ); return; }
             
             try
@@ -146,7 +146,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
                             new OracleParameter("ID_PRICE_TYPE", OracleDbType.NVarChar, SelectedMatch.ID_PRICE_TYPE, ParameterDirection.Input),
                         },
-                    Connection = OracleConnectionService.conn,
+                    Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_PRICE_UNLINK"
                 });
@@ -157,23 +157,23 @@ namespace EdiClient.ViewModel
                   
         private List<PriceType> GetPriceTypes()
         {
-            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
-            var sql = SqlService.GET_PRICE_TYPES;
+            var sql = DbService.Sqls.GET_PRICE_TYPES;
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<PriceType>.DocumentSelect(new List<string> { sql });
+            var result = DbService.DocumentSelect<PriceType>(new List<string> { sql });
             return result;
         }
 
         private List<MatchingPriceTypes> GetMatchList()
         {
-            LogService.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
-            var sql = SqlService.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln);
+            var sql = DbService.Sqls.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln);
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<MatchingPriceTypes>.DocumentSelect(new List<string> { sql });
+            var result = DbService.DocumentSelect<MatchingPriceTypes>(new List<string> { sql });
             return result;
         }
 

@@ -20,7 +20,7 @@ namespace EdiClient.ViewModel
     {
         public MatchMakerViewModel(MatchMakerView page)
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             try
             {
                 _page = page;
@@ -177,7 +177,7 @@ namespace EdiClient.ViewModel
 
         public void LoadData(object obj = null)
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             SetLayoutEnabled(false);
             if(fullGoodsList == null || fullGoodsList.Count < 1)
             {
@@ -192,7 +192,7 @@ namespace EdiClient.ViewModel
 
         public void MakeMatching(object obj = null)
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedFailedGood == null) { Utilites.Error("Не выбран пункт с не сопоставленным товаром"); return; }
             if (SelectedGood == null) { Utilites.Error("Не выбран пункт с товаром"); return; }
             if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.ID)) 
@@ -206,7 +206,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedFailedGood.BUYER_ITEM_CODE, ParameterDirection.Input),
                             new OracleParameter("P_ID_GOOD", OracleDbType.Number, SelectedGood.ID, ParameterDirection.Input),
                         },
-                Connection = OracleConnectionService.conn,
+                Connection = DbService.Connection.conn,
                 CommandType = CommandType.StoredProcedure,
                 CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_LINK"
             });
@@ -214,7 +214,7 @@ namespace EdiClient.ViewModel
 
         public void DisposeMatching(object obj = null)
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedMatch == null) { Utilites.Error("Не выбран пункт с сопоставлением"); return; }
             if (String.IsNullOrEmpty(SelectedMatch.CUSTOMER_ARTICLE)) { Utilites.Error("У выбранного товара отсутствует код покупателя"); return; }
 
@@ -227,7 +227,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
                             new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedMatch.CUSTOMER_ARTICLE, ParameterDirection.Input)
                         },
-                    Connection = OracleConnectionService.conn,
+                    Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_UNLINK"
                 });
@@ -240,32 +240,32 @@ namespace EdiClient.ViewModel
                 
         private List<Goods> GetGoods()
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var sql = SqlService.GET_GOODS;
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            var sql = DbService.Sqls.GET_GOODS;
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<Goods>.DocumentSelect(new List<string> { sql });
+            var result = DbService.DocumentSelect<Goods>(new List<string> { sql });
             return result;
         }
 
         private List<FailedGoods> GetFailedGoods()
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
-            var sql = SqlService.GET_FAILED_DETAILS(SelectedRelationship?.partnerIln);
+            var sql = DbService.Sqls.GET_FAILED_DETAILS(SelectedRelationship?.partnerIln);
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<FailedGoods>.DocumentSelect(new List<string> { sql });
+            var result = DbService.DocumentSelect<FailedGoods>(new List<string> { sql });
             return result;
         }
 
         private List<Matches> GetMatchesList()
         {
-            LogService.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Utilites.Error("Не выбран клиент"); return null; }
             if (SelectedRelationship.partnerIln == null) { Utilites.Error("Не выбран клиент"); return null; }
-            var sql = SqlService.GET_MATCHED(SelectedRelationship?.partnerIln);
+            var sql = DbService.Sqls.GET_MATCHED(SelectedRelationship?.partnerIln);
             if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService<Matches>.DocumentSelect(new List<string> { sql });
+            var result = DbService.DocumentSelect<Matches>(new List<string> { sql });
             return result;
         }
 

@@ -1,19 +1,20 @@
-﻿using EdiClient.ViewModel.Common;
+﻿using DevExpress.Xpf.Core;
+using EdiClient.ViewModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace EdiClient.Services
 {
-    public static class TabService
+    public static class TabService 
     {
         public static ICollection<TabViewModel> Tabs { get; set; } = new ObservableCollection<TabViewModel>();
-
         private static MainWindow _window { get; set; }
-        private static TabControl _tabControl { get; set; }
+        private static DXTabControl _tabControl { get; set; }
 
-        public static void Configure(ref MainWindow window, ref TabControl tabControl)
+        public static void Configure(ref MainWindow window, ref DXTabControl tabControl)
         {
             _window = window;
             _tabControl = tabControl;
@@ -25,18 +26,21 @@ namespace EdiClient.Services
             _window.UpdateLayout();
         }
 
-        public static void NewTab(Type view, string title = null)
+        public static void NewTab(Page view, string title = null)
         {
-            if (view == null) return;
-            EdiClient.Services.LogService.Log($"[INIT-TabViewModel] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            if (view == null /*|| Tabs.Any( x=>x.View.GetType().IsEquivalentTo(view.GetType()) ) наверка на уже открытые вкладки*/  ) return;
+
             var newTab = new TabViewModel();
-            EdiClient.Services.LogService.Log($"[INIT-TabViewModel] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            newTab = new TabViewModel(view, title);
-            EdiClient.Services.LogService.Log($"[INIT-.Add(newTab)] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            newTab = new TabViewModel(view, title ?? (view.Title ?? "view"));
             Tabs.Add(newTab);
-            EdiClient.Services.LogService.Log($"[INIT-Update] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Update();
         }
-        
+
+        public static void CloseTab(object view)
+        {
+            Tabs.Remove(Tabs.FirstOrDefault(x => x.View == view));
+            Update();
+        }
+
     }
 }

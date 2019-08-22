@@ -28,8 +28,7 @@ namespace EdiClient.View
 
         public DocumentPage()
         {
-            EdiClient.Services.LogService.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            DevExpress.Xpf.Core.ThemeManager.SetThemeName(this, "VS2017Light");
+            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new DocumentListViewModel();
             DataContext = Context;
             InitializeComponent();
