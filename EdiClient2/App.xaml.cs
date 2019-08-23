@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using EdiClient.AppSettings;
 using EdiClient.Services;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient
 {
@@ -28,11 +29,11 @@ namespace EdiClient
             bool? LogState = AppConfig.EnableLogging; //запоминаем что в логинге
             AppConfig.EnableLogging = true; // принудительно вырубаем его
 
-            Utilites.Logger.Log("========== START INIT APPLICATION ==========");
+            Logger.Log("========== START INIT APPLICATION ==========");
             AppConfigHandler.Load();
             AppConfigHandler.ConfigureEdi();
             AppConfigHandler.ConfigureOracle();
-            Utilites.Logger.Log("========== END INIT APPLICATION ==========");
+            Logger.Log("========== END INIT APPLICATION ==========");
 
             AppConfig.EnableLogging = LogState; // и возвращаем то что было до принудительного включения
             

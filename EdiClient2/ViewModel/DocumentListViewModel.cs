@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Controls;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.ViewModel
 {
@@ -13,9 +14,11 @@ namespace EdiClient.ViewModel
     {
         public DocumentListViewModel()
         {
-            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             DateFrom = DateTime.Today;
             DateTo = DateTime.Today.AddDays(1);
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
         }
 
         private string time;
@@ -69,40 +72,72 @@ namespace EdiClient.ViewModel
                 NotifyPropertyChanged("DateTo");
             }
         }
-
-        public CommandService NextDayCommand => new CommandService(NextDay);
-        public CommandService GetDocumentsCommand => new CommandService(GetDocuments);
-        public CommandService PrevDayCommand => new CommandService(PrevDay);
-        public CommandService GetEDIDOCCommand => new CommandService(GetEDIDOC);
-        public CommandService SendORDRSPCommand => new CommandService(SendORDRSP);
-        public CommandService SendDESADVCommand => new CommandService(SendDESADV);
-        public CommandService ToTraderCommand => new CommandService(ToTrader);
+        
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public virtual void ToTrader(object o = null) => ActionInTime(()
-            => { DocumentRepository.CreateTraderDocument(SelectedDocument.ID); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
-        public void SendORDRSP(object o = null) => ActionInTime(()
-            => { DocumentRepository.SendOrdrsp(SelectedDocument); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
-        public void SendDESADV(object o = null) => ActionInTime(()
-            => { DocumentRepository.SendDesadv(SelectedDocument); Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
-        public void GetDocuments(object o = null) => ActionInTime(()
-            => { Documents = DocumentRepository.GetDocuments(DateFrom, DateTo); });
-        public void GetEDIDOC(object o = null) => ActionInTime(()
-            => {
-                //DocumentRepository.GetRecadv();
-                DocumentRepository.GetNewOrders(dateFrom, dateTo);
-                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
-            });
 
         protected void NotifyPropertyChanged(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
 
+
+
+        public CommandService ToTraderCommand => new CommandService((o) => ActionInTime(()
+            => {
+                DocumentRepository.CreateTraderDocument(SelectedDocument.ID);
+                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService SendORDRSPCommand => new CommandService((o) => ActionInTime(()
+            => {
+                DocumentRepository.SendOrdrsp(SelectedDocument);
+                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService SendDESADVCommand => new CommandService((o) => ActionInTime(()
+            => {
+                DocumentRepository.SendDesadv(SelectedDocument);
+                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService GetDocumentsCommand => new CommandService((o) => ActionInTime(()
+            => {
+                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService GetEDIDOCCommand => new CommandService((o) => ActionInTime(()
+            => {
+                //DocumentRepository.GetRecadv();
+                DocumentRepository.GetNewOrders(dateFrom, dateTo);
+                Documents = DocumentRepository.GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService NextDayCommand => new CommandService((o) =>
+        {
+            DateFrom = DateFrom.AddDays(1);
+            DateTo = DateTo.AddDays(1);
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
+        });
+
+        public CommandService PrevDayCommand => new CommandService((o) =>
+        {
+            DateFrom = DateFrom.AddDays(-1);
+            DateTo = DateTo.AddDays(-1);
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
+        });
+
         public void ActionInTime(Action act)
         {
-            Utilites.Logger.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
+            Logger.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -111,30 +146,23 @@ namespace EdiClient.ViewModel
             catch (Exception ex)
             {
                 watch.Stop();
-                Utilites.Error(ex);
+                Error(ex);
             }
             finally
             {
                 watch.Stop();
                 Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
-                Utilites.Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+                Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
             }
             NotifyPropertyChanged("Documents");
             NotifyPropertyChanged("DateFrom");
             NotifyPropertyChanged("DateTo");
             NotifyPropertyChanged("SelectedDocument");
+            NotifyStaticPropertyChanged("tasks");
+            NotifyStaticPropertyChanged("RunnedCount");
+            NotifyStaticPropertyChanged("tasksCount");
+            NotifyStaticPropertyChanged("RanToCompletionCount");
         }
 
-        public void NextDay(object o = null)
-        {
-            DateFrom = DateFrom.AddDays(1);
-            DateTo = DateTo.AddDays(1);
-        }
-
-        public void PrevDay(object o = null)
-        {
-            DateFrom = DateFrom.AddDays(-1);
-            DateTo = DateTo.AddDays(-1);
-        }
     }
 }

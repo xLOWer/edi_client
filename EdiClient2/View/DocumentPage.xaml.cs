@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.View
 {
@@ -28,7 +29,7 @@ namespace EdiClient.View
 
         public DocumentPage()
         {
-            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new DocumentListViewModel();
             DataContext = Context;
             InitializeComponent();

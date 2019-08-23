@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Linq;
 using EdiClient.AppSettings;
 using System.Net;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.Services
 {
@@ -43,7 +44,7 @@ namespace EdiClient.Services
 
         internal static void UpdateData()
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
             var rl = GetRelationships() ?? new List<Relation>();
             /* // для дебага
@@ -51,7 +52,7 @@ namespace EdiClient.Services
             foreach(var r in rl)            
                 ss += $"{r.relationId}\t{r.partnerIln}\t{r.partnerName}\t{r.documentType}\t{r.documentVersion}\t{r.documentStandard}\t{r.documentTest}\t{r.direction}\t{r.description}\t{r.test}\t{r.form}\r\n";
             */
-            if (rl.Count == 0) { Utilites.Logger.Log($"\t\tGetRelationships() return null"); return; }
+            if (rl.Count == 0) { Logger.Log($"\t\tGetRelationships() return null"); return; }
             var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
             //var rels = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
 
@@ -80,7 +81,7 @@ namespace EdiClient.Services
                 if (!String.IsNullOrEmpty(AppConfig.ProxyUserName) && !String.IsNullOrEmpty(AppConfig.ProxyUserPassword))
                     // задаём данные для аутентификации пользователя прокси
                     GlobalProxySelection.Select.Credentials = new NetworkCredential(AppConfig.ProxyUserName, AppConfig.ProxyUserPassword);
-                else Utilites.Error("Не удалось задать пользователя прокси.\nДанные пользователя не верны");
+                else Error("Не удалось задать пользователя прокси.\nДанные пользователя не верны");
             }
             else
             {
@@ -123,13 +124,13 @@ namespace EdiClient.Services
 
         internal static OrganizationInfo OrganizationInfo(string inn, string kpp, string ogrn, string fnsId, string gln)
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
             XmlSerializer serializer = new XmlSerializer(typeof(OrganizationInfo));
 
             returnedResult = Client.organizationInfo(Name, Password, inn, kpp, ogrn, fnsId, gln);
 
-            if (returnedResult == null) Utilites.Error("Нет соединения с edisoft");
+            if (returnedResult == null) Error("Нет соединения с edisoft");
 
             if (returnedResult.res == "00000000")
                 return (OrganizationInfo)serializer.Deserialize(new StringReader(returnedResult.cnt));
@@ -141,16 +142,16 @@ namespace EdiClient.Services
 
         internal static List<Relation> GetRelationships(int timeout = 5000)
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(RelationResponse));
             retRes returnedResult = null;
             try
             {
                 returnedResult = Client?.relationships(Name, Password, timeout);
             }
-            catch (Exception ex) { Utilites.Error(ex); }
+            catch (Exception ex) { Error(ex); }
             
-            if (returnedResult == null) Utilites.Error("Запрос связей не дал результатов");
+            if (returnedResult == null) Error("Запрос связей не дал результатов");
             
             if (returnedResult?.res == "00000000")
             {
@@ -168,16 +169,16 @@ namespace EdiClient.Services
 
         internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(TModel));
             retRes returnedResult = null;
 
             returnedResult = Client?.receive(Name, Password, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
             
-            if (returnedResult == null) Utilites.Error("Нет соединения с edisoft");
+            if (returnedResult == null) Error("Нет соединения с edisoft");
 
             if (returnedResult?.res == "00000000")
-                return Utilites.XmlService<TModel>.Deserialize(returnedResult.cnt);
+                return XmlService<TModel>.Deserialize(returnedResult.cnt);
             else
                 MessageBox.Show(ResponseErrorHandler(returnedResult));
 
@@ -187,7 +188,7 @@ namespace EdiClient.Services
 
         internal static void Send(string partnerILN, string documentType, string documentVersion, string documentStandard, string documentTest, string controlNumber, string documentContent, int timeout = 5000)
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
 
             returnedResult = Client.send(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
@@ -200,13 +201,13 @@ namespace EdiClient.Services
 
         internal static List<DocumentInfo> ListMBAll(bool getBinaryData = false)
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
             returnedResult = Client?.listMBAllEx(Name, Password, getBinaryData);
 
-            if (returnedResult == null) Utilites.Error("Нет соединения с edisoft");
+            if (returnedResult == null) Error("Нет соединения с edisoft");
 
             if (returnedResult?.res == "00000000")
                 return ((MailboxResponse)ser.Deserialize(new StringReader(returnedResult.cnt))).DocumentInfo;
@@ -229,13 +230,13 @@ namespace EdiClient.Services
             , string documentStatus
             , int timeout = 5000)
         {
-            Utilites.Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
             returnedResult = Client?.listMBEx(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, dateFrom, dateTo, itemFrom, itemTo, documentStatus, timeout);
 
-            if (returnedResult == null) Utilites.Error("Нет соединения с edisoft");
+            if (returnedResult == null) Error("Нет соединения с edisoft");
 
             if (returnedResult?.res == "00000000")            
                 return ((MailboxResponse)ser.Deserialize(new StringReader(returnedResult.cnt))).DocumentInfo;            

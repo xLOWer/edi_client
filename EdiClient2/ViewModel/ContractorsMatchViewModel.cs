@@ -13,6 +13,7 @@ using EdiClient.AppSettings;
 using System.Reflection;
 using EdiClient.ViewModel.Common;
 using System.Windows.Data;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.ViewModel
 {
@@ -20,7 +21,7 @@ namespace EdiClient.ViewModel
     {
         public ContractorsMatchViewModel()
         {
-            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
 
         }
 
@@ -205,7 +206,7 @@ namespace EdiClient.ViewModel
          
         public void Save(object obj = null)
         {
-            Utilites.Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             
             try
             {
@@ -228,7 +229,7 @@ namespace EdiClient.ViewModel
                 });
                 LoadData();
             }
-            catch (Exception ex) { Utilites.Error(ex); }
+            catch (Exception ex) { Error(ex); }
         }
 
         public void Remove(object obj = null)              { }
@@ -255,7 +256,7 @@ namespace EdiClient.ViewModel
 
         public void LoadData(object obj = null)
         {
-            Utilites.Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             GetClients();
             GetCustomers();
             GetContractors();

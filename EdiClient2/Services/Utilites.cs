@@ -10,10 +10,12 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace EdiClient.Services
+namespace EdiClient.Services.Utils
 {
     public static class Utilites
     {
+
+        static Utilites(){}
         internal static void Error(Exception ex)
         {
             Logger.Log($"===============================");
@@ -116,12 +118,14 @@ namespace EdiClient.Services
             }
 
         }
-
         
-        public static Task[] tasks;
+        public static string RunnedCount => tasks?.Where(x=>x.Status == TaskStatus.Running)?.Count().ToString() ?? "0";
+        public static string tasksCount => tasks?.Count().ToString() ?? "0";
+        public static string RanToCompletionCount => tasks?.Where(x => x.Status == TaskStatus.RanToCompletion)?.Count().ToString() ?? "0";
 
 
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static Task[] tasks { get; set; }
+
         private static string _Time = "0";
         public static string Time
         {
@@ -149,7 +153,8 @@ namespace EdiClient.Services
             }
         }
 
-        private static void NotifyStaticPropertyChanged(string propertyName)
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static void NotifyStaticPropertyChanged(string propertyName)
         {
             if (StaticPropertyChanged != null)
                 StaticPropertyChanged(null, new PropertyChangedEventArgs(propertyName));

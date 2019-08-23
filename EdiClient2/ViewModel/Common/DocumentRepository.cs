@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using EdiClient.AppSettings;
 using EdiClient.Services;
-using static EdiClient.Services.Utilites;
+using static EdiClient.Services.Utils.Utilites;
 using System.Threading.Tasks;
 
 namespace EdiClient.ViewModel.Common
@@ -29,7 +29,7 @@ namespace EdiClient.ViewModel.Common
         /// <returns>Список полученных заказов</returns>
         public static void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) return;
             if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
 
@@ -47,34 +47,35 @@ namespace EdiClient.ViewModel.Common
                     NewOrders.RemoveAll(x => x.documentNumber == order.ORDER_NUMBER);                   
                 }
 
-                Utilites.tasks = new Task[NewOrders.Count()];
+                tasks = new Task[NewOrders.Count()];
                 int i = 0;
                 foreach (var order in NewOrders)
                 {
-                    Utilites.tasks[i] = GetOrder(SelectedRelationship.partnerIln, SelectedRelationship.documentType, order.trackingId, SelectedRelationship.documentStandard);
-                    Utilites.tasks[i++].Start();
-                }
-                
-                Task.WaitAny(Utilites.tasks);
+                    tasks[i] = new Task(() =>
+                    {
+                        var document = EdiService.Receive<DocumentOrder>(SelectedRelationship.partnerIln,
+                                                                            SelectedRelationship.documentType,
+                                                                            order.trackingId,
+                                                                            SelectedRelationship.documentStandard,"").First();
+                        InsertIncomingIntoDatabase(document);
+                        NotifyStaticPropertyChanged("tasks");
+                        NotifyStaticPropertyChanged("RunnedCount");
+                        NotifyStaticPropertyChanged("tasksCount");
+                        NotifyStaticPropertyChanged("RanToCompletionCount");
+                    });
+
+                    tasks[i++].Start();
+                }                
+
             }
         }
-
-        private static Task GetOrder(string partnerIln, string documentType, string trackingId, string documentStandard)
-        {             
-            return new Task(() =>
-            {
-                var document = EdiService.Receive<DocumentOrder>(partnerIln, documentType, trackingId, documentStandard, "").First();
-                InsertIncomingIntoDatabase(document);                
-            });
-        }
-
-
+        
         private static string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
 
         public static void UpdateFailedDetails(string P_EDI_DOC_ID)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Utilites.Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
             DbService.ExecuteCommand(new OracleCommand()
             {
                 Connection = DbService.Connection.conn,
@@ -90,8 +91,8 @@ namespace EdiClient.ViewModel.Common
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
         internal static void CreateTraderDocument(string orderID)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Utilites.Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
             var commands = new List<OracleCommand>()
                 {
                         new OracleCommand()
@@ -116,7 +117,7 @@ namespace EdiClient.ViewModel.Common
         /// <param name="orders">Список заказов</param>
         private static void InsertIncomingIntoDatabase(DocumentOrder order)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             List<OracleCommand> commands = new List<OracleCommand>();
             var coms = XmlOrdersToDatabase(order);
             if (coms != null && coms.Count > 0)
@@ -135,7 +136,7 @@ namespace EdiClient.ViewModel.Common
         /// <returns>Список сформированных команд</returns>
         private static List<OracleCommand> XmlOrdersToDatabase(DocumentOrder order)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (order == null) return new List<OracleCommand>();
             List<OracleCommand> commands = new List<OracleCommand>();
 
@@ -193,7 +194,7 @@ namespace EdiClient.ViewModel.Common
 
         internal static DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
             var PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
 
@@ -281,17 +282,17 @@ namespace EdiClient.ViewModel.Common
         /// <param name="advice">отправляемый заказ</param>
         internal static void SendDesadv(Document doc)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
 
-            if (advice == null) { Utilites.Error("При отправке уведомления об отгрузке: не выбран заказ"); return; }
-            if (advice.DocumentParties == null) { Utilites.Error("При отправке уведомления об отгрузке: отсутсвуют части документа(DocumentParties)"); return; }
-            if (advice.DocumentParties?.Receiver == null) { Utilites.Error("При отправке уведомления об отгрузке: отсутствует отправитель"); return; }
-            if (String.IsNullOrEmpty(advice.DocumentParties.Receiver.ILN)) { Utilites.Error("При отправке уведомления об отгрузке: у отправителя отсутствует GLN"); return; }
-            if (SelectedRelationship == null) { Utilites.Error("При отправке уведомления об отгрузке: не выбран покупатель"); return; }
-            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
-            if (advice.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Utilites.Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
+            if (advice == null) { Error("При отправке уведомления об отгрузке: не выбран заказ"); return; }
+            if (advice.DocumentParties == null) { Error("При отправке уведомления об отгрузке: отсутсвуют части документа(DocumentParties)"); return; }
+            if (advice.DocumentParties?.Receiver == null) { Error("При отправке уведомления об отгрузке: отсутствует отправитель"); return; }
+            if (String.IsNullOrEmpty(advice.DocumentParties.Receiver.ILN)) { Error("При отправке уведомления об отгрузке: у отправителя отсутствует GLN"); return; }
+            if (SelectedRelationship == null) { Error("При отправке уведомления об отгрузке: не выбран покупатель"); return; }
+            if (SelectedRelationship.partnerIln == null) { Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
+            if (advice.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
 
 
             EdiService.Send(SelectedRelationship?.partnerIln, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
@@ -397,7 +398,7 @@ namespace EdiClient.ViewModel.Common
 
                 };
             }
-            catch(Exception ex) { Utilites.Error(ex); }
+            catch(Exception ex) { Error(ex); }
             return ordrsp;
         }
 
@@ -407,17 +408,17 @@ namespace EdiClient.ViewModel.Common
         /// <param name="order">отправляемый заказ</param>
         internal static void SendOrdrsp(Document doc)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
             
-            if (order == null) { Utilites.Error("При отправке ответа на заказ: заказ = null"); return; }
-            if (order.DocumentParties == null) { Utilites.Error("При отправке ответа на заказ: отсутсвуют части документа(DocumentParties)"); return; }
-            if (order.DocumentParties?.Receiver == null) { Utilites.Error("При отправке ответа на заказ: отсутствует отправитель"); return; }
-            if (String.IsNullOrEmpty(order.DocumentParties.Receiver.ILN)) { Utilites.Error("При отправке ответа на заказ: у отправителя отсутствует GLN"); return; }
-            if (SelectedRelationship == null) { Utilites.Error("При отправке ответа на заказ: не выбран покупатель"); return; }
-            if (SelectedRelationship.partnerIln == null) { Utilites.Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
-            if (order.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Utilites.Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
+            if (order == null) { Error("При отправке ответа на заказ: заказ = null"); return; }
+            if (order.DocumentParties == null) { Error("При отправке ответа на заказ: отсутсвуют части документа(DocumentParties)"); return; }
+            if (order.DocumentParties?.Receiver == null) { Error("При отправке ответа на заказ: отсутствует отправитель"); return; }
+            if (String.IsNullOrEmpty(order.DocumentParties.Receiver.ILN)) { Error("При отправке ответа на заказ: у отправителя отсутствует GLN"); return; }
+            if (SelectedRelationship == null) { Error("При отправке ответа на заказ: не выбран покупатель"); return; }
+            if (SelectedRelationship.partnerIln == null) { Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
+            if (order.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
             
             var sendOrder = XmlService<DocumentOrderResponse>.Serialize(order);
             EdiService.Send(SelectedRelationship.partnerIln, "ORDRSP", "", "", "T", "", sendOrder, 20);
@@ -435,7 +436,7 @@ namespace EdiClient.ViewModel.Common
         
         internal static List<Detail> GetDocumentDetails(string Id)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = DbService.Sqls.GET_ORDER_DETAILS(Id);
             var result = DbService.DocumentSelect<Detail>(sql);
             return result;
@@ -443,7 +444,7 @@ namespace EdiClient.ViewModel.Common
 
         internal static List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = DbService.Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
             var result = DbService.DocumentSelect<Document>(sql);
             if (result != null)
@@ -454,20 +455,20 @@ namespace EdiClient.ViewModel.Common
                         //foreach (var detail in doc.Details)                        
                         //    detail.Doc = doc;                        
                     }
-            Utilites.LoadedDocsCount = result.Count.ToString();
+            LoadedDocsCount = result.Count.ToString();
             return result;
         }
         
         internal static List<DocumentReceivingAdvice> GetRecadv()
         {
-            Utilites.Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             return new List<DocumentReceivingAdvice>();
         }
 
         public static List<T> GetList<T>(string sql)
         {
-            Utilites.Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (string.IsNullOrEmpty(sql)) { Utilites.Error("Ошибка при выполнении загрузки"); return null; }
+            Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки"); return null; }
             var result = DbService.DocumentSelect<T>(new List<string> { sql }).Cast<T>().ToList();
             return result;
         }

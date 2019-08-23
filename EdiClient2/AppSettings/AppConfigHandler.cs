@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.AppSettings
 {
@@ -16,18 +17,18 @@ namespace EdiClient.AppSettings
 
         public static void ConfigureEdi()
         {
-            Utilites.Logger.Log("[EdiService]");
+            Logger.Log("[EdiService]");
             try { EdiService.Configure(); }
-            catch (Exception ex) { Utilites.Error(ex); }
+            catch (Exception ex) { Error(ex); }
         }
 
         public static void ConfigureOracle()
         {
-            Utilites.Logger.Log("[Connection]");
+            Logger.Log("[Connection]");
             try { DbService.Connection.Configure(); }
-            catch (Exception ex) { Utilites.Error(ex); }
-            Utilites.Logger.Log("\t\tClientVersion " + DbService.Connection.conn.ClientVersion);
-            Utilites.Logger.Log("\t\tServer " + DbService.Connection.conn.Server);
+            catch (Exception ex) { Error(ex); }
+            Logger.Log("\t\tClientVersion " + DbService.Connection.conn.ClientVersion);
+            Logger.Log("\t\tServer " + DbService.Connection.conn.Server);
         }
 
         public static void Load()
@@ -40,7 +41,7 @@ namespace EdiClient.AppSettings
 
             Read();
 
-            Utilites.Logger.Log($"\t\tconf_dir {directoryPath}\\{dirName}");
+            Logger.Log($"\t\tconf_dir {directoryPath}\\{dirName}");
         }
 
 
@@ -52,7 +53,7 @@ namespace EdiClient.AppSettings
 
         public static void Read()
         {
-            Utilites.Logger.Log("[APPCONFIG]");
+            Logger.Log("[APPCONFIG]");
             var newLoadedConfig = new Model.Common.AppConfig();
             XmlSerializer xml = new XmlSerializer(typeof(Model.Common.AppConfig));
             using (var stream = XmlReader.Create(fullPath))
@@ -87,10 +88,10 @@ namespace EdiClient.AppSettings
             AppConfig.ProxyUserPassword = !string.IsNullOrEmpty(newLoadedConfig.ProxyUserPassword) ? newLoadedConfig.ProxyUserPassword : AppConfig.ProxyUserPassword;
 
 
-            Utilites.Logger.Log("\t\tDbUserName " + AppConfig.DbUserName);
-            Utilites.Logger.Log("\t\tDbHost " + AppConfig.DbHost);
-            Utilites.Logger.Log("\t\tEdiUser " + AppConfig.EdiUser);
-            Utilites.Logger.Log("\t\tEdiGLN " + AppConfig.EdiGLN);
+            Logger.Log("\t\tDbUserName " + AppConfig.DbUserName);
+            Logger.Log("\t\tDbHost " + AppConfig.DbHost);
+            Logger.Log("\t\tEdiUser " + AppConfig.EdiUser);
+            Logger.Log("\t\tEdiGLN " + AppConfig.EdiGLN);
         }
 
 

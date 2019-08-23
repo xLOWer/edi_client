@@ -5,6 +5,7 @@ using EdiClient.Services;
 using System;
 using System.Diagnostics;
 using System.Windows;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient
 {
@@ -44,7 +45,7 @@ namespace EdiClient
                 }
                 DXMessageBox.Show($"OK!");
             }
-            catch (Exception ex) { Utilites.Error(ex); }            
+            catch (Exception ex) { Error(ex); }            
         }
 
 

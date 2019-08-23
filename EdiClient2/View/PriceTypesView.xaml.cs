@@ -1,5 +1,6 @@
 ﻿using EdiClient.ViewModel;
 using System.Windows.Controls;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.View
 {
@@ -12,7 +13,7 @@ namespace EdiClient.View
 
         public PriceTypesView()
         {
-            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new PriceTypesViewModel(this);
             DataContext = Context;
             InitializeComponent();

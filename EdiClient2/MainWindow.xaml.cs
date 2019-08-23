@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using System.Windows;
+using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Ribbon;
 using EdiClient.Services;
 using EdiClient.ViewModel.Common;
 
@@ -8,12 +10,13 @@ namespace EdiClient
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>(
-    public partial class MainWindow : Window
+    public partial class MainWindow : DXRibbonWindow
     {
         private MainViewModel Context { get; set; }
 
         public MainWindow()
         {
+            ThemeManager.SetThemeName(this, "VS2017Light");
             InitializeComponent();            
             TabService.Configure(ref mainWindow, ref MainTabControl);
             Context = new MainViewModel();

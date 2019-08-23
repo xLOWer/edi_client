@@ -1,9 +1,12 @@
 ﻿using EdiClient.View;
 using EdiClient.Services;
+using static EdiClient.Services.Utils.Utilites;
 using System.ComponentModel;
 using EdiClient.AppSettings;
 using System;
 using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Editors.Settings;
 
 namespace EdiClient.ViewModel.Common
 {
@@ -13,68 +16,17 @@ namespace EdiClient.ViewModel.Common
 
         public CommandService OpenCommonSettingsCommand => new CommandService( OpenCommonSettings );
         public CommandService RefreshRelationshipsCommand => new CommandService(RefreshRelationships);
-        public CommandService MatcherPriceOpenCommand => new CommandService(MatcherPriceOpen);
-        public CommandService MatcherGoodsOpenCommand => new CommandService(MatcherGoodsOpen);
-        public CommandService MatcherDeliveryPointsOpenCommand => new CommandService(MatcherDeliveryPointsOpen);
-        public CommandService DocumentsOpenCommand => new CommandService(DocumentsOpen);
         
-        private bool _IsNightTheme;
-        public bool IsNightTheme
-        {
-            get => _IsNightTheme;
-            set
-            {
-                _IsNightTheme = value;
-                if (value)
-                    AppConfig.ThemeName = "MetropolisDark";
-                else
-                    AppConfig.ThemeName = "MetropolisLight";                
-            }
-        }
-
-        public void DocumentsOpen(object o = null)
-        {
-            try
-            {
-                TabService.NewTab(new DocumentPage(), "Документы");
-            }
-            catch (Exception ex) { Utilites.Error(ex); }
-        }
-
-        public void MatcherPriceOpen(object o = null)
-        {
-            try
-            {
-                TabService.NewTab(new PriceTypesView(), "Связи цен");
-            }
-            catch (Exception ex) { Utilites.Error(ex); }
-        }
-
-        public void MatcherGoodsOpen(object o = null)
-        {
-            try
-            {
-                TabService.NewTab(new MatchMakerView(), "Связи товаров");
-            }
-            catch (Exception ex) { Utilites.Error(ex); }
-        }
-
-        public void MatcherDeliveryPointsOpen(object o = null)
-        {
-            try
-            {
-                TabService.NewTab(new ContractorsMatchView(), "Связи точек доставки");
-            }
-            catch (Exception ex) { Utilites.Error(ex); }
-        }
-
         public MainViewModel()
         {
             try
             {
                 TabService.NewTab(new DocumentPage(), "Документы");
+                TabService.NewTab(new MatchMakerView(), "Связи товаров");
+                TabService.NewTab(new PriceTypesView(), "Связи цен");
+                TabService.NewTab(new ContractorsMatchView(), "Связи точек доставки");
             }
-            catch(Exception ex) { Utilites.Error(ex); }
+            catch(Exception ex) { Error(ex); }
         }
 
         public void OpenCommonSettings(object o)
@@ -93,10 +45,9 @@ namespace EdiClient.ViewModel.Common
 
         public void RefreshRelationships(object o)
         {
-            EdiClient.Services.Utilites.Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
                 EdiService.UpdateData();
-
             (o as ComboBoxEdit).ItemsSource = EdiService.Relationships;
         }
     }
