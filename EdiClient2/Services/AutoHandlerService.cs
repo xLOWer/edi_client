@@ -1,5 +1,5 @@
 ﻿using EdiClient.AppSettings;
-using EdiClient.ViewModel.Common;
+using EdiClient.ViewModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,18 +11,18 @@ namespace EdiClient.Services
         internal static void Process()
         {
             // выхватим новые документы
-            DocumentRepository.GetNewOrders(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow);
+            //DocumentRepository.GetNewOrders(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow);
 
             // для всех документов в базе
-            foreach (var doc in DocumentRepository.GetDocuments(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow))
-            {
+            //foreach (var doc in DocumentRepository.GetDocuments(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow))
+            //{
                 // если doc не сфэйлиный и готов к созданию в трейдере то добавим в трейдер
-                if (doc.IsReadyToTrader && !doc.IsInTrader && !doc.IsFailed) DocumentRepository.CreateTraderDocument(doc.ID);
+                //if (doc.IsReadyToTrader && !doc.IsInTrader && !doc.IsFailed) DocumentRepository.CreateTraderDocument(doc.ID);
                 // если doc не сфэйлиный и готов к отправке как ответ на заказ то отправляем его
                 //if (doc.IsReadyToOrdrsp && doc.IsInTrader && !doc.IsFailed) DocumentRepository.SendOrdrsp(doc);
                 // если doc не сфэйлиный и готов к отправке как уведомление об отгрузки то отправляем его
                 //if (doc.IsReadyToDesadv && doc.IsInTrader && doc.IsOrdrsp && !doc.IsFailed) DocumentRepository.SendDesadv(doc);
-            }
+            //}
         }
 
         internal static void RegisterAutoHandler()

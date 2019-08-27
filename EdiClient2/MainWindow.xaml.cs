@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Ribbon;
 using EdiClient.Services;
-using EdiClient.ViewModel.Common;
+using EdiClient.ViewModel;
 
 namespace EdiClient
 {
@@ -18,10 +20,10 @@ namespace EdiClient
         {
             ThemeManager.SetThemeName(this, "VS2017Light");
             InitializeComponent();            
-            TabService.Configure(ref mainWindow, ref MainTabControl);
+            //TabService.Configure(ref mainWindow, ref MainTabControl);
             Context = new MainViewModel();
             DataContext = Context;
-            UpdateLayout();
+            //UpdateLayout();
             Title = $"Клиент EDI (версия {Assembly.GetEntryAssembly().GetName().Version})";
         }
 
@@ -69,6 +71,27 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
 Владивосток
 2019", "О программе", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+        private void DocumentsDataGrid_CustomColumnSort(object sender, DevExpress.Xpf.Grid.CustomColumnSortEventArgs e)
+        {
+            double val1 = -999, val2 = -999;
+            try
+            {
+                val1 = Convert.ToDouble(ToCultureDoubleString(e.Value1));
+                val2 = Convert.ToDouble(ToCultureDoubleString(e.Value2));
+
+            }
+            catch (Exception ex) { }
+
+            if (val1 > val2) e.Result = 1;
+            else e.Result = val1 == val2 ? 0 : -1;
+
+            e.Handled = true;
+        }
+
+        private string ToCultureDoubleString(object obj)
+            => obj.ToString()
+            .Replace('.', Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator[0])
+            .Replace(',', Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
 
     }
 }

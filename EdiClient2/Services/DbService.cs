@@ -203,8 +203,12 @@ namespace EdiClient.Services
 
             internal static void Check()
             {
-                if (conn.State != System.Data.ConnectionState.Open)
-                    conn.Open();
+                try
+                {
+                    if (conn.State != ConnectionState.Open)
+                        conn.Open();
+                }
+                catch (Exception ex) { Error(ex); }
             }
 
         }

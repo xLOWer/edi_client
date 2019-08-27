@@ -21,13 +21,11 @@ namespace EdiClient.Services
         internal static EDIWebServicePortTypeClient Client { get; set; }
         internal static ServiceEndpoint endPoint;
         internal static EndpointAddress address;
-        private static string Name { get; set; }
-        private static string Password { get; set; }
 
         public static List<Relation> Relationships { get; set; }
 
         private static Relation selectedRelationship;
-        
+
         public static Relation SelectedRelationship
         {
             get
@@ -46,19 +44,16 @@ namespace EdiClient.Services
         {
             Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
-            var rl = GetRelationships() ?? new List<Relation>();
-            /* // для дебага
-            string ss = "";
-            foreach(var r in rl)            
-                ss += $"{r.relationId}\t{r.partnerIln}\t{r.partnerName}\t{r.documentType}\t{r.documentVersion}\t{r.documentStandard}\t{r.documentTest}\t{r.direction}\t{r.description}\t{r.test}\t{r.form}\r\n";
-            */
-            if (rl.Count == 0) { Logger.Log($"\t\tGetRelationships() return null"); return; }
-            var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
-            //var rels = GetRelationships().Where(x => x.documentType == "ORDER").ToList();
+            if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
+            {
+                var rl = GetRelationships() ?? new List<Relation>();
+                if (rl.Count == 0) { Logger.Log($"\t\tGetRelationships() return null"); return; }
+                var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
+                Relationships = rels;
+                SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
+                RelationshipCount = Relationships.Count;
+            }
 
-            Relationships = rels;
-            SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
-            RelationshipCount = Relationships.Count;
         }
 
         internal static EDIWebServicePortTypeClient Configure(EndpointAddress _address = null)
@@ -88,17 +83,13 @@ namespace EdiClient.Services
                 // сбрасываем данные для аутентификации пользователя прокси
                 GlobalProxySelection.Select.Credentials = null;
             }
-
-            Name = AppConfig.EdiUser;
-            Password = AppConfig.EdiPassword;
+            
             return Client;
         }
 
         internal static EDIWebServicePortTypeClient Configure(string _endPointConfigurationName, EndpointAddress _endpointAddress)
         {
             Client = new EDIWebServicePortTypeClient(_endPointConfigurationName, _endpointAddress);
-            Name = AppSettings.AppConfig.EdiUser;
-            Password = AppSettings.AppConfig.EdiPassword;
             return Client;
         }
 
@@ -128,7 +119,7 @@ namespace EdiClient.Services
             retRes returnedResult = null;
             XmlSerializer serializer = new XmlSerializer(typeof(OrganizationInfo));
 
-            returnedResult = Client.organizationInfo(Name, Password, inn, kpp, ogrn, fnsId, gln);
+            returnedResult = Client.organizationInfo(AppConfig.EdiUser, AppConfig.EdiPassword, inn, kpp, ogrn, fnsId, gln);
 
             if (returnedResult == null) Error("Нет соединения с edisoft");
 
@@ -147,7 +138,7 @@ namespace EdiClient.Services
             retRes returnedResult = null;
             try
             {
-                returnedResult = Client?.relationships(Name, Password, timeout);
+                returnedResult = Client?.relationships(AppConfig.EdiUser, AppConfig.EdiPassword, timeout);
             }
             catch (Exception ex) { Error(ex); }
             
@@ -173,7 +164,7 @@ namespace EdiClient.Services
             var ser = new XmlSerializer(typeof(TModel));
             retRes returnedResult = null;
 
-            returnedResult = Client?.receive(Name, Password, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
+            returnedResult = Client?.receive(AppConfig.EdiUser, AppConfig.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
             
             if (returnedResult == null) Error("Нет соединения с edisoft");
 
@@ -191,7 +182,7 @@ namespace EdiClient.Services
             Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
 
-            returnedResult = Client.send(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
+            returnedResult = Client.send(AppConfig.EdiUser, AppConfig.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
 
             if (returnedResult?.res != "00000000" && returnedResult != null)
             {
@@ -205,7 +196,7 @@ namespace EdiClient.Services
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
-            returnedResult = Client?.listMBAllEx(Name, Password, getBinaryData);
+            returnedResult = Client?.listMBAllEx(AppConfig.EdiUser, AppConfig.EdiPassword, getBinaryData);
 
             if (returnedResult == null) Error("Нет соединения с edisoft");
 
@@ -234,7 +225,7 @@ namespace EdiClient.Services
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
-            returnedResult = Client?.listMBEx(Name, Password, partnerILN, documentType, documentVersion, documentStandard, documentTest, dateFrom, dateTo, itemFrom, itemTo, documentStatus, timeout);
+            returnedResult = Client?.listMBEx(AppConfig.EdiUser, AppConfig.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, dateFrom, dateTo, itemFrom, itemTo, documentStatus, timeout);
 
             if (returnedResult == null) Error("Нет соединения с edisoft");
 

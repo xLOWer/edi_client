@@ -1,33 +1,260 @@
-﻿using EdiClient.Model;
-using Devart.Data.Oracle;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
+﻿using EdiClient.Services;
+using System.ComponentModel;
 using EdiClient.AppSettings;
-using EdiClient.Services;
-using static EdiClient.Services.Utils.Utilites;
+using System;
+using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Bars;
+using System.Collections.Generic;
+using EdiClient.Model;
+using System.Reflection;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Data;
+using Devart.Data.Oracle;
+using static EdiClient.Services.EdiService;
+using static EdiClient.Services.DbService;
+using static EdiClient.Model.WebModel.RelationResponse;
+using static EdiClient.Services.Utils.Utilites;
+using EdiClient.View;
 
-namespace EdiClient.ViewModel.Common
+namespace EdiClient.ViewModel
 {
-    /// <summary>
-    /// Класс для работы с заказами
-    /// </summary>
-    public static class DocumentRepository
+    class MainViewModel : INotifyPropertyChanged
     {
-        public static List<Model.WebModel.RelationResponse.Relation> Relationships => EdiService.Relationships;
-        public static Model.WebModel.RelationResponse.Relation SelectedRelationship => EdiService.SelectedRelationship;
-        public static int RelationshipCount => EdiService.RelationshipCount;
+        public event PropertyChangedEventHandler PropertyChanged;
+      
+        public CommandService EditValueChangedCommand => new CommandService(o =>
+        {
+            ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
+            EdiService.SelectedRelationship = cmb.SelectedItem as Relation;
+        });
 
-        /// <summary>
-        /// Получить новые заказы
-        /// </summary>
-        /// <param name="dateFrom">начальная дата</param>
-        /// <param name="dateTo">конечная дата</param>x
-        /// <returns>Список полученных заказов</returns>
-        public static void GetNewOrders(DateTime dateFrom, DateTime dateTo)
+        public CommandService RefreshRelationshipsCommand => new CommandService(RefreshRelationships);
+        public CommandService SaveConfigCommand => new CommandService(SaveConfig);
+
+        public MainViewModel()
+        {
+            DateFrom = DateTime.Today;
+            DateTo = DateTime.Today.AddDays(1);
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
+            //try
+            //{
+            //    TabService.NewTab(new DocumentPage(), "Документы");
+            //    TabService.NewTab(new MatchMakerView(), "Связи товаров");
+            //    TabService.NewTab(new PriceTypesView(), "Связи цен");
+            //    TabService.NewTab(new ContractorsMatchView(), "Связи точек доставки");
+            //}
+            //catch(Exception ex) { Error(ex); }
+        }
+        public void RefreshRelationships(object o = null)
+        {
+            EdiService.UpdateData();
+            ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
+            cmb.ItemsSource = EdiService.Relationships;
+        }
+
+        public void SaveConfig(object o)
+        {
+            Logger.Log($"[CONFIG SAVED]");
+            AppConfigHandler.Save();
+            AppConfigHandler.Load();
+            AppConfigHandler.ConfigureEdi();
+            AppConfigHandler.ConfigureOracle();
+        }
+
+        public PriceTypesView _PriceTypesView { get; set; }
+        public MatchMakerView _MatchMakerView { get; set; }
+        public ContractorsMatchView _ContractorsMatchView { get; set; }
+
+        public CommandService OpenPriceTypesViewCommand => new CommandService( o  => 
+        {
+            if(_PriceTypesView == null) _PriceTypesView = new PriceTypesView();
+            _PriceTypesView.Activate();
+            _PriceTypesView.Show();
+        });
+
+        public CommandService OpenMatchMakerViewCommand => new CommandService(o =>
+        {
+            if (_MatchMakerView == null) _MatchMakerView = new MatchMakerView();
+            _MatchMakerView.Activate();
+            _MatchMakerView.Show();
+        });
+
+        public CommandService OpenContractorsMatchViewCommand => new CommandService(o =>
+        {
+            if (_ContractorsMatchView == null) _ContractorsMatchView = new ContractorsMatchView();
+            _ContractorsMatchView.Activate();
+            _ContractorsMatchView.Show();
+        });
+
+
+
+
+
+        private DateTime dateTo;
+        private DateTime dateFrom;
+        private Document selectedDocument;
+        private List<Document> documents;
+        private string _Time = "0";
+        private string _LoadedDocsCount = "0";
+
+        public string RunnedCount => tasks?.Where(x => x.Status == TaskStatus.Running)?.Count().ToString() ?? "0";
+        public string tasksCount => tasks?.Count().ToString() ?? "0";
+        public string RanToCompletionCount => tasks?.Where(x => x.Status == TaskStatus.RanToCompletion)?.Count().ToString() ?? "0";
+
+        public Task[] tasks { get; set; }
+
+        public string Time
+        {
+            get { return _Time; }
+            set
+            {
+                if (value != _Time)
+                {
+                    _Time = value;
+                    NotifyPropertyChanged("Time");
+                }
+            }
+        }
+
+        public string LoadedDocsCount
+        {
+            get { return _LoadedDocsCount; }
+            set
+            {
+                if (value != _LoadedDocsCount)
+                {
+                    _LoadedDocsCount = value;
+                    NotifyPropertyChanged("LoadedDocsCount");
+                }
+            }
+        }
+
+
+        public List<Document> Documents
+        {
+            get { return documents ?? new List<Document>(); }
+            set
+            {
+                documents = value;
+                NotifyPropertyChanged("Documents");
+            }
+        }
+        public Document SelectedDocument
+        {
+            get { return selectedDocument; }
+            set
+            {
+                selectedDocument = value;
+                NotifyPropertyChanged("SelectedDocument");
+            }
+        }
+        public DateTime DateFrom
+        {
+            get { return dateFrom; }
+            set
+            {
+                dateFrom = value;
+                NotifyPropertyChanged("DateFrom");
+            }
+        }
+        public DateTime DateTo
+        {
+            get { return dateTo; }
+            set
+            {
+                dateTo = value;
+                NotifyPropertyChanged("DateTo");
+            }
+        }
+
+
+        protected void NotifyPropertyChanged(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
+
+
+        public CommandService ToTraderCommand => new CommandService((o) => ActionInTime(()
+            => {
+                CreateTraderDocument(SelectedDocument.ID);
+                Documents = GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService SendORDRSPCommand => new CommandService((o) => ActionInTime(()
+            => {
+                SendOrdrsp(SelectedDocument);
+                Documents = GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService SendDESADVCommand => new CommandService((o) => ActionInTime(()
+            => {
+                SendDesadv(SelectedDocument);
+                Documents = GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService GetDocumentsCommand => new CommandService((o) => ActionInTime(()
+            => {
+                Documents = GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService GetEDIDOCCommand => new CommandService((o) => ActionInTime(()
+            => {
+                //GetRecadv();
+                GetNewOrders(dateFrom, dateTo);
+                Documents = GetDocuments(DateFrom, DateTo);
+            }));
+
+
+        public CommandService NextDayCommand => new CommandService((o) =>
+        {
+            DateFrom = DateFrom.AddDays(1);
+            DateTo = DateTo.AddDays(1);
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
+        });
+
+        public CommandService PrevDayCommand => new CommandService((o) =>
+        {
+            DateFrom = DateFrom.AddDays(-1);
+            DateTo = DateTo.AddDays(-1);
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
+        });
+
+        public void ActionInTime(Action act)
+        {
+            Logger.Log($"[DOC] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                act.Invoke();
+            }
+            catch (Exception ex)
+            {
+                watch.Stop();
+                Error(ex);
+            }
+            finally
+            {
+                watch.Stop();
+                Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+                Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+            }
+            NotifyPropertyChanged("Documents");
+            NotifyPropertyChanged("DateFrom");
+            NotifyPropertyChanged("DateTo");
+            NotifyPropertyChanged("SelectedDocument");
+        }
+
+
+        public void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) return;
@@ -44,7 +271,7 @@ namespace EdiClient.ViewModel.Common
             {
                 foreach (var order in GetDocuments(dateFrom, dateTo))
                 {
-                    NewOrders.RemoveAll(x => x.documentNumber == order.ORDER_NUMBER);                   
+                    NewOrders.RemoveAll(x => x.documentNumber == order.ORDER_NUMBER);
                 }
 
                 tasks = new Task[NewOrders.Count()];
@@ -53,26 +280,39 @@ namespace EdiClient.ViewModel.Common
                 {
                     tasks[i] = new Task(() =>
                     {
-                        var document = EdiService.Receive<DocumentOrder>(SelectedRelationship.partnerIln,
+                        var document = Receive<DocumentOrder>(SelectedRelationship.partnerIln,
                                                                             SelectedRelationship.documentType,
                                                                             order.trackingId,
-                                                                            SelectedRelationship.documentStandard,"").First();
+                                                                            SelectedRelationship.documentStandard, "").First();
                         InsertIncomingIntoDatabase(document);
-                        NotifyStaticPropertyChanged("tasks");
-                        NotifyStaticPropertyChanged("RunnedCount");
-                        NotifyStaticPropertyChanged("tasksCount");
-                        NotifyStaticPropertyChanged("RanToCompletionCount");
                     });
 
                     tasks[i++].Start();
-                }                
+                }
 
             }
         }
-        
-        private static string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
 
-        public static void UpdateFailedDetails(string P_EDI_DOC_ID)
+
+        internal List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
+        {
+            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            var sql = DbService.Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
+            var result = DbService.DocumentSelect<Document>(sql);
+            if (result != null)
+                if (result.Count > 0)
+                    foreach (var doc in result)
+                    {
+                        doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
+                        //foreach (var detail in doc.Details)                        
+                        //    detail.Doc = doc;                        
+                    }
+            LoadedDocsCount = result.Count.ToString();
+            return result;
+        }
+
+        private string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
+        public void UpdateFailedDetails(string P_EDI_DOC_ID)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
@@ -81,7 +321,7 @@ namespace EdiClient.ViewModel.Common
                 Connection = DbService.Connection.conn,
                 Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, P_EDI_DOC_ID, ParameterDirection.Input) },
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfig.Schema+".") + "EDI_REFRESH_DOC_DETAILS"
+                CommandText = (AppConfig.Schema + ".") + "EDI_REFRESH_DOC_DETAILS"
             });
         }
 
@@ -89,7 +329,7 @@ namespace EdiClient.ViewModel.Common
         /// Создать реальный документ для работы в trader
         /// </summary>
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
-        internal static void CreateTraderDocument(string orderID)
+        internal void CreateTraderDocument(string orderID)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
@@ -115,7 +355,7 @@ namespace EdiClient.ViewModel.Common
         /// Отправить полученные заказы в буферную таблицу
         /// </summary>
         /// <param name="orders">Список заказов</param>
-        private static void InsertIncomingIntoDatabase(DocumentOrder order)
+        private void InsertIncomingIntoDatabase(DocumentOrder order)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             List<OracleCommand> commands = new List<OracleCommand>();
@@ -134,7 +374,7 @@ namespace EdiClient.ViewModel.Common
         /// </summary>
         /// <param name="order">Заказ</param>
         /// <returns>Список сформированных команд</returns>
-        private static List<OracleCommand> XmlOrdersToDatabase(DocumentOrder order)
+        private List<OracleCommand> XmlOrdersToDatabase(DocumentOrder order)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (order == null) return new List<OracleCommand>();
@@ -157,7 +397,7 @@ namespace EdiClient.ViewModel.Common
                     },
                 Connection = DbService.Connection.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfig.Schema+".") + "Edi_ADD_ORDER"
+                CommandText = (AppConfig.Schema + ".") + "Edi_ADD_ORDER"
             });
 
             if (order.OrderLines.Lines.Count > 0)
@@ -185,14 +425,14 @@ namespace EdiClient.ViewModel.Common
                         },
                         Connection = DbService.Connection.conn,
                         CommandType = CommandType.StoredProcedure,
-                        CommandText = (AppConfig.Schema+".") + "Edi_ADD_ORDER_DETAIL"
+                        CommandText = (AppConfig.Schema + ".") + "Edi_ADD_ORDER_DETAIL"
                     });
                 }
 
             return commands;
         }
 
-        internal static DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
+        internal DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
@@ -280,7 +520,7 @@ namespace EdiClient.ViewModel.Common
         /// Отправить извещение об отгрузке в систему EDI
         /// </summary>
         /// <param name="advice">отправляемый заказ</param>
-        internal static void SendDesadv(Document doc)
+        internal void SendDesadv(Document doc)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
@@ -302,13 +542,13 @@ namespace EdiClient.ViewModel.Common
                         {
                             new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
                         },
-                Connection = DbService.Connection.conn,
+                Connection = Connection.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfig.Schema+".") + "EDI_MAKE_DESADV"
+                CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_DESADV"
             });
         }
 
-        internal static DocumentOrderResponse DocumentToXmlOrderResponse(Document doc)
+        internal DocumentOrderResponse DocumentToXmlOrderResponse(Document doc)
         {
             DocumentOrderResponse ordrsp = null;
             var orderLines = new DocumentOrderResponseLine();
@@ -398,7 +638,7 @@ namespace EdiClient.ViewModel.Common
 
                 };
             }
-            catch(Exception ex) { Error(ex); }
+            catch (Exception ex) { Error(ex); }
             return ordrsp;
         }
 
@@ -406,12 +646,12 @@ namespace EdiClient.ViewModel.Common
         /// Отправить ответ на заказ в систему EDI
         /// </summary>
         /// <param name="order">отправляемый заказ</param>
-        internal static void SendOrdrsp(Document doc)
+        internal void SendOrdrsp(Document doc)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
-            
+
             if (order == null) { Error("При отправке ответа на заказ: заказ = null"); return; }
             if (order.DocumentParties == null) { Error("При отправке ответа на заказ: отсутсвуют части документа(DocumentParties)"); return; }
             if (order.DocumentParties?.Receiver == null) { Error("При отправке ответа на заказ: отсутствует отправитель"); return; }
@@ -419,7 +659,7 @@ namespace EdiClient.ViewModel.Common
             if (SelectedRelationship == null) { Error("При отправке ответа на заказ: не выбран покупатель"); return; }
             if (SelectedRelationship.partnerIln == null) { Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
             if (order.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
-            
+
             var sendOrder = XmlService<DocumentOrderResponse>.Serialize(order);
             EdiService.Send(SelectedRelationship.partnerIln, "ORDRSP", "", "", "T", "", sendOrder, 20);
             DbService.ExecuteCommand(new OracleCommand()
@@ -433,8 +673,8 @@ namespace EdiClient.ViewModel.Common
                 CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_ORDRSP"
             });
         }
-        
-        internal static List<Detail> GetDocumentDetails(string Id)
+
+        internal List<Detail> GetDocumentDetails(string Id)
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = DbService.Sqls.GET_ORDER_DETAILS(Id);
@@ -442,35 +682,11 @@ namespace EdiClient.ViewModel.Common
             return result;
         }
 
-        internal static List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
-        {
-            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var sql = DbService.Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
-            var result = DbService.DocumentSelect<Document>(sql);
-            if (result != null)
-                if (result.Count > 0)
-                    foreach (var doc in result)
-                    {
-                        doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
-                        //foreach (var detail in doc.Details)                        
-                        //    detail.Doc = doc;                        
-                    }
-            LoadedDocsCount = result.Count.ToString();
-            return result;
-        }
-        
-        internal static List<DocumentReceivingAdvice> GetRecadv()
+
+        internal List<DocumentReceivingAdvice> GetRecadv()
         {
             Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             return new List<DocumentReceivingAdvice>();
-        }
-
-        public static List<T> GetList<T>(string sql)
-        {
-            Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки"); return null; }
-            var result = DbService.DocumentSelect<T>(new List<string> { sql }).Cast<T>().ToList();
-            return result;
         }
     }
 }

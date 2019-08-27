@@ -119,48 +119,6 @@ namespace EdiClient.Services.Utils
 
         }
         
-        public static string RunnedCount => tasks?.Where(x=>x.Status == TaskStatus.Running)?.Count().ToString() ?? "0";
-        public static string tasksCount => tasks?.Count().ToString() ?? "0";
-        public static string RanToCompletionCount => tasks?.Where(x => x.Status == TaskStatus.RanToCompletion)?.Count().ToString() ?? "0";
-
-
-        public static Task[] tasks { get; set; }
-
-        private static string _Time = "0";
-        public static string Time
-        {
-            get { return _Time; }
-            set
-            {
-                if (value != _Time)
-                {
-                    _Time = value;
-                    NotifyStaticPropertyChanged("Time");
-                }
-            }
-        }
-        private static string _LoadedDocsCount = "0";
-        public static string LoadedDocsCount
-        {
-            get { return _LoadedDocsCount; }
-            set
-            {
-                if (value != _LoadedDocsCount)
-                {
-                    _LoadedDocsCount = value;
-                    NotifyStaticPropertyChanged("LoadedDocsCount");
-                }
-            }
-        }
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-        public static void NotifyStaticPropertyChanged(string propertyName)
-        {
-            if (StaticPropertyChanged != null)
-                StaticPropertyChanged(null, new PropertyChangedEventArgs(propertyName));
-
-        }
-
 
     }
 }

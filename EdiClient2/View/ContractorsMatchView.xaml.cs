@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Ribbon;
 using EdiClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace EdiClient.View
     /// <summary>
     /// Логика взаимодействия для MatchMakerView.xaml
     /// </summary>
-    public partial class ContractorsMatchView : Page
+    public partial class ContractorsMatchView : DXRibbonWindow
     {
         public ContractorsMatchViewModel Context { get; set; }
 

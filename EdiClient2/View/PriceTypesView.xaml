@@ -1,9 +1,10 @@
-﻿<Page x:Class="EdiClient.View.PriceTypesView"
+﻿<dxr:DXRibbonWindow x:Class="EdiClient.View.PriceTypesView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:settings="clr-namespace:EdiClient.AppSettings"
         dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
       xmlns:local="clr-namespace:EdiClient.View"
@@ -11,13 +12,13 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PriceTypesView">
-    <Page.Resources>
+    <Window.Resources>
         <Style x:Key="ControlButtons">
             <Setter Property="Control.BorderBrush" Value="Transparent" />
             <Setter Property="Control.Background" Value="Transparent" />
             <Setter Property="Control.BorderThickness" Value="0" />
         </Style>
-    </Page.Resources>
+    </Window.Resources>
 
     <Grid x:Name="mainPriceTypesMatchGrid">
         <Grid.RowDefinitions>
@@ -86,4 +87,4 @@
             </dxg:GridControl.View>
         </dxg:GridControl>
     </Grid>
-</Page>
+</dxr:DXRibbonWindow>

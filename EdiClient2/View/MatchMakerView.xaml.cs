@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Ribbon;
 using EdiClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -21,14 +22,14 @@ namespace EdiClient.View
     /// <summary>
     /// Логика взаимодействия для MatchMakerView.xaml
     /// </summary>
-    public partial class MatchMakerView : Page
+    public partial class MatchMakerView : DXRibbonWindow
     {
         public MatchMakerViewModel Context { get; set; }
 
         public MatchMakerView()
         {
             Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            Context = new MatchMakerViewModel( this );
+            Context = new MatchMakerViewModel( /*this*/ );
             DataContext = Context;
             InitializeComponent();
         }

@@ -19,14 +19,14 @@ namespace EdiClient.ViewModel
 {
     public class MatchMakerViewModel : INotifyPropertyChanged
     {
-        public MatchMakerViewModel(MatchMakerView page)
+        public MatchMakerViewModel(/*MatchMakerView page*/)
         {
             Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            try
-            {
-                _page = page;
-            }
-            catch (Exception ex) { Error(ex); }
+            //try
+            //{
+            //    _page = page;
+            //}
+            //catch (Exception ex) { Error(ex); }
         }
 
         #region fields
@@ -170,16 +170,16 @@ namespace EdiClient.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
         
-        private void SetLayoutEnabled(bool flag)
-        {
-            _page.LoadDataButton.IsEnabled = flag;
-            _page.LoadDataButton.UpdateLayout();
-        }
+        //private void SetLayoutEnabled(bool flag)
+        //{
+        //    _page.LoadDataButton.IsEnabled = flag;
+        //    _page.LoadDataButton.UpdateLayout();
+        //}
 
         public void LoadData(object obj = null)
         {
             Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            SetLayoutEnabled(false);
+            //SetLayoutEnabled(false);
             if(fullGoodsList == null || fullGoodsList.Count < 1)
             {
                 fullGoodsList = GetGoods();
@@ -188,7 +188,7 @@ namespace EdiClient.ViewModel
             FailedGoodsList = GetFailedGoods();
             MatchesList = GetMatchesList();
             
-            SetLayoutEnabled(true);
+            //SetLayoutEnabled(true);
         }
 
         public void MakeMatching(object obj = null)
@@ -252,7 +252,6 @@ namespace EdiClient.ViewModel
         {
             Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Error("Не выбран клиент"); return null; }
-            if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return null; }
             var sql = DbService.Sqls.GET_FAILED_DETAILS(SelectedRelationship?.partnerIln);
             if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
             var result = DbService.DocumentSelect<FailedGoods>(new List<string> { sql });
@@ -263,7 +262,6 @@ namespace EdiClient.ViewModel
         {
             Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Error("Не выбран клиент"); return null; }
-            if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return null; }
             var sql = DbService.Sqls.GET_MATCHED(SelectedRelationship?.partnerIln);
             if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
             var result = DbService.DocumentSelect<Matches>(new List<string> { sql });

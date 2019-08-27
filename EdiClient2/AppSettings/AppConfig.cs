@@ -4,7 +4,7 @@ namespace EdiClient.AppSettings
 {
     public static class AppConfig
     {
-        public const string  AppVersion = "3.3.0.21";
+        public const string  AppVersion = "3.3.1.23";
         public static string DbUserName { get; set; } // имя пользователя
         public static string DbUserPassword { get; set; } // пароль пользователя
         public static string DbPort { get; set; } = "1521"; // порт подключения  
@@ -24,7 +24,7 @@ namespace EdiClient.AppSettings
         //public static int?   AutoHandlerPeriod { get; set; } = 10; // время цикла(в минутах) автообработчика (по-умолч. 10)
         public static bool?  EnableLogging { get; set; } = false; // включено ли логирование (выключено по-умолч.)
 
-        public static string Schema { get; set; } = "DEVELOPER3";
+        public static string Schema { get; set; }
         public static string connString => $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {DbHost})(PORT = {DbPort}))(CONNECT_DATA = "
                                + $"(SERVER = DEDICATED)(SERVICE_NAME = {DbSID})));Password={DbUserPassword};User ID={DbUserName}";
 

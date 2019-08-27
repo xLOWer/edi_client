@@ -8,8 +8,11 @@
         xmlns:dxl="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
         xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
         xmlns:local="clr-namespace:EdiClient"
         xmlns:services="clr-namespace:EdiClient.Services"
+        xmlns:conv="clr-namespace:EdiClient.Services.Converters"
         xmlns:utils="clr-namespace:EdiClient.Services.Utils"
         xmlns:settings="clr-namespace:EdiClient.AppSettings"
         dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
@@ -17,9 +20,18 @@
         Name="mainWindow"
         Height="Auto"
         Width="Auto" 
-        WindowState="Maximized" >
+        WindowState="Maximized" 
+        d:DesignHeight="1050" d:DesignWidth="1900">
+    
     <Window.Resources>
-        
+        <conv:StringToDoubleConverter x:Key="StringToDoubleConverter" />
+        <conv:StringToDateConverter x:Key="StringToDateConverter"/>
+        <Style x:Key="ControlButtons">
+            <Setter Property="Control.BorderBrush" Value="Transparent" />
+            <Setter Property="Control.Background" Value="Transparent" />
+            <Setter Property="Control.Margin" Value="5,0,0,0" />
+            <Setter Property="Control.BorderThickness" Value="0" />
+        </Style>
         <Style x:Key="lname">
             <Setter Property="Control.Margin" Value="0" />
             <Setter Property="Control.Padding" Value="0" />
@@ -32,125 +44,524 @@
             <Setter Property="Control.FontSize" Value="12" />
         </Style>
     </Window.Resources>
-    
+
     <Grid Margin="0 0 0 -2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="26"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="26"/>
         </Grid.RowDefinitions>
 
-        <dxr:RibbonControl DockPanel.Dock="Top" RibbonStyle="Office2010"  Grid.Row="0">
-            <dxr:RibbonControl.ToolbarItems>
-                <dxb:BarStaticItem Content="{Binding Path=(utils:Utilites.Time)}"/>
-                <dxb:BarButtonItem x:Name="CommonSettings" Content="Настройки" Command="{Binding OpenCommonSettingsCommand}" Glyph="~\..\Images\config.png"/>
+
+
+        <dxr:RibbonControl DockPanel.Dock="Top" RibbonStyle="Office2010"  Grid.Row="0" Height="Auto" ShowApplicationButton="False" IsMinimized="True">
+
+            <dxr:RibbonDefaultPageCategory>
+                <dxr:RibbonPage Caption="Настройки">
+
+
+                    <dxr:RibbonPageGroup Caption="">
+                        <dxb:BarButtonItem Command="{Binding SaveConfigCommand}" Glyph="{dx:DXImageOffice2013 Image=Save_32x32.png}" RibbonStyle="Large" Content="Сохранить"/>
+                    </dxr:RibbonPageGroup>
+
+
+
+                    <dxr:RibbonPageGroup Caption="Подключение к БД">
+                        <dxb:BarEditItem Content="Хост" EditValue="{Binding Path=(settings:AppConfig.DbHost), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Порт" EditValue="{Binding Path=(settings:AppConfig.DbPort), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Сервис" EditValue="{Binding Path=(settings:AppConfig.DbSID), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                    </dxr:RibbonPageGroup>
+
+
+                    <dxr:RibbonPageGroup Caption="Пользователь БД">
+                        <dxb:BarEditItem Content="Логин" EditValue="{Binding Path=(settings:AppConfig.DbUserName), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding Path=(settings:AppConfig.DbUserPassword), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:PasswordBoxEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Схема" EditValue="{Binding Path=(settings:AppConfig.Schema), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                    </dxr:RibbonPageGroup>
+
+
+                    <dxr:RibbonPageGroup Caption="Пользователь EDI" >
+                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding Path=(settings:AppConfig.EdiUser), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding Path=(settings:AppConfig.EdiPassword), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:PasswordBoxEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="GLN" EditValue="{Binding Path=(settings:AppConfig.EdiGLN), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                    </dxr:RibbonPageGroup>
+
+
+                    <!--<dxr:RibbonPageGroup Caption="Настройки EDI">
+                        <dxb:BarEditItem Content="URL" EditValue="{Binding Path=(settings:AppConfig.EdiUrl), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="320">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Таймаут" EditValue="{Binding Path=(settings:AppConfig.EdiTimeout), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120" EditHorizontalAlignment="Left">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                    </dxr:RibbonPageGroup>-->
+
+
+                    <dxr:RibbonPageGroup Caption="Прокси">
+                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding Path=(settings:AppConfig.ProxyUserName), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding Path=(settings:AppConfig.ProxyUserPassword), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:PasswordBoxEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem EditValue="{Binding Path=(settings:AppConfig.EnableProxy), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" EditHorizontalAlignment="Left">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings Content="Включить"/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                    </dxr:RibbonPageGroup>
+
+
+                    <dxr:RibbonPageGroup Caption="Логи">
+                        <dxb:BarEditItem EditValue="{Binding Path=(settings:AppConfig.EnableLogging), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" EditHorizontalAlignment="Left">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings Content="Логировать"/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarEditItem EditValue="{Binding Path=(settings:AppConfigHandler.LogPath), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="290">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <dxb:BarButtonItem Content="Где лог" Glyph="{dx:DXImageOffice2013 Image=Open_32x32.png}" Command="{Binding OpenLogFolderCommand}"/>
+                    </dxr:RibbonPageGroup>
+
+
+                </dxr:RibbonPage>
+
+
+                <dxr:RibbonPage Caption="Сопоставление">
+                    <dxr:RibbonPageGroup Caption="">
+                        <dxb:BarButtonItem Command="{Binding OpenPriceTypesWindowCommand}" Glyph="{dx:DXImageOffice2013 Image=Currency_32x32.png}" RibbonStyle="Large" Content="Цены"/>
+                        <dxb:BarButtonItem Command="{Binding OpenContractorsMatchViewCommand}" Glyph="{dx:DXImageOffice2013 Image=Team_32x32.png}" RibbonStyle="Large" Content="Клиенты"/>
+                        <dxb:BarButtonItem Command="{Binding OpenMatchMakerViewCommand}" Glyph="{dx:DXImageOffice2013 Image=Project_32x32.png}" RibbonStyle="Large" Content="Товары"/>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+
+            
+            <dxr:RibbonControl.PageHeaderItems>
+
+                <dxb:BarEditItem x:Name="SelectedRelationship_BarEditItem" EditWidth="600" EditValue="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <dxb:BarEditItem.EditSettings >
+                        <dxe:ComboBoxEditSettings x:Name="RelationshipsComboBox" 
+                                                  DisplayMember="Name" 
+                                                  ValueMember="Name" 
+                                                  ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </dxb:BarEditItem.EditSettings>
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand EventName="EditValueChanged" Command="{Binding EditValueChangedCommand}" CommandParameter="{Binding ElementName=SelectedRelationship_BarEditItem}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </dxb:BarEditItem>
+
+
+                <dxb:BarButtonItem Glyph="~\..\Images\refresh.png"
+                                    ToolTip="Обновить список контрагентов"
+                                    Command="{Binding RefreshRelationshipsCommand}"
+                                   CommandParameter="{Binding ElementName=SelectedRelationship_BarEditItem}"/>
+                <dxb:BarButtonItem x:Name="About" Content="О программе" ItemClick="About_Click" Glyph="{dx:DXImageOffice2013 Image=Info_32x32.png}"/>
                 <dxb:BarButtonItem x:Name="License" Content="Лицензия" ItemClick="License_Click" Glyph="~\..\Images\license.png"/>
-                <dxb:BarButtonItem x:Name="About" Content="О программе" ItemClick="About_Click" Glyph="~\..\Images\info.png"/>
-
-                <dxb:BarStaticItem Content="Документов:  " ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Source={x:Static utils:Utilites.LoadedDocsCount}, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarItemSeparator/>
-
-                <dxb:BarStaticItem Content="Задач: " ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Source={x:Static utils:Utilites.RanToCompletionCount}, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarStaticItem Content=" / " ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Source={x:Static utils:Utilites.tasksCount}, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarStaticItem Content=" (потоки  " ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Source={x:Static utils:Utilites.RunnedCount}, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarStaticItem Content=")" ShowBorder="False"/>
-                <dxb:BarItemSeparator/>
-            </dxr:RibbonControl.ToolbarItems>
+            </dxr:RibbonControl.PageHeaderItems>    
+            
             
         </dxr:RibbonControl>
-        
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <!--<dxb:BarContainerControl Name="TopMenu1" ContainerType="Top" Grid.Row="1">
-                <dxb:MainMenuControl Caption="Main Menu">
+       
 
-                    <dxb:BarButtonItem x:Name="Documents" Content="Документы" Command="{Binding DocumentsOpenCommand}"/>
-                    <dxb:BarButtonItem x:Name="MatcherPrice" Content="Цены" Command="{Binding MatcherPriceOpenCommand}"/>
-                    <dxb:BarButtonItem x:Name="MatcherGoods" Content="Товары" Command="{Binding MatcherGoodsOpenCommand}"/>
-                    <dxb:BarButtonItem x:Name="MatcherDeliveryPoints" Content="Точки доставки" Command="{Binding MatcherDeliveryPointsOpenCommand}"/>
+        <Grid   Height="Auto" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="300"/>
+            </Grid.RowDefinitions>
 
-                </dxb:MainMenuControl>
-            </dxb:BarContainerControl>-->
-            <dxe:ComboBoxEdit x:Name="RelationshipsComboBox" Width="600"
-                      ItemsSource="{Binding Path=(services:EdiService.Relationships), Mode=TwoWay}" 
-                      SelectedIndex="0" 
-                      SelectedItem="{Binding Path=(services:EdiService.SelectedRelationship), Mode=TwoWay}"
-                      DisplayMember="Name"
-                      ValueMember="Name"/>
-            <dx:SimpleButton Glyph="~\..\Images\refresh.png" x:Name="SimpleButton_RefreshRelationships"
-                             ToolTip="Обновить список контрагентов" 
-                             Command="{Binding RefreshRelationshipsCommand}" 
-                             CommandParameter="{Binding ElementName=RelationshipsComboBox}" Width="32"/>
-        </StackPanel>
-        
-        <dx:DXTabControl Name="MainTabControl" Height="Auto" Grid.Row="2"
-                    ItemsSource="{Binding Source={x:Static services:TabService.Tabs}}"
-                        SelectedIndex="0"
-                        AllowDrop="True"
-                        >
-            <dx:DXTabControl.ItemHeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Width="Auto" Text="{Binding Title}"/>
-                </DataTemplate>
-            </dx:DXTabControl.ItemHeaderTemplate>
-            <dx:DXTabControl.ItemTemplate>
-                <DataTemplate>
-                    <Frame Content="{Binding View.Content}" Width="Auto" Height="Auto" NavigationUIVisibility="Hidden"/>
-                </DataTemplate>
-            </dx:DXTabControl.ItemTemplate>
-            <!--AllowHideTabItems="True"
-                                         HideButtonShowMode="InAllTabs"                                          
-                                         AllowScrollOnMouseWheel="True"
-                                         AllowKeyboardNavigation="True"
-                                         ShowHeaderMenu="True"
-                                         ShowHiddenTabItemsInHeaderMenu="True"
-                                         ShowDisabledTabItemsInHeaderMenu="True"
-                                         ShowVisibleTabItemsInHeaderMenu="False"-->
-            <dx:DXTabControl.View>
-                <dx:TabControlScrollView 
-                                         />
-            </dx:DXTabControl.View>           
-        </dx:DXTabControl>
+            <DockPanel Grid.Row="0" LastChildFill="True">
 
-        <dxb:BarContainerControl ContainerType="Bottom" Grid.Row="3">
+                <dxb:BarContainerControl ContainerType="Left" Width="Auto" DockPanel.Dock="Top">
+                    <dxb:ToolBarControl RotateWhenVertical="True" >
+
+                        <dxb:BarEditItem EditValue="{Binding DateFrom,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:DateEditSettings Name="DateFromOrdersDatePicker" Mask="d MMM y" MaskUseAsDisplayFormat="True"/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+
+                        <dxb:BarEditItem EditValue="{Binding DateTo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:DateEditSettings Name="DateToOrdersDatePicker" Mask="d MMM y" MaskUseAsDisplayFormat="True"/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+
+                        <dxb:BarButtonItem ToolTip="Обновить" 
+                                       Command="{Binding PrevDayCommand}" CommandParameter="{Binding ElementName=DateFromOrdersDatePicker}"
+                                       IsEnabled="{Binding IsCanRefresh}"  
+                                       Glyph="{dx:DXImageOffice2013 Image=Prev_32x32.png}" />
+
+                        <dxb:BarButtonItem ToolTip="Следующий день" 
+                                       Command="{Binding NextDayCommand}" CommandParameter="{Binding ElementName=DateToOrdersDatePicker}"
+                                       IsEnabled="{Binding IsCanRefresh}"  
+                                       Glyph="{dx:DXImageOffice2013 Image=Next_32x32.png}" />
+
+                        <dxb:BarButtonItem ToolTip="Обновить" 
+                                       Command="{Binding GetDocumentsCommand}"
+                                       IsEnabled="{Binding IsCanRefresh}"  
+                                       Glyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}" />
+
+                        <dxb:BarButtonItem ToolTip="Создать документ в трейдере" 
+                                       Command="{Binding ToTraderCommand}"
+                                       IsEnabled="{Binding SelectedDocument.IsReadyToTrader}"  
+                                       Glyph="{dx:DXImageOffice2013 Image=AddFile_32x32.png}" />
+
+                        <dxb:BarButtonItem ToolTip="Отправить ответ на заказ" 
+                                       Command="{Binding SendORDRSPCommand}"
+                                       IsEnabled="{Binding SelectedDocument.IsReadyToOrdrsp}" 
+                                       Glyph="{dx:DXImageOffice2013 Image=ForceTesting_32x32.png}" 
+                                       />
+
+                        <dxb:BarButtonItem ToolTip="Отправить уведомление об отгрузке" 
+                                       Command="{Binding SendDESADVCommand}"
+                                       IsEnabled="{Binding SelectedDocument.IsReadyToDesadv}" 
+                                       Glyph="pack://application:,,,/EdiClient;component/Images/car.png" />
+
+                        <dxb:BarButtonItem ToolTip="Забарать документы с платформы EDISOFT" 
+                                       IsEnabled="{Binding IsCanRefresh}" 
+                                       Command="{Binding GetEDIDOCCommand}" 
+                                       Glyph="{dx:DXImageOffice2013 Image=Download_32x32.png}"/>
+
+                    </dxb:ToolBarControl>
+
+                </dxb:BarContainerControl>
+            </DockPanel>
+
+
+
+            <dxg:GridControl Name="DocumentsDataGrid" ShowBorder="False"
+                          ItemsSource="{Binding Path=Documents}"
+                          SelectedItem="{Binding Path=SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                            
+                          Grid.Row="1"
+                          CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
+
+                <dxg:GridControl.Bands>
+                    <dxg:GridControlBand Header="Шапка документа" AllowBestFit="True">
+                        <dxg:GridColumn ReadOnly="True" FieldName="ID" Header="ID док." Width="50" SortMode="Custom" Visible="False"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="CODE" Header="Код" Width="90"  Visible="False"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="ORDER_NUMBER" Header="Номер заказа" Width="90"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="ACT_STATUS" Header="Статус" Width="50"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="DocumentType" Header="Тип"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="DELIVERY_POINT_ILN" Header="Точка/GLN" Width="95"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="BUYER_ILN" Header="Покупатель/GLN" Width="95"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="ORDER_DATE" Header="Дата заказа" Width="80"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="EXPECTED_DELIVERY_DATE" Header="Дата доставки" Width="90"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="REMARKS" Header="Пометки" Visible="False"/>
+                    </dxg:GridControlBand>
+
+
+                    <dxg:GridControlBand Header="В заказе" AllowBestFit="True">
+                        <dxg:GridColumn ReadOnly="True" FieldName="DetailsCount" Header="Позиций" Width="70" SortMode="Custom"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="Details_OrderedLinesCount" Header="Товара" Width="70" SortMode="Custom"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="TOTAL_GROSS_AMOUNT" Header="Сумма" UnboundType="Decimal" Width="110" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                    </dxg:GridControlBand>
+
+                    <dxg:GridControlBand AllowBestFit="True">
+                        <dxg:GridColumn ReadOnly="True" FieldName="CONTRACTOR_MANE" Header="Точка" Width="Auto"/>
+                    </dxg:GridControlBand>
+
+                    <dxg:GridControlBand Header="К отправке" AllowBestFit="True">
+                        <dxg:GridColumn FieldName="Details_DeliveryLinesCount" Header="Позиций" Width="70" SortMode="Custom"/>
+                        <dxg:GridColumn FieldName="Details_DeliveryPositionCount" Header="Товара" Width="70" SortMode="Custom"/>
+                        <dxg:GridColumn FieldName="Details_DeliveryGrossSumm" Header="Сумма" UnboundType="Decimal" Width="110" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                    </dxg:GridControlBand>
+
+                    <!--<dxg:GridControlBand Header="DEBUG">
+                <dxg:GridColumn FieldName="IsFailed"/>
+                <dxg:GridColumn FieldName="IsDesadv"/>
+                <dxg:GridColumn FieldName="IsReadyToDesadv"/>
+                <dxg:GridColumn FieldName="IsOrdrsp"/>
+                <dxg:GridColumn FieldName="IsReadyToOrdrsp"/>
+                <dxg:GridColumn FieldName="IsInTrader"/>
+                <dxg:GridColumn FieldName="IsReadyToTrader"/>
+                <dxg:GridColumn FieldName="IsEmptyContractorLink"/>
+                </dxg:GridControlBand>-->
+                </dxg:GridControl.Bands>
+                <dxg:GridControl.View>
+                    <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowSearchPanelMode="Always"
+                               ShowGroupPanel="True" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="True" 
+                               NavigationStyle="Cell"
+                               GroupSummaryDisplayMode="AlignByColumns">
+
+                        <dxg:TableView.FormatConditions>
+
+
+                            <dxg:FormatCondition ApplyToRow="True" Expression="[IsEmptyContractorLink] == True">
+                                <dxg:Format Background="#e36b6b"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition ApplyToRow="True" Expression="[IsFailed] == True">
+                                <dxg:Format Background="#de4f35"/>
+                            </dxg:FormatCondition>
+
+                            <dxg:FormatCondition ApplyToRow="True" Expression="[IsDesadv] == True">
+                                <dxg:Format Background="GreenYellow"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition ApplyToRow="True" Expression="[IsReadyToDesadv] == True">
+                                <dxg:Format Background="#dec"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition ApplyToRow="True" Expression="[IsOrdrsp] == True">
+                                <dxg:Format Background="CornflowerBlue"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition ApplyToRow="True" Expression="[IsReadyToOrdrsp] == True">
+                                <dxg:Format Background="#ede"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition ApplyToRow="True"  Expression="[IsInTrader] == LightGray">
+                                <dxg:Format Background="#ffe1c4"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition ApplyToRow="True"  Expression="[IsReadyToTrader] == True">
+                                <dxg:Format Background="LightGray"/>
+                            </dxg:FormatCondition>
+
+                            <dxg:FormatCondition FieldName="Details_DeliveryLinesCount" Expression="[Details_DeliveryLinesCount] != [DetailsCount] and [IsInTrader] == True">
+                                <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition FieldName="DetailsCount" Expression="[Details_DeliveryLinesCount] != [DetailsCount] and [IsInTrader] == True">
+                                <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                            </dxg:FormatCondition>
+
+                            <dxg:FormatCondition FieldName="Details_DeliveryPositionCount" Expression="[Details_DeliveryPositionCount] != [Details_OrderedLinesCount] and [IsInTrader] == True" >
+                                <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition FieldName="Details_OrderedLinesCount" Expression="[Details_DeliveryPositionCount] != [Details_OrderedLinesCount] and [IsInTrader] == True" >
+                                <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                            </dxg:FormatCondition>
+
+                            <dxg:FormatCondition FieldName="TOTAL_GROSS_AMOUNT" Expression="[TOTAL_GROSS_AMOUNT] != [Details_DeliveryGrossSumm] and [IsInTrader] == True" >
+                                <dxg:Format Background="#ffe8db" FontWeight="Bold" Foreground="#a33b00"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition FieldName="Details_DeliveryGrossSumm" Expression="[TOTAL_GROSS_AMOUNT] != [Details_DeliveryGrossSumm] and [IsInTrader] == True" >
+                                <dxg:Format Background="#ffe8db" FontWeight="Bold" Foreground="#a33b00"/>
+                            </dxg:FormatCondition>
+                        </dxg:TableView.FormatConditions>
+
+                        <dxg:TableView.GroupRowStyle>
+                            <Style TargetType="{x:Type dxg:GroupRowControl}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding GroupLevel}" Value="0">
+                                        <Setter Property="Background" Value="#d9e7ff" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding GroupLevel}" Value="1">
+                                        <Setter Property="Background" Value="#c2d8ff" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding GroupLevel}" Value="1">
+                                        <Setter Property="Background" Value="#abc9ff" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </dxg:TableView.GroupRowStyle>
+
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+
+                <dxg:GridControl.GroupSummary>
+                    <dxg:GridSummaryItem FieldName="ID" ShowInColumn="ID" SummaryType="Count"/>
+                    <dxg:GridSummaryItem FieldName="CODE" ShowInColumn="CODE" SummaryType="Count"/>
+                    <dxg:GridSummaryItem FieldName="REMARKS" ShowInColumn="REMARKS" SummaryType="Count"/>
+
+                    <dxg:GridSummaryItem ShowInColumn="DetailsCount" FieldName="DetailsCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                    <dxg:GridSummaryItem ShowInColumn="Details_OrderedLinesCount" FieldName="Details_OrderedLinesCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                    <dxg:GridSummaryItem ShowInColumn="TOTAL_GROSS_AMOUNT" FieldName="TOTAL_GROSS_AMOUNT" SummaryType="Sum" DisplayFormat=" {0:c2}"/>
+
+                    <dxg:GridSummaryItem ShowInColumn="Details_DeliveryLinesCount" FieldName="Details_DeliveryLinesCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                    <dxg:GridSummaryItem ShowInColumn="Details_DeliveryPositionCount" FieldName="Details_DeliveryPositionCount" SummaryType="Sum" DisplayFormat=" {0:n0}"/>
+                    <dxg:GridSummaryItem ShowInColumn="Details_DeliveryGrossSumm" FieldName="Details_DeliveryGrossSumm" SummaryType="Sum" DisplayFormat=" {0:c2}"/>
+
+                </dxg:GridControl.GroupSummary>
+
+            </dxg:GridControl>
+
+            <GridSplitter Grid.Row="2"
+                      Height="5"
+                      ShowsPreview="False"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"/>
+
+            <dxg:GridControl Name="DocumentDetailsDataGrid" Grid.Row="3" 
+                              ItemsSource="{Binding Path=SelectedDocument.Details}"
+                         AutoGenerateColumns="None"
+                         CustomColumnSort="DocumentsDataGrid_CustomColumnSort">
+                <dxg:GridControl.Bands>
+
+                    <dxg:GridControlBand Header="Заказано" AllowBestFit="True">
+                        <dxg:GridColumn ReadOnly="True" FieldName="ID_GOOD" Header="Наш id товара"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="EAN" Header="Штрих-код"/>
+                        <!--<dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <dxe:BarCodeEdit EditValue="{Binding Value}">
+                                <dxe:BarCodeEdit.StyleSettings>
+                                    <dxe:EAN13StyleSettings/>
+                                </dxe:BarCodeEdit.StyleSettings>
+                            </dxe:BarCodeEdit>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>-->
+                        <dxg:GridColumn ReadOnly="True" FieldName="BUYER_ITEM_CODE" Header="Код товара клиента"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="TAX_RATE" Header="%НДС" UnboundType="Decimal" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="P" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn ReadOnly="True" FieldName="ITEM_DESCRIPTION" Header="Наименовение"/>
+
+                        <dxg:GridColumn ReadOnly="True" FieldName="ORDERED_UNIT_GROSS_PRICE" Header="Цена" UnboundType="Decimal" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn ReadOnly="True" FieldName="ORDERED_QUANTITY" Header="Кол-во" SortMode="Custom"/>
+                    </dxg:GridControlBand>
+
+                    <dxg:GridControlBand Header="К отравке" AllowBestFit="True">
+                        <dxg:GridColumn ReadOnly="True" FieldName="QUANTITY" Header="Кол-во" SortMode="Custom"/>
+                        <dxg:GridColumn ReadOnly="True" FieldName="PRICE" Header="Цена" UnboundType="Decimal" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn ReadOnly="True" FieldName="GrossAmount" Header="Сумма с НДС" UnboundType="Decimal" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn ReadOnly="True" FieldName="NetAmount" Header="Сумма" UnboundType="Decimal" SortMode="Custom">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:TextEditSettings MaskType="Numeric" Mask="C2" MaskUseAsDisplayFormat="True"/>
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                    </dxg:GridControlBand>
+
+                </dxg:GridControl.Bands>
+
+                <dxg:GridControl.View>
+                    <dxg:TableView AllowPerPixelScrolling="True" 
+                               ShowSearchPanelMode="Always"
+                               ShowGroupPanel="False" 
+                               ShowAutoFilterRow="True"  
+                               AllowEditing="True" 
+                               NavigationStyle="Cell" >
+                        <dxg:TableView.FormatConditions>
+
+                            <dxg:FormatCondition FieldName="QUANTITY" Expression="[QUANTITY] != [ORDERED_QUANTITY]">
+                                <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition FieldName="ORDERED_QUANTITY" Expression="[QUANTITY] != [ORDERED_QUANTITY]">
+                                <dxg:Format Background="#fffdc7" FontWeight="Bold" Foreground="#858000"/>
+                            </dxg:FormatCondition>
+
+                            <dxg:FormatCondition FieldName="PRICE" Expression="[ORDERED_UNIT_GROSS_PRICE] != [PRICE]" >
+                                <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                            </dxg:FormatCondition>
+                            <dxg:FormatCondition FieldName="ORDERED_UNIT_GROSS_PRICE" Expression="[ORDERED_UNIT_GROSS_PRICE] != [PRICE]" >
+                                <dxg:Format Background="#fff0d4" FontWeight="Bold" Foreground="#c27e00"/>
+                            </dxg:FormatCondition>
+
+                            <dxg:FormatCondition ApplyToRow="True"  Expression="[IsFailed] == True">
+                                <dxg:Format Background="#e69c9c"/>
+                            </dxg:FormatCondition>
+
+                        </dxg:TableView.FormatConditions>
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+
+
+        </Grid>
+
+        <dxb:BarContainerControl ContainerType="Bottom" Grid.Row="2">
             <dxb:StatusBarControl Caption="Status Bar">
 
 
-                <dxb:BarStaticItem Content="База:" ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.DbHost), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarItemSeparator/>
+                <dxb:BarEditItem Content="База:" EditValue="{Binding Path=(settings:AppConfig.DbHost), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <dxb:BarStaticItem Content="EDI пользователь:" ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.EdiUser), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarItemSeparator/>
+                <dxb:BarEditItem Content="EDI пользователь:" EditValue="{Binding Path=(settings:AppConfig.EdiUser), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <dxb:BarStaticItem Content="GLN:" ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.EdiGLN), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarItemSeparator/>
+                <dxb:BarEditItem Content="GLN:" EditValue="{Binding Path=(settings:AppConfig.EdiGLN), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <dxb:BarStaticItem Content="Логирование:" ShowBorder="False"/>
-                <dxb:BarStaticItem Content="{Binding Path=(settings:AppConfig.EnableLogging), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ShowBorder="False"/>
-                <dxb:BarItemSeparator/>
-
-
-
-                <!--<dxb:BarItemSeparator Alignment="Far"/>
-                <dxb:BarEditItem  Content="темная тема" Alignment="Far" EditValue="{Binding IsNightTheme}">
+                <dxb:BarEditItem Content="Логирование:" EditValue="{Binding Path=(settings:AppConfig.EnableLogging), UpdateSourceTrigger=PropertyChanged}">
                     <dxb:BarEditItem.EditSettings>
                         <dxe:CheckEditSettings/>
                     </dxb:BarEditItem.EditSettings>
-                    </dxb:BarEditItem>-->
+                </dxb:BarEditItem>
+
+
+                <dxb:BarEditItem Content="Отображно документов:" EditValue="{Binding LoadedDocsCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <dxb:BarEditItem Content="Обработано:" EditValue="{Binding RanToCompletionCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <dxb:BarEditItem Content="Задач:" EditValue="{Binding tasksCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <dxb:BarEditItem Content=" Потоки:" EditValue="{Binding RunnedCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                
+                <dxb:BarStaticItem Content="{Binding Time}" Alignment="Far"/>
 
 
             </dxb:StatusBarControl>
         </dxb:BarContainerControl>
 
-
+        
         
     </Grid>
-    
+
 </dxr:DXRibbonWindow>

@@ -1,4 +1,5 @@
-﻿using EdiClient.ViewModel;
+﻿using DevExpress.Xpf.Ribbon;
+using EdiClient.ViewModel;
 using System.Windows.Controls;
 using static EdiClient.Services.Utils.Utilites;
 
@@ -7,7 +8,7 @@ namespace EdiClient.View
     /// <summary>
     /// Логика взаимодействия для PriceTypesView.xaml
     /// </summary>
-    public partial class PriceTypesView : Page
+    public partial class PriceTypesView : DXRibbonWindow
     {
         public PriceTypesViewModel Context { get; set; }
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using EdiClient.View;
 using EdiClient.AppSettings;
 using System.Reflection;
-using EdiClient.ViewModel.Common;
+using EdiClient.ViewModel;
 using System.Windows.Data;
 using static EdiClient.Services.Utils.Utilites;
 
@@ -262,13 +262,20 @@ namespace EdiClient.ViewModel
             GetContractors();
         }
 
-        private void GetCustomers() => CustomersList = DocumentRepository.GetList<Customer>(DbService.Sqls.GET_CUSTOMERS);
-        private void GetContractors() => ContractorsList = DocumentRepository.GetList<Customer>(DbService.Sqls.GET_CONTRACTORS);
+        private void GetCustomers() => CustomersList = GetList<Customer>(DbService.Sqls.GET_CUSTOMERS);
+        private void GetContractors() => ContractorsList = GetList<Customer>(DbService.Sqls.GET_CONTRACTORS);
         private void GetClients()
         {
-            ClientsList = DocumentRepository.GetList<Client>(DbService.Sqls.GET_CLIENTS);
+            ClientsList = GetList<Client>(DbService.Sqls.GET_CLIENTS);
         }
-        
+
+        public List<T> GetList<T>(string sql)
+        {
+            Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки"); return null; }
+            var result = DbService.DocumentSelect<T>(new List<string> { sql }).Cast<T>().ToList();
+            return result;
+        }
 
     }
 }
