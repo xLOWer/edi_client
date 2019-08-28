@@ -11,7 +11,7 @@
       xmlns:local="clr-namespace:EdiClient.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="MatchMaker">
+      Title="Товары" >
     <Window.Resources>
         <Style x:Key="ControlButtons">
             <Setter Property="Control.BorderBrush" Value="Transparent" />
@@ -20,7 +20,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid x:Name="mainMatchesGrid" Margin="-12 -12 -12 -12">
+    <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition Height="28"/>

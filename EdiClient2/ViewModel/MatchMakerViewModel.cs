@@ -19,14 +19,9 @@ namespace EdiClient.ViewModel
 {
     public class MatchMakerViewModel : INotifyPropertyChanged
     {
-        public MatchMakerViewModel(/*MatchMakerView page*/)
+        public MatchMakerViewModel()
         {
             Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            //try
-            //{
-            //    _page = page;
-            //}
-            //catch (Exception ex) { Error(ex); }
         }
 
         #region fields
@@ -169,17 +164,11 @@ namespace EdiClient.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
-        
-        //private void SetLayoutEnabled(bool flag)
-        //{
-        //    _page.LoadDataButton.IsEnabled = flag;
-        //    _page.LoadDataButton.UpdateLayout();
-        //}
+
 
         public void LoadData(object obj = null)
         {
             Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            //SetLayoutEnabled(false);
             if(fullGoodsList == null || fullGoodsList.Count < 1)
             {
                 fullGoodsList = GetGoods();
@@ -187,8 +176,6 @@ namespace EdiClient.ViewModel
             GoodsList = fullGoodsList;
             FailedGoodsList = GetFailedGoods();
             MatchesList = GetMatchesList();
-            
-            //SetLayoutEnabled(true);
         }
 
         public void MakeMatching(object obj = null)

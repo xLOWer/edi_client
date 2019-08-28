@@ -19,12 +19,15 @@ namespace EdiClient
         public MainWindow()
         {
             ThemeManager.SetThemeName(this, "VS2017Light");
-            InitializeComponent();            
-            //TabService.Configure(ref mainWindow, ref MainTabControl);
+            InitializeComponent();
             Context = new MainViewModel();
             DataContext = Context;
-            //UpdateLayout();
             Title = $"Клиент EDI (версия {Assembly.GetEntryAssembly().GetName().Version})";
+            try
+            {
+                DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayout.xml");
+            }
+            catch (Exception ex) { }
         }
 
         private void License_Click(object sender, RoutedEventArgs e)
@@ -93,5 +96,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
             .Replace('.', Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator[0])
             .Replace(',', Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
 
+        private void Save_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            DocumentsDataGrid.SaveLayoutToXml("Save_GridLayout.xml");
+        }
+
+        private void Load_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayout.xml");
+        }
     }
 }

@@ -29,63 +29,65 @@ namespace EdiClient.ViewModel
             EdiService.SelectedRelationship = cmb.SelectedItem as Relation;
         });
 
-        public CommandService RefreshRelationshipsCommand => new CommandService(RefreshRelationships);
-        public CommandService SaveConfigCommand => new CommandService(SaveConfig);
-
-        public MainViewModel()
-        {
-            DateFrom = DateTime.Today;
-            DateTo = DateTime.Today.AddDays(1);
-            NotifyPropertyChanged("DateFrom");
-            NotifyPropertyChanged("DateTo");
-            //try
-            //{
-            //    TabService.NewTab(new DocumentPage(), "Документы");
-            //    TabService.NewTab(new MatchMakerView(), "Связи товаров");
-            //    TabService.NewTab(new PriceTypesView(), "Связи цен");
-            //    TabService.NewTab(new ContractorsMatchView(), "Связи точек доставки");
-            //}
-            //catch(Exception ex) { Error(ex); }
-        }
-        public void RefreshRelationships(object o = null)
+        public CommandService RefreshRelationshipsCommand => new CommandService(o => 
         {
             EdiService.UpdateData();
             ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
             cmb.ItemsSource = EdiService.Relationships;
-        }
-
-        public void SaveConfig(object o)
+            RaiseAllProps();
+        });
+        public CommandService SaveConfigCommand => new CommandService(o => 
         {
             Logger.Log($"[CONFIG SAVED]");
             AppConfigHandler.Save();
             AppConfigHandler.Load();
             AppConfigHandler.ConfigureEdi();
             AppConfigHandler.ConfigureOracle();
+            RaiseAllProps();
+        });
+
+        public MainViewModel()
+        {
+            DateFrom = DateTime.Today;
+            DateTo = DateTime.Today.AddDays(1);
+            RaiseAllProps();
         }
 
         public PriceTypesView _PriceTypesView { get; set; }
         public MatchMakerView _MatchMakerView { get; set; }
         public ContractorsMatchView _ContractorsMatchView { get; set; }
 
-        public CommandService OpenPriceTypesViewCommand => new CommandService( o  => 
+        public CommandService OpenPriceTypesViewCommand => new CommandService( o  =>
         {
-            if(_PriceTypesView == null) _PriceTypesView = new PriceTypesView();
-            _PriceTypesView.Activate();
-            _PriceTypesView.Show();
+            try
+            {
+                _PriceTypesView = new PriceTypesView();
+                _PriceTypesView.Activate();
+                _PriceTypesView.Show();
+            }
+            catch (Exception ex) { Error(ex); }
         });
 
         public CommandService OpenMatchMakerViewCommand => new CommandService(o =>
         {
-            if (_MatchMakerView == null) _MatchMakerView = new MatchMakerView();
-            _MatchMakerView.Activate();
-            _MatchMakerView.Show();
+            try
+            {
+                _MatchMakerView = new MatchMakerView();
+                _MatchMakerView.Activate();
+                _MatchMakerView.Show();
+            }
+            catch (Exception ex) { Error(ex); }
         });
 
         public CommandService OpenContractorsMatchViewCommand => new CommandService(o =>
         {
-            if (_ContractorsMatchView == null) _ContractorsMatchView = new ContractorsMatchView();
-            _ContractorsMatchView.Activate();
-            _ContractorsMatchView.Show();
+            try
+            {
+                _ContractorsMatchView = new ContractorsMatchView();
+                _ContractorsMatchView.Activate();
+                _ContractorsMatchView.Show();
+            }
+            catch (Exception ex) { Error(ex); }
         });
 
 
@@ -97,7 +99,6 @@ namespace EdiClient.ViewModel
         private Document selectedDocument;
         private List<Document> documents;
         private string _Time = "0";
-        private string _LoadedDocsCount = "0";
 
         public string RunnedCount => tasks?.Where(x => x.Status == TaskStatus.Running)?.Count().ToString() ?? "0";
         public string tasksCount => tasks?.Count().ToString() ?? "0";
@@ -113,23 +114,12 @@ namespace EdiClient.ViewModel
                 if (value != _Time)
                 {
                     _Time = value;
-                    NotifyPropertyChanged("Time");
+                    RaiseAllProps();
                 }
             }
         }
 
-        public string LoadedDocsCount
-        {
-            get { return _LoadedDocsCount; }
-            set
-            {
-                if (value != _LoadedDocsCount)
-                {
-                    _LoadedDocsCount = value;
-                    NotifyPropertyChanged("LoadedDocsCount");
-                }
-            }
-        }
+        public string LoadedDocsCount { get; set; } = "0";
 
 
         public List<Document> Documents
@@ -138,7 +128,7 @@ namespace EdiClient.ViewModel
             set
             {
                 documents = value;
-                NotifyPropertyChanged("Documents");
+                RaiseAllProps();
             }
         }
         public Document SelectedDocument
@@ -147,7 +137,7 @@ namespace EdiClient.ViewModel
             set
             {
                 selectedDocument = value;
-                NotifyPropertyChanged("SelectedDocument");
+                RaiseAllProps();
             }
         }
         public DateTime DateFrom
@@ -156,7 +146,7 @@ namespace EdiClient.ViewModel
             set
             {
                 dateFrom = value;
-                NotifyPropertyChanged("DateFrom");
+                RaiseAllProps();
             }
         }
         public DateTime DateTo
@@ -165,7 +155,7 @@ namespace EdiClient.ViewModel
             set
             {
                 dateTo = value;
-                NotifyPropertyChanged("DateTo");
+                RaiseAllProps();
             }
         }
 
@@ -216,16 +206,14 @@ namespace EdiClient.ViewModel
         {
             DateFrom = DateFrom.AddDays(1);
             DateTo = DateTo.AddDays(1);
-            NotifyPropertyChanged("DateFrom");
-            NotifyPropertyChanged("DateTo");
+            RaiseAllProps();
         });
 
         public CommandService PrevDayCommand => new CommandService((o) =>
         {
             DateFrom = DateFrom.AddDays(-1);
             DateTo = DateTo.AddDays(-1);
-            NotifyPropertyChanged("DateFrom");
-            NotifyPropertyChanged("DateTo");
+            RaiseAllProps();
         });
 
         public void ActionInTime(Action act)
@@ -245,14 +233,17 @@ namespace EdiClient.ViewModel
             {
                 watch.Stop();
                 Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
-                Time = ((double)(((double)watch.ElapsedMilliseconds) / 1000)).ToString() + " сек";
+                RaiseAllProps();
             }
-            NotifyPropertyChanged("Documents");
-            NotifyPropertyChanged("DateFrom");
-            NotifyPropertyChanged("DateTo");
-            NotifyPropertyChanged("SelectedDocument");
         }
 
+        private void RaiseAllProps()
+        {
+            foreach(var prop in typeof(MainViewModel).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                NotifyPropertyChanged(prop.Name);
+            }
+        }
 
         public void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
@@ -285,6 +276,7 @@ namespace EdiClient.ViewModel
                                                                             order.trackingId,
                                                                             SelectedRelationship.documentStandard, "").First();
                         InsertIncomingIntoDatabase(document);
+                        RaiseAllProps();
                     });
 
                     tasks[i++].Start();
@@ -308,6 +300,7 @@ namespace EdiClient.ViewModel
                         //    detail.Doc = doc;                        
                     }
             LoadedDocsCount = result.Count.ToString();
+            NotifyPropertyChanged("LoadedDocsCount");
             return result;
         }
 

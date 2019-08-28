@@ -4,7 +4,7 @@ namespace EdiClient.AppSettings
 {
     public static class AppConfig
     {
-        public const string  AppVersion = "3.3.1.23";
+        public const string  AppVersion = "3.3.2.25";
         public static string DbUserName { get; set; } // имя пользователя
         public static string DbUserPassword { get; set; } // пароль пользователя
         public static string DbPort { get; set; } = "1521"; // порт подключения  

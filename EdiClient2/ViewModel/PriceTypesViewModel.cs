@@ -15,13 +15,9 @@ namespace EdiClient.ViewModel
 {
     public class PriceTypesViewModel : INotifyPropertyChanged
     {
-        public PriceTypesViewModel(PriceTypesView page)
+        public PriceTypesViewModel()
         {
             Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            try
-            {
-                _page = page;
-            } catch (Exception ex) { Error( ex ); }
         }
 
         #region fields
@@ -29,8 +25,7 @@ namespace EdiClient.ViewModel
         public List<Relation> Relationships => EdiService.Relationships;
         public Relation SelectedRelationship => EdiService.SelectedRelationship;
         public int RelationshipCount => EdiService.RelationshipCount;
-
-        private PriceTypesView _page { get; set; }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         private PriceType selectedPriceType = new PriceType();
@@ -90,21 +85,11 @@ namespace EdiClient.ViewModel
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( info ) );
         }            
         
-        private void SetLayoutEnabled(bool flag)
-        {
-            _page.LoadDataButton.IsEnabled = flag;
-            _page.LoadDataButton.UpdateLayout();
-        }
         
         public void LoadData(object obj = null)
         {
-            SetLayoutEnabled( false );
-
            PriceTypeList = GetPriceTypes();
-            MatchList = GetMatchList();
-            
-            SetLayoutEnabled( true );
-
+           MatchList = GetMatchList();    
         }
         
         public void MakeMatching(object obj = null)

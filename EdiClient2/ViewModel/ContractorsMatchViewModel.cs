@@ -246,11 +246,8 @@ namespace EdiClient.ViewModel
                 DeliveryGln = SelectedClient?.DELIVERY_POINT_GLN ?? "";
 
                 LinkedSenderCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.SENDER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
-
                 LinkedBuyerCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.BUYER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
-
                 LinkedDeliveryPointContractor = ContractorsList?.Where(x => x.Id == (SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID ?? "a")).FirstOrDefault() ?? null;
-
             }
         }
 
