@@ -191,12 +191,12 @@ namespace EdiClient.ViewModel
                 Parameters =
                         {
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedRelationship.partnerIln, ParameterDirection.Input),
-                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedFailedGood.BUYER_ITEM_CODE, ParameterDirection.Input),
                             new OracleParameter("P_ID_GOOD", OracleDbType.Number, SelectedGood.ID, ParameterDirection.Input),
+                            new OracleParameter("P_EAN", OracleDbType.NVarChar, SelectedFailedGood.EAN, ParameterDirection.Input),
                         },
                 Connection = DbService.Connection.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_LINK"
+                CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_LINK"
             });
         }
 
@@ -204,7 +204,7 @@ namespace EdiClient.ViewModel
         {
             Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedMatch == null) { Error("Не выбран пункт с сопоставлением"); return; }
-            if (String.IsNullOrEmpty(SelectedMatch.CUSTOMER_ARTICLE)) { Error("У выбранного товара отсутствует код покупателя"); return; }
+            if (String.IsNullOrEmpty(SelectedMatch.EAN)) { Error("У выбранного товара отсутствует код покупателя"); return; }
 
             try
             {
@@ -213,11 +213,11 @@ namespace EdiClient.ViewModel
                     Parameters =
                         {
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
-                            new OracleParameter("P_CUSTOMER_ARTICLE", OracleDbType.NVarChar, SelectedMatch.CUSTOMER_ARTICLE, ParameterDirection.Input)
+                            new OracleParameter("P_EAN", OracleDbType.NVarChar, SelectedMatch.EAN, ParameterDirection.Input)
                         },
                     Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_GOOD_UNLINK"
+                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_UNLINK"
                 });
                 
                 FailedGoodsList = GetFailedGoods();

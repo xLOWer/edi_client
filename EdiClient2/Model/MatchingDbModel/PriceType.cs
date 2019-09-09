@@ -1,6 +1,6 @@
 ﻿namespace EdiClient.Model.MatchingDbModel
 {
-    public class PriceType
+    public struct PriceType
     {
         public string ID { get; set; }
         public string NAME { get; set; }

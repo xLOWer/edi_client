@@ -44,7 +44,7 @@ namespace EdiClient.Services
         {
             Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
-            if (!string.IsNullOrEmpty(AppConfig.EdiPassword) && !string.IsNullOrEmpty(AppConfig.EdiGLN) && !string.IsNullOrEmpty(AppConfig.EdiUser))
+            if (!string.IsNullOrEmpty(AppConfigHandler.conf.EdiPassword) && !string.IsNullOrEmpty(AppConfigHandler.conf.EdiGLN) && !string.IsNullOrEmpty(AppConfigHandler.conf.EdiUser))
             {
                 var rl = GetRelationships() ?? new List<Relation>();
                 if (rl.Count == 0) { Logger.Log($"\t\tGetRelationships() return null"); return; }
@@ -68,14 +68,14 @@ namespace EdiClient.Services
             }
 
 
-            if (AppConfig.EnableProxy == true)
+            if (AppConfigHandler.conf.EnableProxy == true)
             {
                 // задать настройки прокси как у системы
                 GlobalProxySelection.Select = WebProxy.GetDefaultProxy();
 
-                if (!String.IsNullOrEmpty(AppConfig.ProxyUserName) && !String.IsNullOrEmpty(AppConfig.ProxyUserPassword))
+                if (!String.IsNullOrEmpty(AppConfigHandler.conf.ProxyUserName) && !String.IsNullOrEmpty(AppConfigHandler.conf.ProxyUserPassword))
                     // задаём данные для аутентификации пользователя прокси
-                    GlobalProxySelection.Select.Credentials = new NetworkCredential(AppConfig.ProxyUserName, AppConfig.ProxyUserPassword);
+                    GlobalProxySelection.Select.Credentials = new NetworkCredential(AppConfigHandler.conf.ProxyUserName, AppConfigHandler.conf.ProxyUserPassword);
                 else Error("Не удалось задать пользователя прокси.\nДанные пользователя не верны");
             }
             else
@@ -119,7 +119,7 @@ namespace EdiClient.Services
             retRes returnedResult = null;
             XmlSerializer serializer = new XmlSerializer(typeof(OrganizationInfo));
 
-            returnedResult = Client.organizationInfo(AppConfig.EdiUser, AppConfig.EdiPassword, inn, kpp, ogrn, fnsId, gln);
+            returnedResult = Client.organizationInfo(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, inn, kpp, ogrn, fnsId, gln);
 
             if (returnedResult == null) Error("Нет соединения с edisoft");
 
@@ -138,7 +138,7 @@ namespace EdiClient.Services
             retRes returnedResult = null;
             try
             {
-                returnedResult = Client?.relationships(AppConfig.EdiUser, AppConfig.EdiPassword, timeout);
+                returnedResult = Client?.relationships(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, timeout);
             }
             catch (Exception ex) { Error(ex); }
             
@@ -164,12 +164,17 @@ namespace EdiClient.Services
             var ser = new XmlSerializer(typeof(TModel));
             retRes returnedResult = null;
 
-            returnedResult = Client?.receive(AppConfig.EdiUser, AppConfig.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
+            returnedResult = Client?.receive(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
             
             if (returnedResult == null) Error("Нет соединения с edisoft");
 
             if (returnedResult?.res == "00000000")
-                return XmlService<TModel>.Deserialize(returnedResult.cnt);
+            {                
+                var xml = XmlService<TModel>.Deserialize(returnedResult.cnt);
+                Logger.LogXml(returnedResult.cnt, $"{trackingId}__{partnerILN}.txt");
+                Logger.Log($"[RECEIVE {typeof(TModel).Name}]" );
+                return xml;
+            }
             else
                 MessageBox.Show(ResponseErrorHandler(returnedResult));
 
@@ -182,7 +187,7 @@ namespace EdiClient.Services
             Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
 
-            returnedResult = Client.send(AppConfig.EdiUser, AppConfig.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
+            returnedResult = Client.send(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
 
             if (returnedResult?.res != "00000000" && returnedResult != null)
             {
@@ -196,7 +201,7 @@ namespace EdiClient.Services
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
-            returnedResult = Client?.listMBAllEx(AppConfig.EdiUser, AppConfig.EdiPassword, getBinaryData);
+            returnedResult = Client?.listMBAllEx(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, getBinaryData);
 
             if (returnedResult == null) Error("Нет соединения с edisoft");
 
@@ -225,7 +230,7 @@ namespace EdiClient.Services
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
-            returnedResult = Client?.listMBEx(AppConfig.EdiUser, AppConfig.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, dateFrom, dateTo, itemFrom, itemTo, documentStatus, timeout);
+            returnedResult = Client?.listMBEx(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, dateFrom, dateTo, itemFrom, itemTo, documentStatus, timeout);
 
             if (returnedResult == null) Error("Нет соединения с edisoft");
 

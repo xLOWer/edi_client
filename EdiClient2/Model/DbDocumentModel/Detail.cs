@@ -5,6 +5,7 @@ namespace EdiClient.Model
     public class Detail
     {
 
+        public string ID { get; set; }
         public string ID_GOOD { get; set; }
         public string ID_EDI_DOC { get; set; }
         public string EAN { get; set; }

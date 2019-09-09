@@ -94,10 +94,6 @@ namespace EdiClient.ViewModel
         
         public void MakeMatching(object obj = null)
         {
-            Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedRelationship == null) { Error( "Не выбран покупатель" ); return; }
-            if (SelectedPriceType == null) { Error( "Не выбран тип цены" ); return; }
-
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
@@ -109,7 +105,7 @@ namespace EdiClient.ViewModel
                         },
                     Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_PRICE_LINK"
+                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_LINK"
                 });
 
                 MatchList = GetMatchList();
@@ -134,7 +130,7 @@ namespace EdiClient.ViewModel
                         },
                     Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfig.Schema + ".") + "EDI_MAKE_PRICE_UNLINK"
+                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_UNLINK"
                 });
                 MatchList = GetMatchList();
             }

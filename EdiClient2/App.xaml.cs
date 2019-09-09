@@ -23,19 +23,11 @@ namespace EdiClient
             Thread.CurrentThread.CurrentCulture = culture;
             
 
-
-            // Хитронаёбочка. Чтобы регистрировать каждое включение программы.
-            //                Может такие логи вести сразу в базу?
-            bool? LogState = AppConfig.EnableLogging; //запоминаем что в логинге
-            AppConfig.EnableLogging = true; // принудительно вырубаем его
-
-            Logger.Log("========== START INIT APPLICATION ==========");
+            //Logger.Log("========== START INIT APPLICATION ==========");
             AppConfigHandler.Load();
             AppConfigHandler.ConfigureEdi();
             AppConfigHandler.ConfigureOracle();
-            Logger.Log("========== END INIT APPLICATION ==========");
-
-            AppConfig.EnableLogging = LogState; // и возвращаем то что было до принудительного включения
+            //Logger.Log("========== END INIT APPLICATION ==========");            
             
         }        
         

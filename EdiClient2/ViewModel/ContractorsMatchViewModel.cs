@@ -225,7 +225,7 @@ namespace EdiClient.ViewModel
                         },
                     Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfig.Schema + ".") + "EDI_CHANGE_DELIVERY_POINT"
+                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.CHANGE_DELIVERY_POINT"
                 });
                 LoadData();
             }

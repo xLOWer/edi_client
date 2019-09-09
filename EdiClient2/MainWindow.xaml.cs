@@ -4,8 +4,10 @@ using System.Threading;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Ribbon;
+using EdiClient.AppSettings;
 using EdiClient.Services;
 using EdiClient.ViewModel;
+using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient
 {
@@ -32,7 +34,7 @@ namespace EdiClient
 
         private void License_Click(object sender, RoutedEventArgs e)
         {
-            DevExpress.Xpf.Core.DXMessageBox.Show(@"Продукт защищён лицензией MIT.
+            MessageBox.Show(@"Продукт защищён лицензией MIT.
 
 Copyright (c) 2019 Шишло Дмитрий
 
@@ -105,5 +107,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
         {
             DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayout.xml");
         }
+
     }
 }

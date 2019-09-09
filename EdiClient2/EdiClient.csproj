@@ -31,7 +31,7 @@
     <PublisherName>ВИРЭЙ</PublisherName>
     <SuiteName>EDI_CLIENT</SuiteName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>27</ApplicationRevision>
+    <ApplicationRevision>28</ApplicationRevision>
     <ApplicationVersion>3.3.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -186,16 +186,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppSettings\AppConfig.cs" />
     <Compile Include="AppSettings\AppConfigHandler.cs" />
-    <Compile Include="Model\Common\AppConfig.cs" />
     <Compile Include="Model\DbDocumentModel\Detail.cs" />
     <Compile Include="Model\DbDocumentModel\Document.cs" />
     <Compile Include="Model\DocumentDespatchAdvice.cs" />
     <Compile Include="Model\DocumentReceivingAdvice.cs" />
     <Compile Include="Model\MatchingDbModel\Client.cs" />
-    <Compile Include="Model\MatchingDbModel\Customer.cs" />
     <Compile Include="Model\MatchingDbModel\FailedGoods.cs" />
+    <Compile Include="Model\MatchingDbModel\Customer.cs" />
     <Compile Include="Model\MatchingDbModel\Goods.cs" />
     <Compile Include="Model\MatchingDbModel\Matches.cs" />
     <Compile Include="Model\MatchingDbModel\MatchingPriceTypes.cs" />
@@ -203,12 +201,12 @@
     <Compile Include="Model\WebModel\DocumentInfo.cs" />
     <Compile Include="Model\WebModel\OrganizationInfo.cs" />
     <Compile Include="Model\WebModel\RelationResponse.cs" />
+    <Compile Include="Model\WebModel\XmlEnvelope.cs" />
     <Compile Include="Services\AutoHandlerService.cs" />
     <Compile Include="Services\Converters\StringToDateConverter.cs" />
     <Compile Include="Services\Converters\StringToDoubleConverter.cs" />
     <Compile Include="Services\DbService.cs" />
     <Compile Include="Services\EdiService.cs" />
-    <Compile Include="Services\OracleConnectionService.cs" />
     <Compile Include="Services\Common\CommandService.cs" />
     <Compile Include="Services\Utilites.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

@@ -14,6 +14,7 @@ namespace EdiClient.AppSettings
         private static string fileName = "EdiClientAppConfig.xml";
         private static string fullPath => Path.GetFullPath($"{directoryPath}\\{dirName}\\{fileName}");
         public static string LogPath => Path.GetFullPath($"{directoryPath}\\{dirName}");
+        public static AppConfig conf = new AppConfig();
 
         public static void ConfigureEdi()
         {
@@ -47,6 +48,7 @@ namespace EdiClient.AppSettings
 
         public static void Save()
         {
+            Logger.Log("[APPCONFIG SAVE]");
             Create();
         }
 
@@ -54,57 +56,76 @@ namespace EdiClient.AppSettings
         public static void Read()
         {
             Logger.Log("[APPCONFIG]");
-            var newLoadedConfig = new Model.Common.AppConfig();
-            XmlSerializer xml = new XmlSerializer(typeof(Model.Common.AppConfig));
+            var newLoadedConfig = new AppConfig();
+            XmlSerializer xml = new XmlSerializer(typeof(AppConfig));
             using (var stream = XmlReader.Create(fullPath))
             {
-                newLoadedConfig = (Model.Common.AppConfig)xml.Deserialize(stream);
+                newLoadedConfig = (AppConfig)xml.Deserialize(stream);
                 stream.Close();
             }
+            conf = newLoadedConfig;
 
-            AppConfig.DbUserName = !string.IsNullOrEmpty(newLoadedConfig.DbUserName) ? newLoadedConfig.DbUserName : AppConfig.DbUserName;
-            AppConfig.DbUserPassword = !string.IsNullOrEmpty(newLoadedConfig.DbUserPassword) ? newLoadedConfig.DbUserPassword : AppConfig.DbUserPassword;
-            AppConfig.DbHost = !string.IsNullOrEmpty(newLoadedConfig.DbHost) ? newLoadedConfig.DbHost : AppConfig.DbHost;
-            AppConfig.DbPort = !string.IsNullOrEmpty(newLoadedConfig.DbPort) ? newLoadedConfig.DbPort : AppConfig.DbPort;
-            AppConfig.DbSID = !string.IsNullOrEmpty(newLoadedConfig.DbSID) ? newLoadedConfig.DbSID : AppConfig.DbSID;
-
-            //AppConfig.TraderUserName = !string.IsNullOrEmpty(newLoadedConfig.TraderUserName) ? newLoadedConfig.TraderUserName : AppConfig.TraderUserName;
-            //AppConfig.TraderUserPassword = !string.IsNullOrEmpty(newLoadedConfig.TraderUserPassword) ? newLoadedConfig.TraderUserPassword : AppConfig.TraderUserPassword;
-
-            AppConfig.EdiTimeout = !string.IsNullOrEmpty(newLoadedConfig.EdiTimeout.ToString()) ? newLoadedConfig.EdiTimeout : AppConfig.EdiTimeout;
-            AppConfig.EdiUser = !string.IsNullOrEmpty(newLoadedConfig.EdiUser) ? newLoadedConfig.EdiUser : AppConfig.EdiUser;
-            AppConfig.EdiPassword = !string.IsNullOrEmpty(newLoadedConfig.EdiPassword) ? newLoadedConfig.EdiPassword : AppConfig.EdiPassword;
-            AppConfig.EdiGLN = !string.IsNullOrEmpty(newLoadedConfig.EdiGLN) ? newLoadedConfig.EdiGLN : AppConfig.EdiGLN;
-            AppConfig.EdiUrl = !string.IsNullOrEmpty(newLoadedConfig.EdiUrl) ? newLoadedConfig.EdiUrl : AppConfig.EdiUrl;
-
-            //AppConfig.EnableAutoHandler = newLoadedConfig.EnableAutoHandler ?? AppConfig.EnableAutoHandler;
-            //AppConfig.AutoHandlerPeriod = !string.IsNullOrEmpty(newLoadedConfig.AutoHandlerPeriod.ToString()) ? newLoadedConfig.AutoHandlerPeriod : AppConfig.AutoHandlerPeriod;
-            AppConfig.EnableLogging = newLoadedConfig.EnableLogging ?? AppConfig.EnableLogging;
-
-            AppConfig.Schema = !string.IsNullOrEmpty(newLoadedConfig.Schema) ? newLoadedConfig.Schema : AppConfig.Schema;
-
-            AppConfig.EnableProxy = newLoadedConfig.EnableProxy ?? AppConfig.EnableProxy;
-            AppConfig.ProxyUserName = !string.IsNullOrEmpty(newLoadedConfig.ProxyUserName) ? newLoadedConfig.ProxyUserName : AppConfig.ProxyUserName;
-            AppConfig.ProxyUserPassword = !string.IsNullOrEmpty(newLoadedConfig.ProxyUserPassword) ? newLoadedConfig.ProxyUserPassword : AppConfig.ProxyUserPassword;
-
-
-            Logger.Log("\t\tDbUserName " + AppConfig.DbUserName);
-            Logger.Log("\t\tDbHost " + AppConfig.DbHost);
-            Logger.Log("\t\tEdiUser " + AppConfig.EdiUser);
-            Logger.Log("\t\tEdiGLN " + AppConfig.EdiGLN);
+            Logger.Log("\t\tDbUserName " + conf.DbUserName);
+            Logger.Log("\t\tDbHost " + conf.DbHost);
+            Logger.Log("\t\tEdiUser " + conf.EdiUser);
+            Logger.Log("\t\tEdiGLN " + conf.EdiGLN);
         }
 
 
         public static void Create()
         {
-            XmlSerializer xml = new XmlSerializer(typeof(Model.Common.AppConfig));
+            XmlSerializer xml = new XmlSerializer(typeof(AppConfig));
             using (var stream = XmlWriter.Create(fullPath))
             {
-                xml.Serialize(stream, new Model.Common.AppConfig());
+                if(conf == null)                
+                    xml.Serialize(stream, new AppConfig());    
+                else
+                    xml.Serialize(stream, conf);
+
                 stream.Close();
             }
         }
 
+
+    }
+
+
+
+    public class AppConfig
+    {
+        public const string AppVersion = "3.3.2.27";
+        public static string ThemeName { get; set; } = "VS2017Light"; //VS2017Light  MetropolisDark
+
+        public string DbUserName { get; set; } // имя пользователя
+        public string DbUserPassword { get; set; } // пароль пользователя
+        public string DbPort { get; set; } // порт подключения  
+        public string DbSID { get; set; } // имя сервиса 
+        public string DbHost { get; set; } // ip/хост базы 
+
+        //public string TraderUserName { get; set; } // имя пользователя в трейдере для создания документа 
+        //public string TraderUserPassword { get; set; } // пароль пользователя в трейдере для создания документа 
+
+        public int EdiTimeout { get; set; } = 5000; // таймаут соединения с сервисами
+        public string EdiUser { get; set; } // аккаунт EDI. без ЕС - обычный
+        public string EdiPassword { get; set; } // пароль edi
+        public string EdiGLN { get; set; } // GLN
+        public string EdiUrl { get; set; } // путь до платформы
+
+        //public bool?  EnableAutoHandler { get; set; } = false; // включен ли автообработчик (по-умолч. false)
+        //public int?   AutoHandlerPeriod { get; set; } = 10; // время цикла(в минутах) автообработчика (по-умолч. 10)
+        public bool EnableLogging { get; set; } = false; // включено ли логирование (выключено по-умолч.)
+
+        public string Schema { get; set; }
+        public string connString => $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {DbHost})(PORT = {DbPort}))(CONNECT_DATA = "
+                               + $"(SERVER = DEDICATED)(SERVICE_NAME = {DbSID})));Password={DbUserPassword};User ID={DbUserName}";
+
+        public bool EnableProxy { get; set; } = false; // включен ли трафик через прокси
+        public string ProxyUserName { get; set; } // имя пользователя для прокси
+        public string ProxyUserPassword { get; set; } // пароль пользователя прокси
+        
+        public string FtpDir { get; set; } // директория, откуда забираются документы для загрузки в базу
+
+        /*виртуальные свойства, не идущие в файл*/
 
     }
 }

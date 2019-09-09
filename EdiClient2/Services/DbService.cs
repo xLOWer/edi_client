@@ -20,12 +20,15 @@ namespace EdiClient.Services
         {
             Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             Logger.Log("\t\tcount=" + commands.Count.ToString());
+            int i = 0;
             foreach (var command in commands)
             {
+                i++;
                 command.Connection = DbService.Connection.conn;
                 DbService.Connection.Check();
                 command.ExecuteNonQuery();
             }
+            Logger.Log("\t\tafter exec count=" + i);
         }
 
 
@@ -56,12 +59,11 @@ namespace EdiClient.Services
                 OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
-                
-            }            
+            }
             return DataGridItems;
         }
 
-        internal static void Insert(string Sql)
+        internal static void ExecuteLine(string Sql)
         {
             Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (OracleCommand command = new OracleCommand(Sql))
@@ -69,11 +71,10 @@ namespace EdiClient.Services
                 command.Connection = DbService.Connection.conn;
                 DbService.Connection.Check();
                 command.ExecuteNonQuery();
-                
             }
         }
 
-        internal static void Insert(List<string> Sqls)
+        internal static void ExecuteLines(List<string> Sqls)
         {
             Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             int c = Sqls.Count();
@@ -83,11 +84,9 @@ namespace EdiClient.Services
                 {
                     command.Connection = DbService.Connection.conn;
                     DbService.Connection.Check();
-                    command.ExecuteNonQuery();
-                    
+                    command.ExecuteNonQuery();                    
                 }
             }
-
         }
 
         internal static string SelectSingleValue(string Sql)
@@ -145,34 +144,34 @@ namespace EdiClient.Services
             }
 
             internal static string GET_FAILED_DETAILS(string SENDER_ILN) =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_FAILED_DETAILS WHERE SENDER_ILN={SENDER_ILN}";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_FAILED_DETAILS WHERE SENDER_ILN={SENDER_ILN}";
 
             internal static string GET_GOODS =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_GOODS";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_GOODS";
 
             internal static string GET_MATCHED(string CUSTOMER_GLN) =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
 
             internal static string GET_MATCHED_PRICE_TYPES(string CUSTOMER_GLN) =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
 
             internal static string GET_ORDERS(string SENDER_ILN, DateTime DateFrom, DateTime DateTo) =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
 
             internal static string GET_ORDER_DETAILS(string ID_EDI_DOC) =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
 
             internal static string GET_PRICE_TYPES =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_PRICE_TYPES";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_PRICE_TYPES";
 
             internal static string GET_CLIENTS =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_DELIVERY_POINTS";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_DELIVERY_POINTS";
 
             internal static string GET_CUSTOMERS =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_CUSTOMERS";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_CUSTOMERS";
 
             internal static string GET_CONTRACTORS =>
-                $"SELECT * FROM {(AppConfig.Schema + ".")}EDI_GET_CONTRACTORS";
+                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_CONTRACTORS";
 
         }
 
@@ -184,14 +183,14 @@ namespace EdiClient.Services
 
             internal static void Configure()
             {
-                if (!string.IsNullOrEmpty(AppConfig.connString) ||
-                    !String.IsNullOrEmpty(AppConfig.DbUserName) ||
-                    !String.IsNullOrEmpty(AppConfig.DbUserPassword) ||
-                    !String.IsNullOrEmpty(AppConfig.DbSID) ||
-                    !String.IsNullOrEmpty(AppConfig.DbPort) ||
-                    !String.IsNullOrEmpty(AppConfig.DbHost))
+                if (!string.IsNullOrEmpty(AppConfigHandler.conf.connString) ||
+                    !String.IsNullOrEmpty(AppConfigHandler.conf.DbUserName) ||
+                    !String.IsNullOrEmpty(AppConfigHandler.conf.DbUserPassword) ||
+                    !String.IsNullOrEmpty(AppConfigHandler.conf.DbSID) ||
+                    !String.IsNullOrEmpty(AppConfigHandler.conf.DbPort) ||
+                    !String.IsNullOrEmpty(AppConfigHandler.conf.DbHost))
                 {
-                    conn = new OracleConnection(AppConfig.connString);
+                    conn = new OracleConnection(AppConfigHandler.conf.connString);
                     //DbService.SelectSingleValue("alter session set nls_numeric_characters = ',.'");
                 }
                 else
@@ -232,17 +231,6 @@ namespace EdiClient.Services
             Documents = ToListof<TModel>(DataGridItems).ToList();
             return Documents;
         }
-        /*
-        internal static TModel ObjectToClass(object[] obj)
-        {
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-            TModel inst = Activator.CreateInstance<TModel>();
-            var objectProperties = typeof(TModel).GetProperties(flags);
-            int c = obj.Count();
-            for (int i = 0; i < c; ++i)            
-                objectProperties[i].SetValue(inst, obj[i].ToString(), null);  
-            return inst;
-        }*/
 
         internal static List<TModel> ToListof<TModel>(DataTable dt)
         {

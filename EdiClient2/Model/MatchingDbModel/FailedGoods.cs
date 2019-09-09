@@ -7,7 +7,7 @@ namespace EdiClient.Model.MatchingDbModel
 {
     public class FailedGoods
     {
-        public string ID_GOOD { get; set; }
+
         public string ID_EDI_DOC { get; set; }
         public string ITEM_DESCRIPTION { get; set; }
         public string EAN { get; set; }
@@ -15,5 +15,6 @@ namespace EdiClient.Model.MatchingDbModel
         public string ORDER_NUMBER { get; set; }
         public string ORDER_DATE { get; set; }
         public string SENDER_ILN { get; set; }
+
     }
 }

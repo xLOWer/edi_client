@@ -62,12 +62,25 @@ namespace EdiClient.Services.Utils
 
             public static void Log(string msg)
             {
-                if (!AppConfig.EnableLogging ?? false) return;
+                if (!AppConfigHandler.conf.EnableLogging) return;
                 if (string.IsNullOrEmpty(msg)) return;
                 string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}] "
                     + $"{msg}\r\n";
                 int c = message.Count();
                 using (var stream = new FileStream(fullPath, FileMode.Append))
+                {
+                    stream.Write(Encoding.Default.GetBytes(message), 0, c);
+                    stream.Close();
+                }
+            }
+
+            public static void LogXml(string xml, string fileName)
+            {
+                if (!AppConfigHandler.conf.EnableLogging) return;
+                if (string.IsNullOrEmpty(xml)) return;
+                string message = xml;
+                int c = message.Count();
+                using (var stream = new FileStream($"{directoryPath}\\{dirName}\\{fileName}", FileMode.Append))
                 {
                     stream.Write(Encoding.Default.GetBytes(message), 0, c);
                     stream.Close();
