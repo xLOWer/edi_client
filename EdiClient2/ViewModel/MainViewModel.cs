@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Diagnostics;
+using System.Windows;
 
 namespace EdiClient.ViewModel
 {
@@ -33,23 +34,23 @@ namespace EdiClient.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public CommandService EditValueChangedCommand => new CommandService(o =>
+        public Command EditValueChangedCommand => new Command((o) =>
         {
             ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
             EdiService.SelectedRelationship = cmb.SelectedItem as Relation;
         });
 
-        public CommandService RefreshRelationshipsCommand => new CommandService(o =>
+        public Command<BarEditItem> RefreshRelationshipsCommand => new Command<BarEditItem>((o) =>
         {
-            EdiService.UpdateData();
+            UpdateData();
             ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
             cmb.ItemsSource = EdiService.Relationships;
             RaiseAllProps();
         });
 
-        public CommandService SaveConfigCommand => new CommandService(o =>
+        public Command SaveConfigCommand => new Command((o) =>
         {
-            Logger.Log($"[CONFIG SAVED]");
+            //Logger.Log($"[CONFIG SAVED]");
             RaiseAllProps();
             AppConfigHandler.conf = AppConfig;
             AppConfigHandler.Save();
@@ -73,7 +74,7 @@ namespace EdiClient.ViewModel
         public MatchMakerView _MatchMakerView { get; set; }
         public ContractorsMatchView _ContractorsMatchView { get; set; }
 
-        public CommandService OpenPriceTypesViewCommand => new CommandService(o =>
+        public Command OpenPriceTypesViewCommand => new Command((o) =>
        {
            try
            {
@@ -84,7 +85,7 @@ namespace EdiClient.ViewModel
            catch (Exception ex) { Error(ex); }
        });
 
-        public CommandService OpenMatchMakerViewCommand => new CommandService(o =>
+        public Command OpenMatchMakerViewCommand => new Command((o) =>
         {
             try
             {
@@ -94,8 +95,8 @@ namespace EdiClient.ViewModel
             }
             catch (Exception ex) { Error(ex); }
         });
-
-        public CommandService OpenContractorsMatchViewCommand => new CommandService(o =>
+        
+        public Command OpenContractorsMatchViewCommand => new Command((o) =>
         {
             try
             {
@@ -137,7 +138,7 @@ namespace EdiClient.ViewModel
             }
         }
 
-        public string LoadedDocsCount { get; set; } = "0";
+        public string LoadedDocsCount =>  Documents.Count().ToString();
 
 
         public List<Document> Documents
@@ -185,62 +186,61 @@ namespace EdiClient.ViewModel
 
 
 
-        public CommandService ToTraderCommand => new CommandService((o) => ActionInTime(()
+        public Command ToTraderCommand => new Command((o) => ActionInTime(()
             => {
                 CreateTraderDocument(SelectedDocument.ID);
-                Documents = GetDocuments(DateFrom, DateTo);
+                GetDocuments(DateFrom, DateTo);
             }));
 
 
-        public CommandService SendORDRSPCommand => new CommandService((o) => ActionInTime(()
+        public Command SendORDRSPCommand => new Command((o) => ActionInTime(()
             => {
                 SendOrdrsp(SelectedDocument);
-                Documents = GetDocuments(DateFrom, DateTo);
+                GetDocuments(DateFrom, DateTo);
             }));
 
 
-        public CommandService SendDESADVCommand => new CommandService((o) => ActionInTime(()
+        public Command SendDESADVCommand => new Command((o) => ActionInTime(()
             => {
                 SendDesadv(SelectedDocument);
-                Documents = GetDocuments(DateFrom, DateTo);
+                GetDocuments(DateFrom, DateTo);
             }));
 
 
-        public CommandService GetDocumentsCommand => new CommandService((o) => ActionInTime(()
+        public Command GetDocumentsCommand => new Command((o) => ActionInTime(()
             => {
-                Documents = GetDocuments(DateFrom, DateTo);
+                GetDocuments(DateFrom, DateTo);
             }));
 
 
-        public CommandService GetEDIDOCCommand => new CommandService((o) => ActionInTime(()
+        public Command GetEDIDOCCommand => new Command((o) => ActionInTime(()
             => {
                 //GetRecadv();
                 GetNewOrders(dateFrom, dateTo);
-                Documents = GetDocuments(DateFrom, DateTo);
+                //Documents = GetDocuments(DateFrom, DateTo);
             }));
 
 
-        public CommandService ReloadDocumentCommand => new CommandService(o =>
+        public Command ReloadDocumentCommand => new Command((o) =>
         {
             if(SelectedDocument != null)
             {
-                Logger.Log($"[RELOADED] {SelectedDocument.ID}");
+                //Logger.Log($"[RELOADED] {SelectedDocument.ID}");
                 var sql = $"delete from {(AppConfigHandler.conf.Schema + ".")}EDI_DOC WHERE ID = {SelectedDocument.ID}";
                 ExecuteLine(sql);
                 GetNewOrders(dateFrom, dateTo);
-                Documents = GetDocuments(DateFrom, DateTo);
                 RaiseAllProps();
             }
         });
 
-        public CommandService NextDayCommand => new CommandService((o) =>
+        public Command NextDayCommand => new Command((o) =>
         {
             DateFrom = DateFrom.AddDays(1);
             DateTo = DateTo.AddDays(1);
             RaiseAllProps();
         });
 
-        public CommandService PrevDayCommand => new CommandService((o) =>
+        public Command PrevDayCommand => new Command((o) =>
         {
             DateFrom = DateFrom.AddDays(-1);
             DateTo = DateTo.AddDays(-1);
@@ -249,7 +249,7 @@ namespace EdiClient.ViewModel
 
         public void ActionInTime(Action act)
         {
-            Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
+            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -353,7 +353,7 @@ namespace EdiClient.ViewModel
 
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, DesiredAccess dwDesiredAccess, ShareMode dwShareMode, IntPtr lpSecurityAttributes,
-            CreationDisposition dwCreationDisposition, FlagsAndAttributes dwFlagsAndAttributes, IntPtr hTemplateFile);
+            CreationDisposition dwCreationDisposition, FlagsAndAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
         [DllImport("kernel32", SetLastError = true)]
         internal static extern Int32 CloseHandle(SafeFileHandle hObject);
@@ -365,42 +365,67 @@ namespace EdiClient.ViewModel
             if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
 
             List<string> sqls = new List<string>();
+            List<WIN32_FIND_DATA> files = new List<WIN32_FIND_DATA>();
             string dir = $"{AppConfig.FtpDir}{SelectedRelationship.partnerIln}";
             byte[] aBuffer;
-            List<Document> db_docs = new List<Document>();
+            DocumentOrder order;
             List<OracleCommand> commands = new List<OracleCommand>();
             WIN32_FIND_DATA w32file = new WIN32_FIND_DATA();
             SafeFileHandle hFile = null;
-            DateTime w32fileCreateTime;
+            DateTime w32fileCreateTime, minDate = DateTime.MaxValue, maxDate = DateTime.MinValue;
 
-            db_docs = GetDocuments(dateFrom, dateTo);
-            
-            IntPtr h = FindFirstFile($@"{dir}\*.*", out w32file);
+            int frCount = 0, ftCount = 0, docaCount = 0, detaCount = 0, failCount = 0;
+            uint btCount = 0;
+            string fails = "";
+
+            Documents.Clear();
+            GetDocuments(dateFrom, dateTo);
+
+            IntPtr h = FindFirstFile($"{dir}\\*.*", out w32file);
             FindNextFile(h, out w32file); // пропускаем указатель на родительский каталог
-
             while (FindNextFile(h, out w32file))
             {
+                ftCount++;
                 w32fileCreateTime = DateTime.FromFileTime((((long)w32file.ftCreationTime.dwHighDateTime) << 32) | ((uint)w32file.ftCreationTime.dwLowDateTime));
-                if (!(w32fileCreateTime > dateFrom && w32fileCreateTime < dateTo)) continue;
-                hFile = CreateFile($@"{dir}\{w32file.cFileName}", DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
+                if (!(w32fileCreateTime > dateFrom.AddHours(-1) && w32fileCreateTime < dateTo.AddHours(1))) continue;
+                // 1 - в скобках раньше, 0 - равно, -1 - позже
+                if (minDate.CompareTo(w32fileCreateTime) >= 0) minDate = w32fileCreateTime;
+                if (maxDate.CompareTo(w32fileCreateTime) <= 0) maxDate = w32fileCreateTime;
+                files.Add(w32file);
+            }
+            FindClose(h);
+
+
+
+            foreach (var w32f in files)
+            {
+                var name = w32f.cFileName;
+                var size = w32f.nFileSizeLow;
+                frCount++;
+                hFile = CreateFile($"{dir}\\{name}", DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
                 if (hFile.IsInvalid)
                 {
                     int Err = Marshal.GetLastWin32Error();
-                    throw new System.ComponentModel.Win32Exception(Err);
+                    failCount++;
+                    fails += $@"
+#{failCount} : Win32Err#{Err}, file: {name}
+{new System.ComponentModel.Win32Exception(Err).Message}
+";
                     continue;
                 }
-                aBuffer = new byte[w32file.nFileSizeLow];
-                ReadFile(hFile, aBuffer, w32file.nFileSizeLow, 0, IntPtr.Zero);
+
+                btCount += size;
+                aBuffer = new byte[size];
+                ReadFile(hFile, aBuffer, size, 0, IntPtr.Zero);
                 hFile.Close();
 
-                var order = (DocumentOrder)new XmlSerializer(typeof(DocumentOrder))
+                order = (DocumentOrder)new XmlSerializer(typeof(DocumentOrder))
                     .Deserialize(new StringReader(((XmlNode[])((Envelope)new XmlSerializer(typeof(Envelope))
                     .Deserialize(new StringReader(Encoding.UTF8.GetString(aBuffer)))).Body.receiveResponse.@return.cnt)
                     .First().OuterXml));
 
-                if (!db_docs.Any(x => order.OrderHeader.OrderNumber == x.ORDER_NUMBER))
+                if (!Documents.Any(x => order.OrderHeader.OrderNumber == x.ORDER_NUMBER))
                 {
-
                     commands.Add(new OracleCommand()
                     {
                         Parameters = {
@@ -419,11 +444,12 @@ namespace EdiClient.ViewModel
                         CommandType = CommandType.StoredProcedure,
                         CommandText = (AppConfigHandler.conf.Schema + ".") + "Edi_MANAGER.ADD_ORDER"
                     });
-                    
+                    docaCount++;
                     if (order.OrderLines.Lines.Count > 0)
                         foreach (var line in order.OrderLines.Lines)
                         {
-                            Logger.Log($"[TODB] EAN={line?.LineItem?.EAN ?? ""}, UNIT_PRICE={line?.LineItem?.OrderedUnitGrossPrice ?? ""}, AMOUNT={line?.LineItem?.OrderedGrossAmount}, QUANTITY={line?.LineItem?.OrderedQuantity ?? "0"}");
+                            detaCount++;
+                            //Logger.Log($"[TODB] EAN={line?.LineItem?.EAN ?? ""}, UNIT_PRICE={line?.LineItem?.OrderedUnitGrossPrice ?? ""}, AMOUNT={line?.LineItem?.OrderedGrossAmount}, QUANTITY={line?.LineItem?.OrderedQuantity ?? "0"}");
                             commands.Add(new OracleCommand()
                             {
                                 Parameters =
@@ -452,35 +478,55 @@ namespace EdiClient.ViewModel
                 }
 
             }
-            FindClose(h);
             ExecuteCommand(commands);
+            GetDocuments(dateFrom, dateTo);
+
             commands.Clear();
             RaiseAllProps();
 
+            Task.Factory.StartNew(() =>
+            {
+                string result = $@"
+ПАРАМЕТРЫ:
+аргумент1: dateFrom {dateFrom.ToShortDateString()} {dateFrom.ToLongTimeString()}
+аргумент2: dateTo {dateTo.ToShortDateString()} {dateTo.ToLongTimeString()}
+
+ФАЙЛЫ
+размер прочитанного: {Math.Round((double)btCount / 1024)} Кб ({Math.Round((double)btCount / 1024 / 1024, 1)} Мб)
+прочитано: {ftCount}
+обработано: {frCount}
+мин. дата: {minDate.ToShortDateString()} {minDate.ToLongTimeString()}
+макс. дата: {maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}
+
+КОМАНДЫ
+документов: {docaCount}
+деталей: {detaCount}
+сумма: {docaCount + detaCount}
+
+ОШИБКИ:
+{fails}
+";
+                Logger.Log(result);
+                MessageBox.Show(result);
+            });
         }
 
 
-        internal List<Document> GetDocuments(DateTime dateFrom, DateTime dateTo)
+        internal void GetDocuments(DateTime dateFrom, DateTime dateTo)
         {
-            Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
-            var result = DocumentSelect<Document>(sql);
-            if (result != null)
-                if (result.Count > 0)
-                    foreach (var doc in result)
+            Documents = DocumentSelect<Document>(sql);
+                if (Documents.Count > 0)
+                    foreach (var doc in Documents)
                     {
-                        doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
-                        //foreach (var detail in doc.Details)                        
-                        //    detail.Doc = doc;                        
+                        doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();                  
                     }
-            LoadedDocsCount = result.Count.ToString();
-            NotifyPropertyChanged("LoadedDocsCount");
-            return result;
         }
 
         internal List<Detail> GetDocumentDetails(string Id)
         {
-            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = Sqls.GET_ORDER_DETAILS(Id);
             var result = DocumentSelect<Detail>(sql);
             return result;
@@ -490,8 +536,8 @@ namespace EdiClient.ViewModel
 
         public void UpdateFailedDetails(string P_EDI_DOC_ID)
         {
-            Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
+            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
             ExecuteCommand(new OracleCommand()
             {
                 Connection = Connection.conn,
@@ -507,8 +553,8 @@ namespace EdiClient.ViewModel
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
         internal void CreateTraderDocument(string orderID)
         {
-            Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
+            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
             var commands = new List<OracleCommand>()
                 {
                         new OracleCommand()
@@ -530,7 +576,7 @@ namespace EdiClient.ViewModel
 
         internal DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
         {
-            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var Consignment = new DocumentDespatchAdviceDespatchAdviceConsignment();
             var PackingSequence = new List<DocumentDespatchAdviceDespatchAdviceConsignmentLine>();
 
@@ -618,7 +664,7 @@ namespace EdiClient.ViewModel
         /// <param name="advice">отправляемый заказ</param>
         internal void SendDesadv(Document doc)
         {
-            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
 
@@ -737,6 +783,7 @@ namespace EdiClient.ViewModel
             catch (Exception ex) { Error(ex); }
             return ordrsp;
         }
+                
 
         /// <summary>
         /// Отправить ответ на заказ в систему EDI
@@ -744,7 +791,7 @@ namespace EdiClient.ViewModel
         /// <param name="order">отправляемый заказ</param>
         internal void SendOrdrsp(Document doc)
         {
-            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
             DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
 
@@ -774,7 +821,7 @@ namespace EdiClient.ViewModel
 
         internal List<DocumentReceivingAdvice> GetRecadv()
         {
-            Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             return new List<DocumentReceivingAdvice>();
         }
     }

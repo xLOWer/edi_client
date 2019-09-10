@@ -581,6 +581,9 @@
                                ShowAutoFilterRow="True"  
                                AllowEditing="True" 
                                NavigationStyle="Cell" >
+                        <dxg:TableView.RowCellMenuCustomizations>
+                            <dxb:BarButtonItem Name="openInMatcher" Content="Открыть в сопоставлении" Command="{Binding OpenMatchMakerViewCommand}"/>
+                        </dxg:TableView.RowCellMenuCustomizations>
                         <dxg:TableView.FormatConditions>
 
                             <dxg:FormatCondition FieldName="QUANTITY" Expression="[QUANTITY] != [ORDERED_QUANTITY]">

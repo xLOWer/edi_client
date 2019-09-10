@@ -37,7 +37,7 @@ namespace EdiClient.View
         private void ClientsGridControlTableView_SelectedItemChanged(object sender, DevExpress.Xpf.Grid.SelectedItemChangedEventArgs e)
         {
             Logger.Log($"[CLIENT-MATCH] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
-            Context.Edit();
+            Context.EditCommand.Execute(null);
 
         }
     }

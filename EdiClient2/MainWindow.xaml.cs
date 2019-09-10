@@ -28,6 +28,8 @@ namespace EdiClient
             try
             {
                 DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayout.xml");
+                //Context.RefreshRelationshipsCommand.Execute(SelectedRelationship_BarEditItem);
+
             }
             catch (Exception ex) { }
         }

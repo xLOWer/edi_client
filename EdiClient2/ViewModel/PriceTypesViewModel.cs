@@ -17,7 +17,8 @@ namespace EdiClient.ViewModel
     {
         public PriceTypesViewModel()
         {
-            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            LoadDataCommand.Execute(null);
         }
 
         #region fields
@@ -74,26 +75,11 @@ namespace EdiClient.ViewModel
 
         private bool HelpMode { get; set; } = false;
         
-        public CommandService LoadDataCommand => new CommandService( LoadData );
-        public CommandService MakeMatchingCommand => new CommandService( MakeMatching );
-        public CommandService DisposeMatchingCommand => new CommandService( DisposeMatching );
-
-        #endregion
-
-        protected void RaiseNotifyPropertyChanged(string info)
-        {
-            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( info ) );
-        }            
-        
-        
-        public void LoadData(object obj = null)
-        {
-           PriceTypeList = GetPriceTypes();
-           MatchList = GetMatchList();    
-        }
-        
-        public void MakeMatching(object obj = null)
-        {
+        public Command LoadDataCommand => new Command( (o) =>{
+            GetPriceTypes();
+            GetMatchList();
+        });
+        public Command MakeMatchingCommand => new Command( (o) =>{
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
@@ -108,17 +94,14 @@ namespace EdiClient.ViewModel
                     CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_LINK"
                 });
 
-                MatchList = GetMatchList();
+                GetMatchList();
             }
-            catch (Exception ex) { Error( ex ); }
-        }
-        
-        
-        public void DisposeMatching(object obj = null)
-        {
-            Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedMatch == null) { Error( "Не выбран пункт с сопоставлением" ); return; }
-            
+            catch (Exception ex) { Error(ex); }
+        });
+        public Command DisposeMatchingCommand => new Command( (o) =>{
+            //Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            if (SelectedMatch == null) { Error("Не выбран пункт с сопоставлением"); return; }
+
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
@@ -132,31 +115,37 @@ namespace EdiClient.ViewModel
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_UNLINK"
                 });
-                MatchList = GetMatchList();
+                GetMatchList();
             }
-            catch (Exception ex) { Error( ex ); }
-        }
-                  
-        private List<PriceType> GetPriceTypes()
+            catch (Exception ex) { Error(ex); }
+        });
+
+        #endregion
+
+        protected void RaiseNotifyPropertyChanged(string info)
         {
-            Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedRelationship == null) { Error("Не выбран клиент"); return null; }
-            if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return null; }
+            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( info ) );
+        }            
+                
+                  
+        private void GetPriceTypes()
+        {
+            //Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            if (SelectedRelationship == null) { Error("Не выбран клиент"); return; }
+            if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return; }
             var sql = DbService.Sqls.GET_PRICE_TYPES;
-            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService.DocumentSelect<PriceType>(new List<string> { sql });
-            return result;
+            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return; }
+            PriceTypeList = DbService.DocumentSelect<PriceType>(new List<string> { sql });            
         }
 
-        private List<MatchingPriceTypes> GetMatchList()
+        private void GetMatchList()
         {
-            Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            if (SelectedRelationship == null) { Error("Не выбран клиент"); return null; }
-            if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return null; }
+            //Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            if (SelectedRelationship == null) { Error("Не выбран клиент"); return; }
+            if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return; }
             var sql = DbService.Sqls.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln);
-            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return null; }
-            var result = DbService.DocumentSelect<MatchingPriceTypes>(new List<string> { sql });
-            return result;
+            if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return; }
+            MatchList = DbService.DocumentSelect<MatchingPriceTypes>(new List<string> { sql });
         }
 
     }

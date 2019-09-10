@@ -21,7 +21,8 @@ namespace EdiClient.ViewModel
     {
         public ContractorsMatchViewModel()
         {
-            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            LoadDataCommand.Execute(null);
 
         }
 
@@ -168,46 +169,31 @@ namespace EdiClient.ViewModel
             }
         }
 
-        public CommandService SelectedDeliveryPointContractorClearCommand => new CommandService(SelectedDeliveryPointContractorClear);
-        public CommandService SelectedBuyerCustomerClearCommand => new CommandService(SelectedBuyerCustomerClear);
-        public CommandService SelectedSenderCustomerClearCommand => new CommandService(SelectedSenderCustomerClear);        
+        public Command SelectedDeliveryPointContractorClearCommand => new Command(SelectedDeliveryPointContractorClear);
+        public Command SelectedBuyerCustomerClearCommand => new Command(SelectedBuyerCustomerClear);
+        public Command SelectedSenderCustomerClearCommand => new Command(SelectedSenderCustomerClear);        
         
-        public CommandService LoadDataCommand => new CommandService(LoadData);
-        public CommandService RemoveCommand => new CommandService(Remove);
-        public CommandService EditCommand => new CommandService(Edit);
-        public CommandService SaveCommand => new CommandService(Save);
-        public CommandService AddNewCommand => new CommandService(AddNew);
-        
+        public Command LoadDataCommand => new Command(LoadData);
+        public Command RemoveCommand => new Command((o) => { });
+        public Command EditCommand => new Command((o) => {
+            if (SelectedClient != null)
+            {
+                DeliveryAddress = SelectedClient?.DELIVERY_POINT_NAME ?? "";
+                BuyerName = SelectedClient?.BUYER_NAME ?? "";
 
-        #endregion
-        
-        private void AddNew(object obj = null)
-        {
-            SelectedDeliveryPointContractorClear();
-            SelectedBuyerCustomerClear();
-            SelectedSenderCustomerClear();
-            SelectedClient = null;
-        }
+                SenderGln = SelectedClient?.SENDER_GLN ?? "";
+                BuyerGln = SelectedClient?.BUYER_GLN ?? "";
+                DeliveryGln = SelectedClient?.DELIVERY_POINT_GLN ?? "";
 
-        private void SelectedDeliveryPointContractorClear(object obj = null)
-        {
-            LinkedDeliveryPointContractor = null;
-        }
+                LinkedSenderCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.SENDER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
+                LinkedBuyerCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.BUYER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
+                LinkedDeliveryPointContractor = ContractorsList?.Where(x => x.Id == (SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID ?? "a")).FirstOrDefault() ?? null;
+            }
+        });
 
-        private void SelectedBuyerCustomerClear(object obj = null)
-        {
-            LinkedBuyerCustomer = null;
-        }
+        public Command SaveCommand => new Command((o) => {
+            //Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
-        private void SelectedSenderCustomerClear(object obj = null)
-        {
-            LinkedSenderCustomer = null;
-        }
-         
-        public void Save(object obj = null)
-        {
-            Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
@@ -230,45 +216,43 @@ namespace EdiClient.ViewModel
                 LoadData();
             }
             catch (Exception ex) { Error(ex); }
-        }
+        });
+        public Command AddNewCommand => new Command((o) => {
+            SelectedDeliveryPointContractorClear();
+            SelectedBuyerCustomerClear();
+            SelectedSenderCustomerClear();
+            SelectedClient = null;
+        });
+        
 
-        public void Remove(object obj = null)              { }
-
-        public void Edit(object obj = null)
+        #endregion
+        
+        private void SelectedDeliveryPointContractorClear(object obj = null)
         {
-            if (SelectedClient != null)
-            {
-                DeliveryAddress = SelectedClient?.DELIVERY_POINT_NAME ?? "";
-                BuyerName = SelectedClient?.BUYER_NAME ?? "";
-
-                SenderGln = SelectedClient?.SENDER_GLN ?? "";
-                BuyerGln = SelectedClient?.BUYER_GLN ?? "";
-                DeliveryGln = SelectedClient?.DELIVERY_POINT_GLN ?? "";
-
-                LinkedSenderCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.SENDER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
-                LinkedBuyerCustomer = CustomersList?.Where(x => x.Id == (SelectedClient?.BUYER_CUSTOMER_ID ?? "a"))?.FirstOrDefault() ?? null;
-                LinkedDeliveryPointContractor = ContractorsList?.Where(x => x.Id == (SelectedClient?.DELIVERY_POINT_CONTRACTOR_ID ?? "a")).FirstOrDefault() ?? null;
-            }
+            LinkedDeliveryPointContractor = null;
         }
 
+        private void SelectedBuyerCustomerClear(object obj = null)
+        {
+            LinkedBuyerCustomer = null;
+        }
+
+        private void SelectedSenderCustomerClear(object obj = null)
+        {
+            LinkedSenderCustomer = null;
+        }
+         
         public void LoadData(object obj = null)
         {
-            Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            GetClients();
-            GetCustomers();
-            GetContractors();
-        }
-
-        private void GetCustomers() => CustomersList = GetList<Customer>(DbService.Sqls.GET_CUSTOMERS);
-        private void GetContractors() => ContractorsList = GetList<Customer>(DbService.Sqls.GET_CONTRACTORS);
-        private void GetClients()
-        {
+            //Logger.Log($"[CLIENT-MATCH] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             ClientsList = GetList<Client>(DbService.Sqls.GET_CLIENTS);
+            CustomersList = GetList<Customer>(DbService.Sqls.GET_CUSTOMERS);
+            ContractorsList = GetList<Customer>(DbService.Sqls.GET_CONTRACTORS);
         }
 
         public List<T> GetList<T>(string sql)
         {
-            Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки"); return null; }
             var result = DbService.DocumentSelect<T>(new List<string> { sql }).Cast<T>().ToList();
             return result;
