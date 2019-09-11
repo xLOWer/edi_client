@@ -157,11 +157,9 @@ namespace EdiClient.ViewModel
         
         public Command LoadDataCommand => new Command((o) =>
         {
-            //Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Error("Не выбран клиент"); return; }
             if (fullGoodsList == null || fullGoodsList.Count < 1)
             {
-                //Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
                 var sql = DbService.Sqls.GET_GOODS;
                 if (string.IsNullOrEmpty(sql)) { Error("Ошибка при выполнении загрузки списка сопоставленных товаров"); return; }
                 fullGoodsList = DbService.DocumentSelect<Goods>(new List<string> { sql });
@@ -171,29 +169,34 @@ namespace EdiClient.ViewModel
             GetMatchesList();
         });
 
-        public Command MakeMatchingCommand => new Command((o) => {
-            //Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+        public Command MakeMatchingCommand => new Command((o) =>
+        {
+            Logger.Log($"[MakeMatchingCommand]P_CUSTOMER_GLN={SelectedRelationship.partnerIln}|P_ID_GOOD={SelectedGood.ID}|P_EAN={SelectedFailedGood.EAN}");
+
             if (SelectedFailedGood == null) { Error("Не выбран пункт с не сопоставленным товаром"); return; }
             if (SelectedGood == null) { Error("Не выбран пункт с товаром"); return; }
             if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.ID))
             { Error("Код покупателя или идентификатор товара отсутствует"); return; }
-
-            DbService.ExecuteCommand(new OracleCommand()
+            try
             {
-                Parameters =
+                DbService.ExecuteCommand(new OracleCommand()
+                {
+                    Parameters =
                         {
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedRelationship.partnerIln, ParameterDirection.Input),
                             new OracleParameter("P_ID_GOOD", OracleDbType.Number, SelectedGood.ID, ParameterDirection.Input),
                             new OracleParameter("P_EAN", OracleDbType.NVarChar, SelectedFailedGood.EAN, ParameterDirection.Input),
                         },
-                Connection = DbService.Connection.conn,
-                CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_LINK"
-            });
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_LINK"
+                });
+            }
+            catch (Exception ex) { Error(ex); }
         });
 
-        public Command DisposeMatchingCommand => new Command((o) => {
-            //Logger.Log($"[GOODS] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+        public Command DisposeMatchingCommand => new Command((o) => 
+        {
+            Logger.Log($"[DisposeMatchingCommand]P_CUSTOMER_GLN={SelectedMatch.CUSTOMER_GLN}|P_EAN={SelectedMatch.EAN}");
             if (SelectedMatch == null) { Error("Не выбран пункт с сопоставлением"); return; }
             if (String.IsNullOrEmpty(SelectedMatch.EAN)) { Error("У выбранного товара отсутствует код покупателя"); return; }
 
@@ -206,7 +209,6 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
                             new OracleParameter("P_EAN", OracleDbType.NVarChar, SelectedMatch.EAN, ParameterDirection.Input)
                         },
-                    Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_UNLINK"
                 });

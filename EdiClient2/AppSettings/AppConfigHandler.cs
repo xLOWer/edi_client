@@ -18,22 +18,30 @@ namespace EdiClient.AppSettings
 
         public static void ConfigureEdi()
         {
-            Logger.Log("[EdiService]");
+            string log = "[APPCONFIG]ConfigureEdi";
             try { EdiService.Configure(); }
             catch (Exception ex) { Error(ex); }
+            log += $"|EdiUser=" + conf.EdiUser;
+            log += $"|EdiGLN=" + conf.EdiGLN;
+            Logger.Log(log);
         }
 
         public static void ConfigureOracle()
         {
-            Logger.Log("[Connection]");
+            string log = "[APPCONFIG]ConfigureOracle";
             try { DbService.Connection.Configure(); }
             catch (Exception ex) { Error(ex); }
-            Logger.Log("\t\tClientVersion " + DbService.Connection.conn.ClientVersion);
-            Logger.Log("\t\tServer " + DbService.Connection.conn.Server);
+            log += $"|ClientVersion=" + DbService.Connection.conn.ClientVersion;
+            log += $"|DbUserName=" + conf.DbUserName;
+            log += $"|DbHost=" + conf.DbHost;
+            log += $"|DbSID=" + conf.DbSID;
+            log += $"|DbPort=" + conf.DbPort;
+            Logger.Log(log);
         }
 
         public static void Load()
         {
+            Logger.Log("[APPCONFIG]LOAD");
             if (!Directory.Exists($"{directoryPath}\\{dirName}"))
                 Directory.CreateDirectory($"{directoryPath}\\{dirName}");
 
@@ -41,21 +49,20 @@ namespace EdiClient.AppSettings
                 Create();
 
             Read();
-
-            Logger.Log($"\t\tconf_dir {directoryPath}\\{dirName}");
+            
         }
 
 
         public static void Save()
         {
-            Logger.Log("[APPCONFIG SAVE]");
+            Logger.Log("[APPCONFIG]SAVE");
             Create();
         }
 
 
         public static void Read()
         {
-            Logger.Log("[APPCONFIG]");
+            string log = "[APPCONFIG]READ";
             var newLoadedConfig = new AppConfig();
             XmlSerializer xml = new XmlSerializer(typeof(AppConfig));
             using (var stream = XmlReader.Create(fullPath))
@@ -65,10 +72,7 @@ namespace EdiClient.AppSettings
             }
             conf = newLoadedConfig;
 
-            Logger.Log("\t\tDbUserName " + conf.DbUserName);
-            Logger.Log("\t\tDbHost " + conf.DbHost);
-            Logger.Log("\t\tEdiUser " + conf.EdiUser);
-            Logger.Log("\t\tEdiGLN " + conf.EdiGLN);
+            Logger.Log(log);
         }
 
 
@@ -85,8 +89,6 @@ namespace EdiClient.AppSettings
                 stream.Close();
             }
         }
-
-
     }
 
 

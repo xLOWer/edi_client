@@ -17,8 +17,8 @@ namespace EdiClient.ViewModel
     {
         public PriceTypesViewModel()
         {
-            //Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             LoadDataCommand.Execute(null);
+            Logger.Log($"[PriceTypesViewModel]PRICES");
         }
 
         #region fields
@@ -78,8 +78,11 @@ namespace EdiClient.ViewModel
         public Command LoadDataCommand => new Command( (o) =>{
             GetPriceTypes();
             GetMatchList();
+            Logger.Log($"[LoadDataCommand]PRICES|PriceTypeListCount={PriceTypeList.Count}|MatchListCount={MatchList.Count}");
         });
-        public Command MakeMatchingCommand => new Command( (o) =>{
+        public Command MakeMatchingCommand => new Command( (o) =>
+        {
+            Logger.Log($"[MakeMatchingCommand]PRICES|P_CUSTOMER_GLN={SelectedMatch.CUSTOMER_GLN}|ID_PRICE_TYPE={SelectedMatch.ID_PRICE_TYPE}");
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
@@ -89,7 +92,6 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_CUSTOMER_GLN", OracleDbType.Number,SelectedMatch.CUSTOMER_GLN, ParameterDirection.Input),
                             new OracleParameter("ID_PRICE_TYPE", OracleDbType.NVarChar, SelectedMatch.ID_PRICE_TYPE, ParameterDirection.Input),
                         },
-                    Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
                     CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_LINK"
                 });
@@ -97,10 +99,12 @@ namespace EdiClient.ViewModel
                 GetMatchList();
             }
             catch (Exception ex) { Error(ex); }
+
         });
-        public Command DisposeMatchingCommand => new Command( (o) =>{
-            //Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+        public Command DisposeMatchingCommand => new Command( (o) =>
+        {
             if (SelectedMatch == null) { Error("Не выбран пункт с сопоставлением"); return; }
+            Logger.Log($"[DisposeMatchingCommand]PRICES|P_CUSTOMER_GLN={SelectedMatch.CUSTOMER_GLN}|ID_PRICE_TYPE={SelectedMatch.ID_PRICE_TYPE}");
 
             try
             {
@@ -130,7 +134,6 @@ namespace EdiClient.ViewModel
                   
         private void GetPriceTypes()
         {
-            //Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Error("Не выбран клиент"); return; }
             if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return; }
             var sql = DbService.Sqls.GET_PRICE_TYPES;
@@ -140,7 +143,6 @@ namespace EdiClient.ViewModel
 
         private void GetMatchList()
         {
-            //Logger.Log($"[PRICE] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             if (SelectedRelationship == null) { Error("Не выбран клиент"); return; }
             if (SelectedRelationship.partnerIln == null) { Error("Не выбран клиент"); return; }
             var sql = DbService.Sqls.GET_MATCHED_PRICE_TYPES(SelectedRelationship.partnerIln);

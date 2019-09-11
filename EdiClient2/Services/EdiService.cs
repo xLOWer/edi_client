@@ -42,12 +42,12 @@ namespace EdiClient.Services
 
         internal static void UpdateData()
         {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
 
             if (!string.IsNullOrEmpty(AppConfigHandler.conf.EdiPassword) && !string.IsNullOrEmpty(AppConfigHandler.conf.EdiGLN) && !string.IsNullOrEmpty(AppConfigHandler.conf.EdiUser))
             {
                 var rl = GetRelationships() ?? new List<Relation>();
-                if (rl.Count == 0) { Logger.Log($"\t\tGetRelationships() return null"); return; }
+                if (rl.Count == 0) { return; }
                 var rels = rl.Where(x => x.documentType == "ORDER").ToList(); ;
                 Relationships = rels;
                 SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
@@ -115,7 +115,7 @@ namespace EdiClient.Services
 
         internal static OrganizationInfo OrganizationInfo(string inn, string kpp, string ogrn, string fnsId, string gln)
         {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
             XmlSerializer serializer = new XmlSerializer(typeof(OrganizationInfo));
 
@@ -133,7 +133,7 @@ namespace EdiClient.Services
 
         internal static List<Relation> GetRelationships(int timeout = 5000)
         {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(RelationResponse));
             retRes returnedResult = null;
             try
@@ -158,33 +158,33 @@ namespace EdiClient.Services
         }
 
 
-        internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
-        {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            var ser = new XmlSerializer(typeof(TModel));
-            retRes returnedResult = null;
+        //internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
+        //{
+        //    //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+        //    var ser = new XmlSerializer(typeof(TModel));
+        //    retRes returnedResult = null;
 
-            returnedResult = Client?.receive(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
+        //    returnedResult = Client?.receive(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
             
-            if (returnedResult == null) Error("Нет соединения с edisoft");
+        //    if (returnedResult == null) Error("Нет соединения с edisoft");
 
-            if (returnedResult?.res == "00000000")
-            {                
-                var xml = XmlService<TModel>.Deserialize(returnedResult.cnt);
-                Logger.LogXml(returnedResult.cnt, $"{trackingId}__{partnerILN}.txt");
-                Logger.Log($"[RECEIVE {typeof(TModel).Name}]" );
-                return xml;
-            }
-            else
-                MessageBox.Show(ResponseErrorHandler(returnedResult));
+        //    if (returnedResult?.res == "00000000")
+        //    {                
+        //        var xml = XmlService<TModel>.Deserialize(returnedResult.cnt);
+        //        //Logger.LogXml(returnedResult.cnt, $"{trackingId}__{partnerILN}.txt");
+        //        //Logger.Log($"[RECEIVE {typeof(TModel).Name}]" );
+        //        return xml;
+        //    }
+        //    else
+        //        MessageBox.Show(ResponseErrorHandler(returnedResult));
 
-            return null;
-        }
+        //    return null;
+        //}
 
 
         internal static void Send(string partnerILN, string documentType, string documentVersion, string documentStandard, string documentTest, string controlNumber, string documentContent, int timeout = 5000)
         {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             retRes returnedResult = null;
 
             returnedResult = Client.send(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, documentVersion, documentStandard, documentTest, controlNumber, documentContent, timeout);
@@ -197,7 +197,7 @@ namespace EdiClient.Services
 
         internal static List<DocumentInfo> ListMBAll(bool getBinaryData = false)
         {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 
@@ -226,7 +226,7 @@ namespace EdiClient.Services
             , string documentStatus
             , int timeout = 5000)
         {
-            Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var ser = new XmlSerializer(typeof(MailboxResponse));
             retRes returnedResult = null;
 

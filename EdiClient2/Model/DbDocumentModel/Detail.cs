@@ -11,7 +11,6 @@ namespace EdiClient.Model
         public string EAN { get; set; }
         public string SUPPLIER_ITEM_CODE { get; set; }
         public string BUYER_ITEM_CODE { get; set; }
-        public string FAILED { get; set; }
         public string ITEM_DESCRIPTION { get; set; }
         public string ORDERED_QUANTITY { get; set; }
         public string TAX_RATE { get; set; }
@@ -28,7 +27,6 @@ namespace EdiClient.Model
         public string LINE_NUMBER { get; set; }
         public string QUANTITY { get; set; }
         public string PRICE { get; set; }
-        //public string DIFF { get; set; }
 
         public string UnitsDifference { get; set; }
 
@@ -37,9 +35,8 @@ namespace EdiClient.Model
         public string TaxAmount { get; set; }
         public string NetAmount { get; set; }
 
-        public bool IsFailed => FAILED == "1";
+        public bool IsFailed => string.IsNullOrEmpty(ID_GOOD) || ID_GOOD=="0";
         public bool IsNotmatched => QUANTITY is null || GrossAmount is null;
-        //public bool HasDiffrence => DIFF == "1" && Doc.IsInTrader;
         public bool HasDiffrence => double.Parse(QUANTITY) != double.Parse(ORDERED_QUANTITY) || double.Parse(PRICE) != double.Parse(ORDERED_UNIT_GROSS_PRICE);
         
     }

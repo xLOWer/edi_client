@@ -18,8 +18,8 @@ namespace EdiClient.Services
         /// <param name="commands">Команды</param>
         internal static void ExecuteCommand(List<OracleCommand> commands)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Logger.Log("\t\tcount=" + commands.Count.ToString());
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log("\t\tcount=" + commands.Count.ToString());
             int i = 0;
             foreach (var command in commands)
             {
@@ -28,13 +28,13 @@ namespace EdiClient.Services
                 DbService.Connection.Check();
                 command.ExecuteNonQuery();
             }
-            Logger.Log("\t\tafter exec count=" + i);
+            //Logger.Log("\t\tafter exec count=" + i);
         }
 
 
         internal static void ExecuteCommand(OracleCommand command)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} command: {command.CommandText}");
             using (command)
             {
                 DbService.Connection.Check();
@@ -49,7 +49,7 @@ namespace EdiClient.Services
         /// <returns>DataTable с резльтатом запроса</returns>
         internal static DataTable Select(string Sql)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             DataTable DataGridItems = ObjToDataTable(typeof(string));
             using (OracleCommand command = new OracleCommand())
             {
@@ -65,7 +65,7 @@ namespace EdiClient.Services
 
         internal static void ExecuteLine(string Sql)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (OracleCommand command = new OracleCommand(Sql))
             {
                 command.Connection = DbService.Connection.conn;
@@ -76,7 +76,7 @@ namespace EdiClient.Services
 
         internal static void ExecuteLines(List<string> Sqls)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             int c = Sqls.Count();
             for (int i = 1; i <= c; ++i)
             {
@@ -91,7 +91,7 @@ namespace EdiClient.Services
 
         internal static string SelectSingleValue(string Sql)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             OracleDataReader reader;
             string retVal = "";
             using (OracleCommand command = new OracleCommand())
@@ -215,8 +215,8 @@ namespace EdiClient.Services
 
         internal static List<TModel> DocumentSelect<TModel>(string Sql)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Logger.Log("\t\t" + Sql);
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log("\t\t" + Sql);
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable<TModel>(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
@@ -265,8 +265,8 @@ namespace EdiClient.Services
 
         internal static List<TModel> DocumentSelect<TModel>(List<string> Sqls)
         {
-            Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            Logger.Log("\t\tSqls.Count=" + Sqls.Count.ToString());
+            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log("\t\tSqls.Count=" + Sqls.Count.ToString());
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable<TModel>(typeof(TModel));
             using (OracleCommand command = new OracleCommand())

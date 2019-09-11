@@ -11,7 +11,6 @@ namespace EdiClient.Model.MatchingDbModel
         public string CUSTOMER_ARTICLE { get; set; }
         public string EAN { get; set; }
         public string ID_GOOD { get; set; }
-        public string BAR_CODE { get; set; }
         public string NAME { get; set; }
         public string INSERT_DATETIME { get; set; }
     }

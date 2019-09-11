@@ -47,7 +47,7 @@ namespace EdiClient.Model
             }
         }
 
-        public bool IsFailed => FAILED == "1";
+        public bool IsFailed => Details?.Any(x => x.IsFailed) ?? true;
         public bool IsReadyToTrader => !IsInTrader && !IsOrdrsp && !IsDesadv && !IsEmptyContractorLink && !IsFailed;
         public bool IsReadyToOrdrsp => IsInTrader && !IsDesadv && !IsOrdrsp && int.Parse(ACT_STATUS) >= 3 && !IsFailed;
         public bool IsReadyToDesadv => IsInTrader && !IsDesadv && IsOrdrsp && int.Parse(ACT_STATUS) >= 4 && !IsFailed;
@@ -59,10 +59,10 @@ namespace EdiClient.Model
         public bool IsDesadv => !string.IsNullOrEmpty(DESADV) && !IsFailed;
         //public bool IsRecadv => !string.IsNullOrEmpty(RECADV) ? true : false;
 
-        public int Details_DeliveryLinesCount => Details.Where(x => x.QUANTITY != "0" || string.IsNullOrEmpty(x.QUANTITY)).Count();
-        public long Details_OrderedLinesCount => Details.Sum(x => long.Parse(x.ORDERED_QUANTITY));
-        public long Details_DeliveryPositionCount => Details.Sum(x => long.Parse(x.QUANTITY));
-        public double Details_DeliveryGrossSumm => Details.Sum(x => double.Parse(x.PRICE) * int.Parse(x.QUANTITY));
+        public int Details_DeliveryLinesCount => Details?.Where(x => x.QUANTITY != "0" || string.IsNullOrEmpty(x.QUANTITY)).Count() ?? 0;
+        public long Details_OrderedLinesCount => Details?.Sum(x => long.Parse(x.ORDERED_QUANTITY)) ?? 0;
+        public long Details_DeliveryPositionCount => Details?.Sum(x => long.Parse(x.QUANTITY)) ?? 0;
+        public double Details_DeliveryGrossSumm => Details?.Sum(x => double.Parse(x.PRICE) * int.Parse(x.QUANTITY)) ?? 0;
         
         public int DetailsCount => Details?.Count ?? 0;
         public List<Detail> Details { get; set; }

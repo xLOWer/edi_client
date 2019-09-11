@@ -185,11 +185,25 @@ namespace EdiClient.ViewModel
         }
 
 
+        public void LogDocument(string name, Document doc)
+        {            
+           Logger.Log($"[{name}] " +
+               $"id={doc.ID}" +
+               $"|number={doc.ORDER_NUMBER}" +
+               $"|sender={doc.SENDER_ILN}" +
+               $"|customer={doc.CUSTOMER_ILN}" +
+               $"|deliveryp={doc.DELIVERY_POINT_ILN}" +
+               $"|del_lines={doc.Details_DeliveryLinesCount}" +
+               $"|ord_lines={doc.Details_OrderedLinesCount}" +
+               $"|details={doc.DetailsCount}");
+        } 
+
 
         public Command ToTraderCommand => new Command((o) => ActionInTime(()
             => {
                 CreateTraderDocument(SelectedDocument.ID);
                 GetDocuments(DateFrom, DateTo);
+                LogDocument("ToTraderCommand", SelectedDocument);
             }));
 
 
@@ -197,19 +211,23 @@ namespace EdiClient.ViewModel
             => {
                 SendOrdrsp(SelectedDocument);
                 GetDocuments(DateFrom, DateTo);
+                LogDocument("SendORDRSPCommand", SelectedDocument);
             }));
+       
 
 
         public Command SendDESADVCommand => new Command((o) => ActionInTime(()
             => {
                 SendDesadv(SelectedDocument);
                 GetDocuments(DateFrom, DateTo);
+                LogDocument("SendDESADVCommand", SelectedDocument);
             }));
 
 
         public Command GetDocumentsCommand => new Command((o) => ActionInTime(()
             => {
                 GetDocuments(DateFrom, DateTo);
+                Logger.Log($"[GetDocumentsCommand]count={Documents.Count()}");
             }));
 
 
@@ -225,7 +243,7 @@ namespace EdiClient.ViewModel
         {
             if(SelectedDocument != null)
             {
-                //Logger.Log($"[RELOADED] {SelectedDocument.ID}");
+                LogDocument("ReloadDocumentCommand", SelectedDocument);
                 var sql = $"delete from {(AppConfigHandler.conf.Schema + ".")}EDI_DOC WHERE ID = {SelectedDocument.ID}";
                 ExecuteLine(sql);
                 GetNewOrders(dateFrom, dateTo);
@@ -374,7 +392,7 @@ namespace EdiClient.ViewModel
             SafeFileHandle hFile = null;
             DateTime w32fileCreateTime, minDate = DateTime.MaxValue, maxDate = DateTime.MinValue;
 
-            int frCount = 0, ftCount = 0, docaCount = 0, detaCount = 0, failCount = 0;
+            int frCount = 0, ftCount = 0, docaCount = 0, detaCount = 0, failCount = 0, ctCount = 0;
             uint btCount = 0;
             string fails = "";
 
@@ -426,6 +444,7 @@ namespace EdiClient.ViewModel
 
                 if (!Documents.Any(x => order.OrderHeader.OrderNumber == x.ORDER_NUMBER))
                 {
+                    ctCount++;
                     commands.Add(new OracleCommand()
                     {
                         Parameters = {
@@ -486,28 +505,13 @@ namespace EdiClient.ViewModel
 
             Task.Factory.StartNew(() =>
             {
-                string result = $@"
-ПАРАМЕТРЫ:
-аргумент1: dateFrom {dateFrom.ToShortDateString()} {dateFrom.ToLongTimeString()}
-аргумент2: dateTo {dateTo.ToShortDateString()} {dateTo.ToLongTimeString()}
-
-ФАЙЛЫ
-размер прочитанного: {Math.Round((double)btCount / 1024)} Кб ({Math.Round((double)btCount / 1024 / 1024, 1)} Мб)
-прочитано: {ftCount}
-обработано: {frCount}
-мин. дата: {minDate.ToShortDateString()} {minDate.ToLongTimeString()}
-макс. дата: {maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}
-
-КОМАНДЫ
-документов: {docaCount}
-деталей: {detaCount}
-сумма: {docaCount + detaCount}
-
-ОШИБКИ:
-{fails}
-";
+                string result = $@"[GetNewOrders]args|dateFrom={dateFrom.ToShortDateString()}|dateTo={dateTo.ToShortDateString()}|"+
+$@"size={Math.Round((double)btCount / 1024)}Kb|"+
+$@"read={ftCount}|handled={frCount}|orders={ctCount}|minDate={minDate.ToShortDateString()} {minDate.ToLongTimeString()}|"+
+$@"maxDate={maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}doc={docaCount}|detail={detaCount}
+{fails}";
                 Logger.Log(result);
-                MessageBox.Show(result);
+                //MessageBox.Show(result);
             });
         }
 
@@ -526,7 +530,6 @@ namespace EdiClient.ViewModel
 
         internal List<Detail> GetDocumentDetails(string Id)
         {
-            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = Sqls.GET_ORDER_DETAILS(Id);
             var result = DocumentSelect<Detail>(sql);
             return result;
@@ -534,18 +537,21 @@ namespace EdiClient.ViewModel
 
         private string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
 
-        public void UpdateFailedDetails(string P_EDI_DOC_ID)
+        public Command UpdateFailedDetailsCommand = new Command((o) =>
         {
-            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            //Logger.Log($"\t\tEDI_REFRESH_DOC_DETAILS.P_EDI_DOC_ID=" + P_EDI_DOC_ID);
-            ExecuteCommand(new OracleCommand()
+            try
             {
-                Connection = Connection.conn,
-                Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, P_EDI_DOC_ID, ParameterDirection.Input) },
-                CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.REFRESH_DOC_DETAILS"
-            });
-        }
+                ExecuteCommand(new OracleCommand()
+                {
+                    Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, o.ToString(), ParameterDirection.Input) },
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.REFRESH_DOC_DETAILS"
+                });
+                Logger.Log($"[UpdateFailedDetailsCommand]P_EDI_DOC_ID=" + o.ToString());
+            }
+            catch(Exception ex) { Error(ex); }
+
+        });
 
         /// <summary>
         /// Создать реальный документ для работы в trader
@@ -553,8 +559,6 @@ namespace EdiClient.ViewModel
         /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
         internal void CreateTraderDocument(string orderID)
         {
-            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            //Logger.Log($"\t\tEDI_MOVE_ORDER.P_ID=" + orderID);
             var commands = new List<OracleCommand>()
                 {
                         new OracleCommand()

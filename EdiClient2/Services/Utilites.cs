@@ -19,7 +19,7 @@ namespace EdiClient.Services.Utils
         internal static void Error(Exception ex)
         {
             Logger.Log($"===============================");
-            var msg = $"Message: {ex.Message}\n\nSource: {ex.Source}\n\n{GetInnerExceptionMessage(ex)}\n\nTargetSite: {ex?.TargetSite}\n\n{ex.InnerException?.Message}\n\nStackTrace: {ex.StackTrace}";
+            var msg = $"Message: {ex.Message}\nSource: {ex.Source}\n{GetInnerExceptionMessage(ex)}\nTargetSite: {ex?.TargetSite}\n{ex.InnerException?.Message}\nStackTrace: {ex.StackTrace}";
             Logger.Log(msg);
             Logger.Log($"===============================");
             DevExpress.Xpf.Core.DXMessageBox.Show(msg, "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -29,7 +29,7 @@ namespace EdiClient.Services.Utils
         internal static void Error(string text)
         {
             Logger.Log($"===============================");
-            Logger.Log($"[ОШИБКА] {text}");
+            Logger.Log($"[ERROR] {text}");
             Logger.Log($"===============================");
             DevExpress.Xpf.Core.DXMessageBox.Show($"[ОШИБКА] {text}", "ОШИБКА", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -47,7 +47,7 @@ namespace EdiClient.Services.Utils
             private static string fullPath => Path.GetFullPath($"{directoryPath}\\{dirName}\\{fileName}");
 
             public static string Read()
-            {
+            {            
                 var log = "";
                 using (var stream = new FileStream(fullPath, FileMode.Open))
                 {
