@@ -54,7 +54,7 @@ namespace EdiClient.ViewModel
         {
             get
             {
-                return !String.IsNullOrEmpty(SelectedMatch?.CUSTOMER_ARTICLE ?? "");
+                return !String.IsNullOrEmpty(SelectedMatch?.EAN ?? "");
             }
             set
             {
@@ -66,7 +66,7 @@ namespace EdiClient.ViewModel
         private bool linkEnabled = true;
         public bool LinkEnabled
         {
-            get { return !String.IsNullOrEmpty(SelectedGood?.ID ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.BUYER_ITEM_CODE ?? ""); }
+            get { return !String.IsNullOrEmpty(SelectedGood?.ID ?? "") && !String.IsNullOrEmpty(SelectedFailedGood?.EAN ?? ""); }
             set
             {
                 linkEnabled = value;
@@ -175,7 +175,7 @@ namespace EdiClient.ViewModel
 
             if (SelectedFailedGood == null) { Error("Не выбран пункт с не сопоставленным товаром"); return; }
             if (SelectedGood == null) { Error("Не выбран пункт с товаром"); return; }
-            if (String.IsNullOrEmpty(SelectedFailedGood.BUYER_ITEM_CODE) || String.IsNullOrEmpty(SelectedGood.ID))
+            if (String.IsNullOrEmpty(SelectedFailedGood.EAN) || String.IsNullOrEmpty(SelectedGood.ID))
             { Error("Код покупателя или идентификатор товара отсутствует"); return; }
             try
             {

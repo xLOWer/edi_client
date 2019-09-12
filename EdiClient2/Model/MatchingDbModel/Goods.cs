@@ -10,5 +10,6 @@ namespace EdiClient.Model.MatchingDbModel
         public string GOOD_SIZE { get; set; }
         public string MANUFACTURER { get; set; }
         public string ID_MANUFACTURER { get; set; }
+        public string IS_PRIMARY { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace EdiClient.Model.MatchingDbModel
     public class Matches
     {
         public string CUSTOMER_GLN { get; set; }
-        public string CUSTOMER_ARTICLE { get; set; }
         public string EAN { get; set; }
         public string ID_GOOD { get; set; }
         public string NAME { get; set; }

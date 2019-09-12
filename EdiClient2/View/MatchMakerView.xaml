@@ -60,6 +60,7 @@
                 <dxg:GridColumn FieldName="BAR_CODE" Header="Штрих-код"/>
                 <dxg:GridColumn FieldName="GOOD_SIZE" Header="Размерность"/>
                 <dxg:GridColumn FieldName="MANUFACTURER" Header="Производитель"/>
+                <dxg:GridColumn FieldName="IS_PRIMARY" Header="IS_PRIMARY"/>
             </dxg:GridControl.Columns>
             <dxg:GridControl.View>
                 <dxg:TableView AllowPerPixelScrolling="True" 

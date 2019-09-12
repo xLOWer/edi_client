@@ -201,33 +201,37 @@ namespace EdiClient.ViewModel
 
         public Command ToTraderCommand => new Command((o) => ActionInTime(()
             => {
+                LogDocument("ToTraderCommand", SelectedDocument);
                 CreateTraderDocument(SelectedDocument.ID);
                 GetDocuments(DateFrom, DateTo);
-                LogDocument("ToTraderCommand", SelectedDocument);
+                RaiseAllProps();
             }));
 
 
         public Command SendORDRSPCommand => new Command((o) => ActionInTime(()
             => {
+                LogDocument("SendORDRSPCommand", SelectedDocument);
                 SendOrdrsp(SelectedDocument);
                 GetDocuments(DateFrom, DateTo);
-                LogDocument("SendORDRSPCommand", SelectedDocument);
+                RaiseAllProps();
             }));
        
 
 
         public Command SendDESADVCommand => new Command((o) => ActionInTime(()
             => {
+                LogDocument("SendDESADVCommand", SelectedDocument);
                 SendDesadv(SelectedDocument);
                 GetDocuments(DateFrom, DateTo);
-                LogDocument("SendDESADVCommand", SelectedDocument);
+                RaiseAllProps();
             }));
 
 
         public Command GetDocumentsCommand => new Command((o) => ActionInTime(()
             => {
-                GetDocuments(DateFrom, DateTo);
                 Logger.Log($"[GetDocumentsCommand]count={Documents.Count()}");
+                GetDocuments(DateFrom, DateTo);
+                RaiseAllProps();
             }));
 
 
@@ -236,6 +240,7 @@ namespace EdiClient.ViewModel
                 //GetRecadv();
                 GetNewOrders(dateFrom, dateTo);
                 //Documents = GetDocuments(DateFrom, DateTo);
+                RaiseAllProps();
             }));
 
 
