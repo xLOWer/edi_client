@@ -93,7 +93,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("ID_PRICE_TYPE", OracleDbType.NVarChar, SelectedMatch.ID_PRICE_TYPE, ParameterDirection.Input),
                         },
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_LINK"
+                    CommandText = "EDI.EDI_MANAGER.MAKE_PRICE_LINK"
                 });
 
                 GetMatchList();
@@ -117,7 +117,7 @@ namespace EdiClient.ViewModel
                         },
                     Connection = DbService.Connection.conn,
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_PRICE_UNLINK"
+                    CommandText = "EDI.EDI_MANAGER.MAKE_PRICE_UNLINK"
                 });
                 GetMatchList();
             }

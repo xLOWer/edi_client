@@ -28,7 +28,7 @@ namespace EdiClient.View
 
         public MatchMakerView()
         {
-            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new MatchMakerViewModel( /*this*/ );
             DataContext = Context;
             InitializeComponent();

@@ -187,20 +187,21 @@ namespace EdiClient.ViewModel
 
         public void LogDocument(string name, Document doc)
         {            
-           Logger.Log($"[{name}] " +
-               $"id={doc.ID}" +
-               $"|number={doc.ORDER_NUMBER}" +
-               $"|sender={doc.SENDER_ILN}" +
-               $"|customer={doc.CUSTOMER_ILN}" +
-               $"|deliveryp={doc.DELIVERY_POINT_ILN}" +
-               $"|del_lines={doc.Details_DeliveryLinesCount}" +
-               $"|ord_lines={doc.Details_OrderedLinesCount}" +
-               $"|details={doc.DetailsCount}");
+           Logger.Log("["+name+"] " +
+               "id=" + doc.ID +
+               "|number="+doc.ORDER_NUMBER +
+               "|sender="+doc.SENDER_ILN +
+               "|customer="+doc.CUSTOMER_ILN +
+               "|deliveryp="+doc.DELIVERY_POINT_ILN +
+               "|del_lines="+doc.Details_DeliveryLinesCount +
+               "|ord_lines="+doc.Details_OrderedLinesCount +
+               "|details="+doc.DetailsCount);
         } 
 
 
         public Command ToTraderCommand => new Command((o) => ActionInTime(()
             => {
+                if (SelectedDocument == null) return;
                 LogDocument("ToTraderCommand", SelectedDocument);
                 CreateTraderDocument(SelectedDocument.ID);
                 GetDocuments(DateFrom, DateTo);
@@ -210,6 +211,7 @@ namespace EdiClient.ViewModel
 
         public Command SendORDRSPCommand => new Command((o) => ActionInTime(()
             => {
+                if (SelectedDocument == null) return;
                 LogDocument("SendORDRSPCommand", SelectedDocument);
                 SendOrdrsp(SelectedDocument);
                 GetDocuments(DateFrom, DateTo);
@@ -220,6 +222,7 @@ namespace EdiClient.ViewModel
 
         public Command SendDESADVCommand => new Command((o) => ActionInTime(()
             => {
+                if (SelectedDocument == null) return;
                 LogDocument("SendDESADVCommand", SelectedDocument);
                 SendDesadv(SelectedDocument);
                 GetDocuments(DateFrom, DateTo);
@@ -229,7 +232,7 @@ namespace EdiClient.ViewModel
 
         public Command GetDocumentsCommand => new Command((o) => ActionInTime(()
             => {
-                Logger.Log($"[GetDocumentsCommand]count={Documents.Count()}");
+                Logger.Log("[GetDocumentsCommand]count="+Documents.Count());
                 GetDocuments(DateFrom, DateTo);
                 RaiseAllProps();
             }));
@@ -246,14 +249,13 @@ namespace EdiClient.ViewModel
 
         public Command ReloadDocumentCommand => new Command((o) =>
         {
-            if(SelectedDocument != null)
-            {
-                LogDocument("ReloadDocumentCommand", SelectedDocument);
-                var sql = $"delete from {(AppConfigHandler.conf.Schema + ".")}EDI_DOC WHERE ID = {SelectedDocument.ID}";
-                ExecuteLine(sql);
-                GetNewOrders(dateFrom, dateTo);
-                RaiseAllProps();
-            }
+            if (SelectedDocument == null) return;
+            LogDocument("ReloadDocumentCommand", SelectedDocument);
+            var sql = "delete from EDI.EDI_DOC WHERE ID = "+SelectedDocument.ID;
+            ExecuteLine(sql);
+            GetNewOrders(dateFrom, dateTo);
+            RaiseAllProps();
+
         });
 
         public Command NextDayCommand => new Command((o) =>
@@ -384,12 +386,46 @@ namespace EdiClient.ViewModel
 
         public void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
+
+
+
+
+
+
+
+
+            if (SelectedRelationship == null) return;
+            if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
+
+            List<Model.WebModel.DocumentInfo> NewOrders
+               = EdiService.ListMBEx(SelectedRelationship.partnerIln
+                                     , SelectedRelationship.documentType, "", "", ""
+                                     , ToEdiDateString(dateFrom)
+                                     , ToEdiDateString(dateTo)
+                                     , "", "", "");
+
+            NewOrders = NewOrders.Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             if (SelectedRelationship == null) return;
             if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
 
             List<string> sqls = new List<string>();
             List<WIN32_FIND_DATA> files = new List<WIN32_FIND_DATA>();
-            string dir = $"{AppConfig.FtpDir}{SelectedRelationship.partnerIln}";
+            string dir = AppConfig.FtpDir+SelectedRelationship.partnerIln;
             byte[] aBuffer;
             DocumentOrder order;
             List<OracleCommand> commands = new List<OracleCommand>();
@@ -404,7 +440,7 @@ namespace EdiClient.ViewModel
             Documents.Clear();
             GetDocuments(dateFrom, dateTo);
 
-            IntPtr h = FindFirstFile($"{dir}\\*.*", out w32file);
+            IntPtr h = FindFirstFile(dir+"\\*.*", out w32file);
             FindNextFile(h, out w32file); // пропускаем указатель на родительский каталог
             while (FindNextFile(h, out w32file))
             {
@@ -425,15 +461,12 @@ namespace EdiClient.ViewModel
                 var name = w32f.cFileName;
                 var size = w32f.nFileSizeLow;
                 frCount++;
-                hFile = CreateFile($"{dir}\\{name}", DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
+                hFile = CreateFile(dir+"\\"+name, DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
                 if (hFile.IsInvalid)
                 {
                     int Err = Marshal.GetLastWin32Error();
                     failCount++;
-                    fails += $@"
-#{failCount} : Win32Err#{Err}, file: {name}
-{new System.ComponentModel.Win32Exception(Err).Message}
-";
+                    fails += "\n#"+failCount+" : Win32Err#"+Err + ", file: " + name+"\n" + new System.ComponentModel.Win32Exception(Err).Message+"\n";
                     continue;
                 }
 
@@ -466,7 +499,7 @@ namespace EdiClient.ViewModel
                         new OracleParameter("P_TOTAL_GROSS_AMOUNT", OracleDbType.NVarChar, order?.OrderSummary?.TotalGrossAmount ?? "", ParameterDirection.Input)
                     },
                         CommandType = CommandType.StoredProcedure,
-                        CommandText = (AppConfigHandler.conf.Schema + ".") + "Edi_MANAGER.ADD_ORDER"
+                        CommandText = "EDI.Edi_MANAGER.ADD_ORDER"
                     });
                     docaCount++;
                     if (order.OrderLines.Lines.Count > 0)
@@ -495,7 +528,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
                         },
                                 CommandType = CommandType.StoredProcedure,
-                                CommandText = (AppConfigHandler.conf.Schema + ".") + "Edi_MANAGER.ADD_ORDER_DETAIL"
+                                CommandText = "EDI.Edi_MANAGER.ADD_ORDER_DETAIL"
                             });
                         }
 
@@ -510,11 +543,10 @@ namespace EdiClient.ViewModel
 
             Task.Factory.StartNew(() =>
             {
-                string result = $@"[GetNewOrders]args|dateFrom={dateFrom.ToShortDateString()}|dateTo={dateTo.ToShortDateString()}|"+
-$@"size={Math.Round((double)btCount / 1024)}Kb|"+
-$@"read={ftCount}|handled={frCount}|orders={ctCount}|minDate={minDate.ToShortDateString()} {minDate.ToLongTimeString()}|"+
-$@"maxDate={maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}doc={docaCount}|detail={detaCount}
-{fails}";
+                string result = "[GetNewOrders]args|dateFrom="+dateFrom.ToShortDateString()+"|dateTo="+dateTo.ToShortDateString()+"|"+
+"size="+Math.Round((double)btCount / 1024)+"Kb|"+
+"read="+ftCount+"|handled="+frCount+"|orders="+ctCount+"|minDate="+minDate.ToShortDateString()+" "+minDate.ToLongTimeString()+"|"+
+"maxDate=" + maxDate.ToShortDateString()+" " + maxDate.ToLongTimeString()+"doc=" + docaCount+"|detail="+detaCount+"\n"+fails;
                 Logger.Log(result);
                 //MessageBox.Show(result);
             });
@@ -550,9 +582,9 @@ $@"maxDate={maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}doc={docaCo
                 {
                     Parameters = { new OracleParameter("P_EDI_DOC_ID", OracleDbType.NVarChar, o.ToString(), ParameterDirection.Input) },
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.REFRESH_DOC_DETAILS"
+                    CommandText = "EDI.EDI_MANAGER.REFRESH_DOC_DETAILS"
                 });
-                Logger.Log($"[UpdateFailedDetailsCommand]P_EDI_DOC_ID=" + o.ToString());
+                Logger.Log("[UpdateFailedDetailsCommand]P_EDI_DOC_ID=" + o.ToString());
             }
             catch(Exception ex) { Error(ex); }
 
@@ -575,7 +607,7 @@ $@"maxDate={maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}doc={docaCo
                             },
                             Connection = Connection.conn,
                             CommandType = CommandType.StoredProcedure,
-                            CommandText = (AppConfigHandler.conf.Schema+".") + "EDI_MANAGER.MOVE_ORDER"
+                            CommandText = "EDI.EDI_MANAGER.MOVE_ORDER"
                         }
                 };
             ExecuteCommand(commands);
@@ -695,7 +727,7 @@ $@"maxDate={maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}doc={docaCo
                         },
                 Connection = Connection.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_DESADV"
+                CommandText = "EDI.EDI_MANAGER.MAKE_DESADV"
             });
         }
 
@@ -822,7 +854,7 @@ $@"maxDate={maxDate.ToShortDateString()} {maxDate.ToLongTimeString()}doc={docaCo
                         },
                 Connection = Connection.conn,
                 CommandType = CommandType.StoredProcedure,
-                CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_ORDRSP"
+                CommandText = "EDI.EDI_MANAGER.MAKE_ORDRSP"
             });
         }
 

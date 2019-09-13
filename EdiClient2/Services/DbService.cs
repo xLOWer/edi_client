@@ -18,27 +18,25 @@ namespace EdiClient.Services
         /// <param name="commands">Команды</param>
         internal static void ExecuteCommand(List<OracleCommand> commands)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            //Logger.Log("\t\tcount=" + commands.Count.ToString());
             int i = 0;
+            Connection.Check();
             foreach (var command in commands)
             {
+                // каждую сотню запросов проверим, а не отвалилось ли соединение
+                if ((i % 100) == 0) Connection.Check();
                 i++;
-                command.Connection = DbService.Connection.conn;
-                DbService.Connection.Check();
+                command.Connection = Connection.conn;
                 command.ExecuteNonQuery();
             }
-            //Logger.Log("\t\tafter exec count=" + i);
         }
 
 
         internal static void ExecuteCommand(OracleCommand command)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} command: {command.CommandText}");
             using (command)
             {
-                DbService.Connection.Check();
-                command.Connection = DbService.Connection.conn;
+                Connection.Check();
+                command.Connection = Connection.conn;
                 var res = command.ExecuteNonQuery();                
             }
         }
@@ -49,13 +47,12 @@ namespace EdiClient.Services
         /// <returns>DataTable с резльтатом запроса</returns>
         internal static DataTable Select(string Sql)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             DataTable DataGridItems = ObjToDataTable(typeof(string));
             using (OracleCommand command = new OracleCommand())
             {
-                command.Connection = DbService.Connection.conn;
-                DbService.Connection.Check();
-                OracleDataAdapter adapter = new OracleDataAdapter(Sql, DbService.Connection.conn);
+                command.Connection = Connection.conn;
+                Connection.Check();
+                OracleDataAdapter adapter = new OracleDataAdapter(Sql, Connection.conn);
                 OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
@@ -65,25 +62,23 @@ namespace EdiClient.Services
 
         internal static void ExecuteLine(string Sql)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             using (OracleCommand command = new OracleCommand(Sql))
             {
-                command.Connection = DbService.Connection.conn;
-                DbService.Connection.Check();
+                command.Connection = Connection.conn;
+                Connection.Check();
                 command.ExecuteNonQuery();
             }
         }
 
         internal static void ExecuteLines(List<string> Sqls)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             int c = Sqls.Count();
             for (int i = 1; i <= c; ++i)
             {
                 using (OracleCommand command = new OracleCommand(Sqls[i - 1]))
                 {
-                    command.Connection = DbService.Connection.conn;
-                    DbService.Connection.Check();
+                    command.Connection = Connection.conn;
+                    Connection.Check();
                     command.ExecuteNonQuery();                    
                 }
             }
@@ -91,22 +86,21 @@ namespace EdiClient.Services
 
         internal static string SelectSingleValue(string Sql)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             OracleDataReader reader;
             string retVal = "";
             using (OracleCommand command = new OracleCommand())
             {
-                command.Connection = DbService.Connection.conn;
+                command.Connection = Connection.conn;
                 command.CommandType = CommandType.Text;
                 command.CommandText = Sql;
-                DbService.Connection.conn.Open();
+                Connection.conn.Open();
                 reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
                     retVal = reader[0].ToString();
                 }
-                DbService.Connection.conn.Close();
+                Connection.conn.Close();
             }
             return retVal;
         }
@@ -123,55 +117,55 @@ namespace EdiClient.Services
         internal static class Sqls
         {
             internal static string DatesBetween(DateTime Date)
-                => $" BETWEEN {OracleDateFormat(Date)} AND {OracleDateFormat(Date)} ";
+                => " BETWEEN " + OracleDateFormat(Date) + " AND " + OracleDateFormat(Date) + " ";
 
             internal static string DatesBetween(DateTime DateFrom, DateTime DateTo)
-                => $" BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)} ";
+                => " BETWEEN " + OracleDateFormat(DateFrom) + " AND " + OracleDateFormat(DateTo) + " ";
 
-            internal static string OracleDateFormat(DateTime Date) => $" TO_DATE('{Date.Day}/{Date.Month}/{Date.Year}','DD/MM/YYYY') ";
+            internal static string OracleDateFormat(DateTime Date) => " TO_DATE('" + Date.Day + "/" + Date.Month + "/" + Date.Year + "','DD/MM/YYYY') ";
 
             internal static string Sql_DateRange(string tableName, string fieldName, string sign, DateTime date1)
-                => $"{tableName}.{fieldName} = {OracleDateFormat(date1)}\n";
+                => "" + tableName + "." + fieldName + " = " + OracleDateFormat(date1) + "\n";
 
             internal static string Sql_DateRange(string shortTableName, string fieldName, string sign, DateTime date1, DateTime date2)
-                => $"{shortTableName}.{fieldName} {DatesBetween(date1, date2)}\n";
+                => "" + shortTableName + "." + fieldName + " " + DatesBetween(date1, date2) + "\n";
 
             internal static string ToOracleDate(DateTime Date)
             {
-                var day = Date.Day < 10 ? $"0{Date.Day}" : Date.Day.ToString();
-                var mouth = Date.Month < 10 ? $"0{Date.Month}" : Date.Month.ToString();
-                return $"{day}.{mouth}. {Date.Year} {Date.Hour}:{Date.Minute}:{Date.Second}";
+                var day = Date.Day < 10 ? "0"+Date.Day : Date.Day.ToString();
+                var mouth = Date.Month < 10 ? "0" + Date.Month : Date.Month.ToString();
+                return day+ "."+mouth+ ". " + Date.Year+ " " + Date.Hour+ ":" + Date.Minute+ ":" + Date.Second;
             }
 
             internal static string GET_FAILED_DETAILS(string SENDER_ILN) =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_FAILED_DETAILS WHERE SENDER_ILN={SENDER_ILN}";
+                "SELECT * FROM EDI.EDI_GET_FAILED_DETAILS WHERE SENDER_ILN=" + SENDER_ILN;
 
             internal static string GET_GOODS =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_GOODS";
+                "SELECT * FROM EDI.EDI_GET_GOODS";
 
             internal static string GET_MATCHED(string CUSTOMER_GLN) =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_MATCHED WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+                "SELECT * FROM EDI.EDI_GET_MATCHED WHERE CUSTOMER_GLN=" + CUSTOMER_GLN;
 
             internal static string GET_MATCHED_PRICE_TYPES(string CUSTOMER_GLN) =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN={CUSTOMER_GLN}";
+                "SELECT * FROM EDI.EDI_GET_MATCHED_PRICE_TYPES WHERE CUSTOMER_GLN=" + CUSTOMER_GLN;
 
             internal static string GET_ORDERS(string SENDER_ILN, DateTime DateFrom, DateTime DateTo) =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_ORDERS WHERE SENDER_ILN like {SENDER_ILN} AND ORDER_DATE BETWEEN {OracleDateFormat(DateFrom)} AND {OracleDateFormat(DateTo)}";
+                "SELECT * FROM EDI.EDI_GET_ORDERS WHERE SENDER_ILN like "+SENDER_ILN+" AND ORDER_DATE BETWEEN "+OracleDateFormat(DateFrom) + " AND " + OracleDateFormat(DateTo);
 
             internal static string GET_ORDER_DETAILS(string ID_EDI_DOC) =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC={ID_EDI_DOC}";
+                "SELECT * FROM EDI.EDI_GET_ORDER_DETAILS WHERE ID_EDI_DOC=" + ID_EDI_DOC;
 
             internal static string GET_PRICE_TYPES =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_PRICE_TYPES";
+                "SELECT * FROM EDI.EDI_GET_PRICE_TYPES";
 
             internal static string GET_CLIENTS =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_DELIVERY_POINTS";
+                "SELECT * FROM EDI.EDI_GET_DELIVERY_POINTS";
 
             internal static string GET_CUSTOMERS =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_CUSTOMERS";
+                "SELECT * FROM EDI.EDI_GET_CUSTOMERS";
 
             internal static string GET_CONTRACTORS =>
-                $"SELECT * FROM {(AppConfigHandler.conf.Schema + ".")}EDI_GET_CONTRACTORS";
+                "SELECT * FROM EDI.EDI_GET_CONTRACTORS";
 
         }
 
@@ -191,7 +185,7 @@ namespace EdiClient.Services
                     !String.IsNullOrEmpty(AppConfigHandler.conf.DbHost))
                 {
                     conn = new OracleConnection(AppConfigHandler.conf.connString);
-                    //DbService.SelectSingleValue("alter session set nls_numeric_characters = ',.'");
+                    //SelectSingleValue("alter session set nls_numeric_characters = ',.'");
                 }
                 else
                     DXMessageBox.Show("Соединение с базой не создано. Не верные параметры в строке соединения");
@@ -215,15 +209,13 @@ namespace EdiClient.Services
 
         internal static List<TModel> DocumentSelect<TModel>(string Sql)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            //Logger.Log("\t\t" + Sql);
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable<TModel>(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
             {
-                command.Connection = DbService.Connection.conn;
-                DbService.Connection.Check();
-                OracleDataAdapter adapter = new OracleDataAdapter(Sql, DbService.Connection.conn);
+                command.Connection = Connection.conn;
+                Connection.Check();
+                OracleDataAdapter adapter = new OracleDataAdapter(Sql, Connection.conn);
                 DataGridItems.Clear();
                 adapter.Fill(DataGridItems);
             }
@@ -265,17 +257,15 @@ namespace EdiClient.Services
 
         internal static List<TModel> DocumentSelect<TModel>(List<string> Sqls)
         {
-            //Logger.Log($"[ORCL] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            //Logger.Log("\t\tSqls.Count=" + Sqls.Count.ToString());
             List<TModel> Documents = new List<TModel>();
             DataTable DataGridItems = ObjToDataTable<TModel>(typeof(TModel));
             using (OracleCommand command = new OracleCommand())
             {
                 foreach (var Sql in Sqls)
                 {
-                    command.Connection = DbService.Connection.conn;
-                    DbService.Connection.Check();
-                    OracleDataAdapter adapter = new OracleDataAdapter(Sql, DbService.Connection.conn);
+                    command.Connection = Connection.conn;
+                    Connection.Check();
+                    OracleDataAdapter adapter = new OracleDataAdapter(Sql, Connection.conn);
                     OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
                     DataGridItems.Clear();
                     adapter.Fill(DataGridItems);

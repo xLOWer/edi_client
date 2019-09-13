@@ -28,7 +28,7 @@ namespace EdiClient.View
 
         public ContractorsMatchView()
         {
-            Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[INIT] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context = new ContractorsMatchViewModel( );
             DataContext = Context;
             InitializeComponent();
@@ -36,7 +36,7 @@ namespace EdiClient.View
         
         private void ClientsGridControlTableView_SelectedItemChanged(object sender, DevExpress.Xpf.Grid.SelectedItemChangedEventArgs e)
         {
-            Logger.Log($"[CLIENT-MATCH] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
+            //Logger.Log($"[CLIENT-MATCH] {System.Reflection.MethodBase.GetCurrentMethod().DeclaringType} {System.Reflection.MethodBase.GetCurrentMethod().Name}");
             Context.EditCommand.Execute(null);
 
         }

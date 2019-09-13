@@ -196,11 +196,6 @@
                                 <dxe:PasswordBoxEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Схема" EditValue="{Binding AppConfig.Schema, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:TextEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
                     </dxr:RibbonPageGroup>
 
 
@@ -222,40 +217,8 @@
                         </dxb:BarEditItem>
                     </dxr:RibbonPageGroup>
 
-
-                    <dxr:RibbonPageGroup Caption="Настрйоки FTP" >
-                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding AppConfig.FtpUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:TextEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.FtpPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:PasswordBoxEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Путь" EditValue="{Binding AppConfig.FtpDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:TextEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-                    </dxr:RibbonPageGroup>
-
-
-                    <!--<dxr:RibbonPageGroup Caption="Настройки EDI">
-                        <dxb:BarEditItem Content="URL" EditValue="{Binding AppConfig.EdiUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="320">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:TextEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Таймаут" EditValue="{Binding AppConfig.EdiTimeout, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120" EditHorizontalAlignment="Left">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:TextEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-                    </dxr:RibbonPageGroup>-->
-
-
+                    
+                    
                     <dxr:RibbonPageGroup Caption="Прокси">
                         <dxb:BarEditItem Content="Юзер" EditValue="{Binding AppConfig.ProxyUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
                             <dxb:BarEditItem.EditSettings>
@@ -275,18 +238,22 @@
                     </dxr:RibbonPageGroup>
 
 
-                    <dxr:RibbonPageGroup Caption="Логи">
+                    <dxr:RibbonPageGroup Caption="Общие">
                         <dxb:BarEditItem EditValue="{Binding AppConfig.EnableLogging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditHorizontalAlignment="Left">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:CheckEditSettings Content="Логировать"/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem EditValue="{Binding Path=(settings:AppConfigHandler.LogPath), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="290">
+                        <dxb:BarEditItem Content="Логи" EditValue="{Binding Path=(settings:AppConfigHandler.LogPath), Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="260">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarButtonItem Content="Открыть в проводнике" Glyph="{dx:DXImageOffice2013 Image=Open_32x32.png}" Command="{Binding OpenLogFolderCommand}"/>
+                        <dxb:BarEditItem Content="Документы" EditValue="{Binding AppConfig.FtpDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="260">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:TextEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
                     </dxr:RibbonPageGroup>
 
                     <dxr:RibbonPageGroup Caption="Интерфейс">
@@ -336,6 +303,28 @@
             
         </dxr:RibbonControl>
        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+ 
 
         <Grid   Height="Auto" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -344,34 +333,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="300"/>
             </Grid.RowDefinitions>
-
-            <!--<DockPanel Grid.Row="0" LastChildFill="True">
-
-                <dxb:BarContainerControl ContainerType="Left" Width="Auto" DockPanel.Dock="Top">
-                    <dxb:ToolBarControl RotateWhenVertical="True" GlyphSize="Small">
-
-                        
-                    </dxb:ToolBarControl>
-
-                </dxb:BarContainerControl>
-            </DockPanel>-->
-
-
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
 
             <dxg:GridControl Name="DocumentsDataGrid" ShowBorder="False"
                           ItemsSource="{Binding Path=Documents}"
@@ -548,6 +509,22 @@
                       ShowsPreview="False"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Center"/>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
             <dxg:GridControl Name="DocumentDetailsDataGrid" Grid.Row="3" 
                               ItemsSource="{Binding Path=SelectedDocument.Details}"

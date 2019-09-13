@@ -7,7 +7,7 @@
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
         xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:settings="clr-namespace:EdiClient.AppSettings"
-        dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
+        dx:ThemeManager.ThemeName="VS2017Blue"
       xmlns:local="clr-namespace:EdiClient.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -23,18 +23,15 @@
     <Grid x:Name="mainMatchesGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
-            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        
-        <StackPanel Orientation="Horizontal">
+
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
             <Button Name="LoadDataButton" Grid.Column="0" ToolTip="Загрузить данные" Command="{Binding LoadDataCommand}" Style="{StaticResource ControlButtons}">
                 <Image Source="~\..\..\Images\refresh.png"/> 
             </Button>
@@ -46,14 +43,11 @@
             </Button>
         </StackPanel>
 
-        <Label Grid.Row="1" Content="Каталог товаров TRADER" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-
-
         <dxg:GridControl Name="GoodsDataGrid" 
                       ItemsSource="{Binding Path=GoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                        
-                      Grid.Row="2"                        
-                      AutoGenerateColumns="None" >
+                      SelectedItem="{Binding Path=SelectedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      AutoGenerateColumns="None"      
+                      Grid.Row="1">
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="ID" Header="Id"/>
                 <dxg:GridColumn FieldName="NAME" Header="Наименование"/>
@@ -71,14 +65,17 @@
             </dxg:GridControl.View>
         </dxg:GridControl>
 
-        <Label Grid.Row="3" Content="Не сопоставленные товары" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
-
+        <GridSplitter Grid.Row="2"
+                      Height="5"
+                      ShowsPreview="False"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"/>
 
         <dxg:GridControl Name="FailedGoodDataGrid" 
                       ItemsSource="{Binding Path=FailedGoodsList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                        
-                      Grid.Row="4"                       
-                      AutoGenerateColumns="None"  >
+                      SelectedItem="{Binding Path=SelectedFailedGood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                             
+                      AutoGenerateColumns="None"       
+                           Grid.Row="3">
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="ITEM_DESCRIPTION" Header="Наименование"/>
                 <dxg:GridColumn FieldName="EAN" Header="Штрих-код"/>
@@ -97,15 +94,17 @@
                                NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
-        
-        <Label Grid.Row="5" Content="Товары имеющие связь с нашими" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
 
-        <dxg:GridControl Name="MatchesDataGrid" 
-                  ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                    
-                  Grid.Row="6"  
-                  Margin="5"                   
-                  AutoGenerateColumns="None"  >
+        <GridSplitter Grid.Row="4"
+                      Height="5"
+                      ShowsPreview="False"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"/>
+
+        <dxg:GridControl Name="MatchesDataGrid"  Grid.Row="5"
+                          ItemsSource="{Binding Path=MatchesList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"    
+                          AutoGenerateColumns="None"  >
             <dxg:GridControl.Columns>
                 <dxg:GridColumn FieldName="CUSTOMER_GLN" Header="ГЛН"/>
                 <dxg:GridColumn FieldName="CUSTOMER_ARTICLE" Header="Код покупателя"/>
@@ -123,12 +122,6 @@
                                NavigationStyle="Row"/>
             </dxg:GridControl.View>
         </dxg:GridControl>
-        
-        <!--<DataGrid 
-                  >
-            <DataGrid.Columns>
-            </DataGrid.Columns>
-        </DataGrid>-->
 
 
     </Grid>

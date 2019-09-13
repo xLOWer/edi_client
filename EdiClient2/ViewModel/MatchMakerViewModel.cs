@@ -171,12 +171,12 @@ namespace EdiClient.ViewModel
 
         public Command MakeMatchingCommand => new Command((o) =>
         {
-            Logger.Log($"[MakeMatchingCommand]P_CUSTOMER_GLN={SelectedRelationship.partnerIln}|P_ID_GOOD={SelectedGood.ID}|P_EAN={SelectedFailedGood.EAN}");
 
             if (SelectedFailedGood == null) { Error("Не выбран пункт с не сопоставленным товаром"); return; }
             if (SelectedGood == null) { Error("Не выбран пункт с товаром"); return; }
             if (String.IsNullOrEmpty(SelectedFailedGood.EAN) || String.IsNullOrEmpty(SelectedGood.ID))
             { Error("Код покупателя или идентификатор товара отсутствует"); return; }
+            Logger.Log($"[MakeMatchingCommand]P_CUSTOMER_GLN={SelectedRelationship.partnerIln}|P_ID_GOOD={SelectedGood.ID}|P_EAN={SelectedFailedGood.EAN}");
             try
             {
                 DbService.ExecuteCommand(new OracleCommand()
@@ -188,7 +188,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_EAN", OracleDbType.NVarChar, SelectedFailedGood.EAN, ParameterDirection.Input),
                         },
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_LINK"
+                    CommandText = "EDI.EDI_MANAGER.MAKE_GOOD_LINK"
                 });
             }
             catch (Exception ex) { Error(ex); }
@@ -210,7 +210,7 @@ namespace EdiClient.ViewModel
                             new OracleParameter("P_EAN", OracleDbType.NVarChar, SelectedMatch.EAN, ParameterDirection.Input)
                         },
                     CommandType = CommandType.StoredProcedure,
-                    CommandText = (AppConfigHandler.conf.Schema + ".") + "EDI_MANAGER.MAKE_GOOD_UNLINK"
+                    CommandText = "EDI.EDI_MANAGER.MAKE_GOOD_UNLINK"
                 });
 
                 GetFailedGoods();

@@ -95,7 +95,7 @@ namespace EdiClient.AppSettings
 
     public class AppConfig
     {
-        public const string AppVersion = "3.4.0.28";
+        public const string AppVersion = "3.4.0.29";
         public static string ThemeName { get; set; } = "VS2017Light"; //VS2017Light  MetropolisDark
 
         public string DbUserName { get; set; } // имя пользователя
@@ -116,8 +116,7 @@ namespace EdiClient.AppSettings
         //public bool?  EnableAutoHandler { get; set; } = false; // включен ли автообработчик (по-умолч. false)
         //public int?   AutoHandlerPeriod { get; set; } = 10; // время цикла(в минутах) автообработчика (по-умолч. 10)
         public bool EnableLogging { get; set; } = false; // включено ли логирование (выключено по-умолч.)
-
-        public string Schema { get; set; }
+        
         public string connString => $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {DbHost})(PORT = {DbPort}))(CONNECT_DATA = "
                                + $"(SERVER = DEDICATED)(SERVICE_NAME = {DbSID})));Password={DbUserPassword};User ID={DbUserName}";
 

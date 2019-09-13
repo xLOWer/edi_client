@@ -6,7 +6,7 @@
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
         xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:settings="clr-namespace:EdiClient.AppSettings"
-        dx:ThemeManager.ThemeName="{Binding Path=(settings:AppConfig.ThemeName)}"
+        dx:ThemeManager.ThemeName="MetropolisLight"
       xmlns:local="clr-namespace:EdiClient.View"
       xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
       mc:Ignorable="d" 

@@ -20,7 +20,7 @@ namespace EdiClient
 
         public MainWindow()
         {
-            ThemeManager.SetThemeName(this, "VS2017Light");
+            ThemeManager.SetThemeName(this, AppConfig.ThemeName);
             InitializeComponent();
             Context = new MainViewModel();
             DataContext = Context;
