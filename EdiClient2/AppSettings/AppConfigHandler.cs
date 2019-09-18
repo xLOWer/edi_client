@@ -95,7 +95,7 @@ namespace EdiClient.AppSettings
 
     public class AppConfig
     {
-        public const string AppVersion = "3.4.0.29";
+        public const string AppVersion = "3.4.1.30";
         public static string ThemeName { get; set; } = "VS2017Light"; //VS2017Light  MetropolisDark
 
         public string DbUserName { get; set; } // имя пользователя

@@ -386,43 +386,9 @@ namespace EdiClient.ViewModel
 
         public void GetNewOrders(DateTime dateFrom, DateTime dateTo)
         {
-
-
-
-
-
-
-
-
             if (SelectedRelationship == null) return;
-            if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
-
-            List<Model.WebModel.DocumentInfo> NewOrders
-               = EdiService.ListMBEx(SelectedRelationship.partnerIln
-                                     , SelectedRelationship.documentType, "", "", ""
-                                     , ToEdiDateString(dateFrom)
-                                     , ToEdiDateString(dateTo)
-                                     , "", "", "");
-
-            NewOrders = NewOrders.Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).ToList();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            if (SelectedRelationship == null) return;
-            if (SelectedRelationship.partnerIln == null || SelectedRelationship.documentType == null) return;
-
+            if (string.IsNullOrEmpty(SelectedRelationship.partnerIln)) return;
+                        
             List<string> sqls = new List<string>();
             List<WIN32_FIND_DATA> files = new List<WIN32_FIND_DATA>();
             string dir = AppConfig.FtpDir+SelectedRelationship.partnerIln;
@@ -432,11 +398,7 @@ namespace EdiClient.ViewModel
             WIN32_FIND_DATA w32file = new WIN32_FIND_DATA();
             SafeFileHandle hFile = null;
             DateTime w32fileCreateTime, minDate = DateTime.MaxValue, maxDate = DateTime.MinValue;
-
-            int frCount = 0, ftCount = 0, docaCount = 0, detaCount = 0, failCount = 0, ctCount = 0;
-            uint btCount = 0;
-            string fails = "";
-
+            
             Documents.Clear();
             GetDocuments(dateFrom, dateTo);
 
@@ -444,7 +406,6 @@ namespace EdiClient.ViewModel
             FindNextFile(h, out w32file); // пропускаем указатель на родительский каталог
             while (FindNextFile(h, out w32file))
             {
-                ftCount++;
                 w32fileCreateTime = DateTime.FromFileTime((((long)w32file.ftCreationTime.dwHighDateTime) << 32) | ((uint)w32file.ftCreationTime.dwLowDateTime));
                 if (!(w32fileCreateTime > dateFrom.AddHours(-1) && w32fileCreateTime < dateTo.AddHours(1))) continue;
                 // 1 - в скобках раньше, 0 - равно, -1 - позже
@@ -453,24 +414,22 @@ namespace EdiClient.ViewModel
                 files.Add(w32file);
             }
             FindClose(h);
-
-
-
+            
+            
             foreach (var w32f in files)
             {
                 var name = w32f.cFileName;
                 var size = w32f.nFileSizeLow;
-                frCount++;
-                hFile = CreateFile(dir+"\\"+name, DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
+                hFile = CreateFile(dir + "\\" + name, DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
                 if (hFile.IsInvalid)
                 {
                     int Err = Marshal.GetLastWin32Error();
-                    failCount++;
-                    fails += "\n#"+failCount+" : Win32Err#"+Err + ", file: " + name+"\n" + new System.ComponentModel.Win32Exception(Err).Message+"\n";
+                    throw new System.ComponentModel.Win32Exception(Err);
+                    //failCount++;
+                    //fails += "\n#" + failCount + " : Win32Err#" + Err + ", file: " + name + "\n" + new System.ComponentModel.Win32Exception(Err).Message + "\n";
                     continue;
                 }
-
-                btCount += size;
+                
                 aBuffer = new byte[size];
                 ReadFile(hFile, aBuffer, size, 0, IntPtr.Zero);
                 hFile.Close();
@@ -482,7 +441,6 @@ namespace EdiClient.ViewModel
 
                 if (!Documents.Any(x => order.OrderHeader.OrderNumber == x.ORDER_NUMBER))
                 {
-                    ctCount++;
                     commands.Add(new OracleCommand()
                     {
                         Parameters = {
@@ -501,12 +459,9 @@ namespace EdiClient.ViewModel
                         CommandType = CommandType.StoredProcedure,
                         CommandText = "EDI.Edi_MANAGER.ADD_ORDER"
                     });
-                    docaCount++;
                     if (order.OrderLines.Lines.Count > 0)
                         foreach (var line in order.OrderLines.Lines)
                         {
-                            detaCount++;
-                            //Logger.Log($"[TODB] EAN={line?.LineItem?.EAN ?? ""}, UNIT_PRICE={line?.LineItem?.OrderedUnitGrossPrice ?? ""}, AMOUNT={line?.LineItem?.OrderedGrossAmount}, QUANTITY={line?.LineItem?.OrderedQuantity ?? "0"}");
                             commands.Add(new OracleCommand()
                             {
                                 Parameters =
@@ -535,27 +490,22 @@ namespace EdiClient.ViewModel
                 }
 
             }
-            ExecuteCommand(commands);
-            GetDocuments(dateFrom, dateTo);
-
-            commands.Clear();
-            RaiseAllProps();
-
-            Task.Factory.StartNew(() =>
+            try
             {
-                string result = "[GetNewOrders]args|dateFrom="+dateFrom.ToShortDateString()+"|dateTo="+dateTo.ToShortDateString()+"|"+
-"size="+Math.Round((double)btCount / 1024)+"Kb|"+
-"read="+ftCount+"|handled="+frCount+"|orders="+ctCount+"|minDate="+minDate.ToShortDateString()+" "+minDate.ToLongTimeString()+"|"+
-"maxDate=" + maxDate.ToShortDateString()+" " + maxDate.ToLongTimeString()+"doc=" + docaCount+"|detail="+detaCount+"\n"+fails;
-                Logger.Log(result);
-                //MessageBox.Show(result);
-            });
+                ExecuteCommand(commands);
+                GetDocuments(dateFrom, dateTo);
+                commands.Clear();
+                RaiseAllProps();                
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
 
         internal void GetDocuments(DateTime dateFrom, DateTime dateTo)
         {
-            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             var sql = Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
             Documents = DocumentSelect<Document>(sql);
                 if (Documents.Count > 0)
