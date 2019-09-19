@@ -1,6 +1,7 @@
 ﻿using EdiClient.Services;
 using System;
 using System.IO;
+using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
 using static EdiClient.Services.Utils.Utilites;
@@ -21,8 +22,8 @@ namespace EdiClient.AppSettings
             string log = "[APPCONFIG]ConfigureEdi";
             try { EdiService.Configure(); }
             catch (Exception ex) { Error(ex); }
-            log += $"|EdiUser=" + conf.EdiUser;
-            log += $"|EdiGLN=" + conf.EdiGLN;
+            log += $"|EdiUser=" + conf.EdiUser
+            + $"|EdiGLN=" + conf.EdiGLN;
             Logger.Log(log);
         }
 
@@ -37,6 +38,14 @@ namespace EdiClient.AppSettings
             log += $"|DbSID=" + conf.DbSID;
             log += $"|DbPort=" + conf.DbPort;
             Logger.Log(log);
+            var a = DbService.SelectSingleValue(@"SELECT ('LANGUAGE: ""'||(SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_LANGUAGE')||
+'""|TERRITORY: ""' || (SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_TERRITORY') ||
+'""|NUMERIC_CHARACTERS: ""' || (SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_NUMERIC_CHARACTERS') ||
+'""|DATE_FORMAT: ""' || (SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_DATE_FORMAT')||
+'""|TIME_FORMAT: ""' || (SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_TIME_FORMAT')||
+'""|ISO_CURRENCY: ""' || (SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_ISO_CURRENCY')) nls FROM dual");
+            Logger.Log(a);
+            //MessageBox.Show(a);
         }
 
         public static void Load()
@@ -95,7 +104,7 @@ namespace EdiClient.AppSettings
 
     public class AppConfig
     {
-        public const string AppVersion = "3.4.1.30";
+        public const string AppVersion = "3.5.0.31";
         public static string ThemeName { get; set; } = "VS2017Light"; //VS2017Light  MetropolisDark
 
         public string DbUserName { get; set; } // имя пользователя
@@ -113,8 +122,7 @@ namespace EdiClient.AppSettings
         public string EdiGLN { get; set; } // GLN
         public string EdiUrl { get; set; } // путь до платформы
 
-        //public bool?  EnableAutoHandler { get; set; } = false; // включен ли автообработчик (по-умолч. false)
-        //public int?   AutoHandlerPeriod { get; set; } = 10; // время цикла(в минутах) автообработчика (по-умолч. 10)
+        public bool EnableAutoHandler { get; set; } = false; // включен ли автообработчик (по-умолч. false)
         public bool EnableLogging { get; set; } = false; // включено ли логирование (выключено по-умолч.)
         
         public string connString => $"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = {DbHost})(PORT = {DbPort}))(CONNECT_DATA = "

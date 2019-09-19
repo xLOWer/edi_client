@@ -42,8 +42,6 @@ namespace EdiClient.Services
 
         internal static void UpdateData()
         {
-            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-
             if (!string.IsNullOrEmpty(AppConfigHandler.conf.EdiPassword) && !string.IsNullOrEmpty(AppConfigHandler.conf.EdiGLN) && !string.IsNullOrEmpty(AppConfigHandler.conf.EdiUser))
             {
                 var rl = GetRelationships() ?? new List<Relation>();
@@ -53,7 +51,6 @@ namespace EdiClient.Services
                 SelectedRelationship = SelectedRelationship ?? (Relationships[0]);
                 RelationshipCount = Relationships.Count;
             }
-
         }
 
         internal static EDIWebServicePortTypeClient Configure(EndpointAddress _address = null)
@@ -158,28 +155,26 @@ namespace EdiClient.Services
         }
 
 
-        //internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
-        //{
-        //    //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-        //    var ser = new XmlSerializer(typeof(TModel));
-        //    retRes returnedResult = null;
+        internal static List<TModel> Receive<TModel>(string partnerILN, string documentType, string trackingId, string documentStandard, string changeDocumentStatus, int timeout = 5000)
+        {
+            //Logger.Log($"[EDI] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
+            var ser = new XmlSerializer(typeof(TModel));
+            retRes returnedResult = null;
 
-        //    returnedResult = Client?.receive(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
-            
-        //    if (returnedResult == null) Error("Нет соединения с edisoft");
+            returnedResult = Client?.receive(AppConfigHandler.conf.EdiUser, AppConfigHandler.conf.EdiPassword, partnerILN, documentType, trackingId, documentStandard, changeDocumentStatus, timeout);
 
-        //    if (returnedResult?.res == "00000000")
-        //    {                
-        //        var xml = XmlService<TModel>.Deserialize(returnedResult.cnt);
-        //        //Logger.LogXml(returnedResult.cnt, $"{trackingId}__{partnerILN}.txt");
-        //        //Logger.Log($"[RECEIVE {typeof(TModel).Name}]" );
-        //        return xml;
-        //    }
-        //    else
-        //        MessageBox.Show(ResponseErrorHandler(returnedResult));
+            if (returnedResult == null) Error("Нет соединения с edisoft");
 
-        //    return null;
-        //}
+            if (returnedResult?.res == "00000000")
+            {
+                var xml = XmlService<TModel>.Deserialize(returnedResult.cnt);
+                return xml;
+            }
+            else
+                MessageBox.Show(ResponseErrorHandler(returnedResult));
+
+            return null;
+        }
 
 
         internal static void Send(string partnerILN, string documentType, string documentVersion, string documentStandard, string documentTest, string controlNumber, string documentContent, int timeout = 5000)

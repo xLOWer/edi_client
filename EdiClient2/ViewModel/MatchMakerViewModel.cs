@@ -4,15 +4,8 @@ using EdiClient.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows;
-using System.Linq;
 using System.Data;
-using System.Threading.Tasks;
 using EdiClient.View;
-using System.Windows.Controls;
-using System.Windows.Media;
-using EdiClient.AppSettings;
-using System.Reflection;
 using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.ViewModel

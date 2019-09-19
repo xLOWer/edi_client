@@ -5,9 +5,7 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Ribbon;
 using EdiClient.AppSettings;
-using EdiClient.Services;
 using EdiClient.ViewModel;
-using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient
 {
@@ -28,6 +26,7 @@ namespace EdiClient
             try
             {
                 DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayout.xml");
+                DocumentDetailsDataGrid.RestoreLayoutFromXml("Save_GridLayoutDetails.xml");
                 //Context.RefreshRelationshipsCommand.Execute(SelectedRelationship_BarEditItem);
 
             }
@@ -103,11 +102,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", "Лиценз�
         private void Save_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
             DocumentsDataGrid.SaveLayoutToXml("Save_GridLayout.xml");
+            DocumentsDataGrid.SaveLayoutToXml("Save_GridLayoutDetails.xml");
         }
 
         private void Load_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
             DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayout.xml");
+            DocumentsDataGrid.RestoreLayoutFromXml("Save_GridLayoutDetails.xml");
         }
 
     }

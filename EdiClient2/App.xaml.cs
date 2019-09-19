@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using EdiClient.AppSettings;
 using EdiClient.Services;
+using EdiClient.Services.Utils;
 using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient
@@ -26,7 +27,9 @@ namespace EdiClient
             //Logger.Log("========== START INIT APPLICATION ==========");
             AppConfigHandler.Load();
             AppConfigHandler.ConfigureEdi();
+            EdiService.UpdateData();
             AppConfigHandler.ConfigureOracle();
+            Logger.Run();
             //Logger.Log("========== END INIT APPLICATION ==========");            
             
         }        

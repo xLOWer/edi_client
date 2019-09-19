@@ -5,10 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using EdiClient.View;
 using static EdiClient.Model.WebModel.RelationResponse;
-using EdiClient.AppSettings;
-using System.Reflection;
 using static EdiClient.Services.Utils.Utilites;
 
 namespace EdiClient.ViewModel

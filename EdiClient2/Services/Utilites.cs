@@ -1,10 +1,12 @@
 ﻿using EdiClient.AppSettings;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
@@ -41,13 +43,62 @@ namespace EdiClient.Services.Utils
 
         public static class Logger
         {
+            // коллекция в которой хранится очередь на запись в лог
+            private static BlockingCollection<string> log = new BlockingCollection<string>();
+
             private static string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             private static string dirName = "EdiClient";
             private static string fileName = "EdiClientLog.txt";
             private static string fullPath => Path.GetFullPath($"{directoryPath}\\{dirName}\\{fileName}");
 
+            private static Thread[] threads;
+
+            public static void Run()
+            {
+                threads = new[] { new Thread(Consumer) };
+                foreach (var t in threads)
+                    t.Start();
+            }
+
+            public static void Stop() // останавливает consumer
+            {
+                log.CompleteAdding();
+
+                foreach (var t in threads)
+                    t.Join();
+            }
+
+            // в блокировочную коллекцию ставим в очередь сообщения для записи в лог
+            public static void Log(string msg)
+            {
+                log.Add(msg);
+            }
+
+
+            private static void Consumer()
+            {
+                foreach (var s in log.GetConsumingEnumerable())
+                {
+                    WriteFile(s);
+                }
+            }
+
+            public static void WriteFile(string msg)
+            {
+                if (!AppConfigHandler.conf.EnableLogging) return;
+                if (string.IsNullOrEmpty(msg)) return;
+                string message = $"[{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}] "
+                    + $"{msg}\r\n";
+                int c = message.Count();
+                using (var stream = new FileStream(fullPath, FileMode.Append))
+                {
+                    stream.Write(Encoding.Default.GetBytes(message), 0, c);
+                    stream.Close();
+                }
+            }
+
             public static string Read()
-            {            
+            {
                 var log = "";
                 using (var stream = new FileStream(fullPath, FileMode.Open))
                 {
@@ -58,20 +109,6 @@ namespace EdiClient.Services.Utils
                     stream.Close();
                 }
                 return log;
-            }
-
-            public static void Log(string msg)
-            {
-                if (!AppConfigHandler.conf.EnableLogging) return;
-                if (string.IsNullOrEmpty(msg)) return;
-                string message = $"[{DateTime.UtcNow.ToShortDateString()} {DateTime.UtcNow.ToLongTimeString()}] "
-                    + $"{msg}\r\n";
-                int c = message.Count();
-                using (var stream = new FileStream(fullPath, FileMode.Append))
-                {
-                    stream.Write(Encoding.Default.GetBytes(message), 0, c);
-                    stream.Close();
-                }
             }
 
             public static void LogXml(string xml, string fileName)

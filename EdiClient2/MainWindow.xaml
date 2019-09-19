@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-        xmlns:dxl="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
         xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
         xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
@@ -13,7 +12,6 @@
         xmlns:local="clr-namespace:EdiClient"
         xmlns:services="clr-namespace:EdiClient.Services"
         xmlns:conv="clr-namespace:EdiClient.Services.Converters"
-        xmlns:utils="clr-namespace:EdiClient.Services.Utils"
         xmlns:settings="clr-namespace:EdiClient.AppSettings"
         dx:ThemeManager.ThemeName="{Binding AppConfig.ThemeName}"
         mc:Ignorable="d" 
@@ -107,6 +105,68 @@
                                            IsEnabled="{Binding SelectedDocument.IsReadyToTrader}"
                                            Glyph="{dx:DXImageOffice2013 Image=AddFile_32x32.png}" />
 
+                    </dxr:RibbonPageGroup>
+                    
+                    
+                    <dxr:RibbonPageGroup Caption="Таблица документов">
+
+                        <dxb:BarEditItem Content="Автопоиск" EditValue="{Binding ElementName=DocumentsDataGrid, Path=View.ShowAutoFilterRow, Mode=TwoWay}">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+
+                        <dxb:BarEditItem Content="Группировка" EditValue="{Binding ElementName=DocumentsDataGrid, Path=View.ShowGroupPanel, Mode=TwoWay}">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+
+                        <dxb:BarButtonItem Content="Ширина столбцов" 
+                                           RibbonStyle="Large"
+                                           Command="{Binding Commands.BestFitColumns, ElementName=view1}" 
+                                           Glyph="{dx:DXImageOffice2013 Image=Stretch_32x32.png}"/>
+                        <dxb:BarButtonItem Content="Выбор столбцов" 
+                                           RibbonStyle="Large"
+                                           Command="{Binding Commands.ShowColumnChooser, ElementName=view1}" 
+                                           Glyph="{dx:DXImageOffice2013 Image=CustomizeGrid_32x32.png}"/>
+
+                    </dxr:RibbonPageGroup>
+
+
+                    <dxr:RibbonPageGroup Caption="Таблица товаров">
+
+                        <dxb:BarEditItem Content="Автопоиск" EditValue="{Binding ElementName=DocumentDetailsDataGrid, Path=View.ShowAutoFilterRow, Mode=TwoWay}">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+
+                        <dxb:BarEditItem Content="Группировка" EditValue="{Binding ElementName=DocumentDetailsDataGrid, Path=View.ShowGroupPanel, Mode=TwoWay}">
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+
+                        <dxb:BarButtonItem Content="Ширина столбцов" 
+                                           RibbonStyle="Large"
+                                           Command="{Binding Commands.BestFitColumns, ElementName=view2}" 
+                                           Glyph="{dx:DXImageOffice2013 Image=Stretch_32x32.png}"/>
+                        <dxb:BarButtonItem Content="Выбор столбцов" 
+                                           RibbonStyle="Large"
+                                           Command="{Binding Commands.ShowColumnChooser, ElementName=view2}" 
+                                           Glyph="{dx:DXImageOffice2013 Image=CustomizeGrid_32x32.png}"/>
+
+                    </dxr:RibbonPageGroup>
+                    
+                    
+
+                </dxr:RibbonPage>
+
+                <dxr:RibbonPage Caption="Служебное">
+
+                    <dxr:RibbonPageGroup Caption="Служебное">
+
                         <dxb:BarButtonItem Content="Ответ на заказ" ToolTip="Отправить ответ на заказ"
                                            Command="{Binding SendORDRSPCommand}"
                                            RibbonStyle="Large"
@@ -128,34 +188,6 @@
                                            KeyGesture="Ctrl+Shift+R"/>
 
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Управление видом">
-
-                        <dxb:BarEditItem Content="Строка автопоиска" EditValue="{Binding ElementName=DocumentsDataGrid, Path=View.ShowAutoFilterRow, Mode=TwoWay}">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:CheckEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-
-                        <dxb:BarEditItem Content="Панель группировки" EditValue="{Binding ElementName=DocumentsDataGrid, Path=View.ShowGroupPanel, Mode=TwoWay}">
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:CheckEditSettings/>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
-
-                        <dxb:BarButtonItem Content="Улучшить ширину столбцов" 
-                                           RibbonStyle="Large"
-                                           Command="{Binding Commands.BestFitColumns, ElementName=view1}" 
-                                           Glyph="{dx:DXImageOffice2013 Image=Stretch_32x32.png}"/>
-                        <dxb:BarButtonItem Content="Выбор столбцов" 
-                                           RibbonStyle="Large"
-                                           Command="{Binding Commands.ShowColumnChooser, ElementName=view1}" 
-                                           Glyph="{dx:DXImageOffice2013 Image=CustomizeGrid_32x32.png}"/>
-                        <dxb:BarButtonItem Content="Показать поиск" 
-                                           RibbonStyle="Large"
-                                           Command="{Binding Commands.ShowSearchPanel, ElementName=view1}" 
-                                           Glyph="pack://application:,,,/EdiClient;component/Images/search.png"/>
-
-                    </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
                 
                 
@@ -163,21 +195,28 @@
 
                     <dxr:RibbonPageGroup Caption="Настройки">
                         <dxb:BarButtonItem Command="{Binding SaveConfigCommand}" Glyph="{dx:DXImageOffice2013 Image=Save_32x32.png}" RibbonStyle="Large" Content="Сохранить"/>
+
+                        <dxb:BarEditItem EditValue="{Binding AppConfig.EnableAutoHandler, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditHorizontalAlignment="Left" >
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:CheckEditSettings Content="Автообработка"/>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        
                     </dxr:RibbonPageGroup>
 
 
                     <dxr:RibbonPageGroup Caption="Подключение к БД">
-                        <dxb:BarEditItem Content="Хост" EditValue="{Binding AppConfig.DbHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                        <dxb:BarEditItem Content="Хост" EditValue="{Binding AppConfig.DbHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Порт" EditValue="{Binding AppConfig.DbPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                        <dxb:BarEditItem Content="Порт" EditValue="{Binding AppConfig.DbPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Сервис" EditValue="{Binding AppConfig.DbSID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                        <dxb:BarEditItem Content="Сервис" EditValue="{Binding AppConfig.DbSID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
@@ -186,12 +225,12 @@
 
 
                     <dxr:RibbonPageGroup Caption="Пользователь БД">
-                        <dxb:BarEditItem Content="Логин" EditValue="{Binding AppConfig.DbUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                        <dxb:BarEditItem Content="Логин" EditValue="{Binding AppConfig.DbUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.DbUserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="100">
+                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.DbUserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:PasswordBoxEditSettings/>
                             </dxb:BarEditItem.EditSettings>
@@ -200,17 +239,17 @@
 
 
                     <dxr:RibbonPageGroup Caption="Пользователь EDI" >
-                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding AppConfig.EdiUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding AppConfig.EdiUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.EdiPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.EdiPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:PasswordBoxEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="GLN" EditValue="{Binding AppConfig.EdiGLN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                        <dxb:BarEditItem Content="GLN" EditValue="{Binding AppConfig.EdiGLN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
@@ -220,12 +259,12 @@
                     
                     
                     <dxr:RibbonPageGroup Caption="Прокси">
-                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding AppConfig.ProxyUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                        <dxb:BarEditItem Content="Юзер" EditValue="{Binding AppConfig.ProxyUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.ProxyUserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="120">
+                        <dxb:BarEditItem Content="Пароль" EditValue="{Binding AppConfig.ProxyUserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="130">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:PasswordBoxEditSettings/>
                             </dxb:BarEditItem.EditSettings>
@@ -239,7 +278,8 @@
 
 
                     <dxr:RibbonPageGroup Caption="Общие">
-                        <dxb:BarEditItem EditValue="{Binding AppConfig.EnableLogging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditHorizontalAlignment="Left">
+                        
+                        <dxb:BarEditItem EditValue="{Binding AppConfig.EnableLogging, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditHorizontalAlignment="Left" >
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:CheckEditSettings Content="Логировать"/>
                             </dxb:BarEditItem.EditSettings>
@@ -249,11 +289,11 @@
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <dxb:BarEditItem Content="Документы" EditValue="{Binding AppConfig.FtpDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="260">
+                        <!--<dxb:BarEditItem Content="Документы" EditValue="{Binding AppConfig.FtpDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EditWidth="260">
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:TextEditSettings/>
                             </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
+                        </dxb:BarEditItem>-->
                     </dxr:RibbonPageGroup>
 
                     <dxr:RibbonPageGroup Caption="Интерфейс">
@@ -583,7 +623,8 @@
                 </dxg:GridControl.Bands>
 
                 <dxg:GridControl.View>
-                    <dxg:TableView AllowPerPixelScrolling="True" 
+                    <dxg:TableView x:Name="view2"
+                                AllowPerPixelScrolling="True" 
                                ShowSearchPanelMode="Always"
                                ShowGroupPanel="False" 
                                ShowAutoFilterRow="True"  
@@ -649,19 +690,6 @@
                 <dxb:BarEditItem Content="{Binding LoadedDocsCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <dxb:BarItemSeparator/>
 
-                <!--<dxb:BarStaticItem Content="Обработано:"/>
-                <dxb:BarEditItem Content="{Binding RanToCompletionCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <dxb:BarItemSeparator/>
-
-                <dxb:BarStaticItem Content="Задач:"/>
-                <dxb:BarEditItem Content="{Binding tasksCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <dxb:BarItemSeparator/>
-
-                <dxb:BarStaticItem Content="Потоки:"/>
-                <dxb:BarEditItem Content="{Binding RunnedCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <dxb:BarItemSeparator/>-->
-                
-                
                 <dxb:BarStaticItem Content="{Binding Time}" Alignment="Far"/>
 
 

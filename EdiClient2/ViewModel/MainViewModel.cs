@@ -16,41 +16,66 @@ using static EdiClient.Services.DbService;
 using static EdiClient.Model.WebModel.RelationResponse;
 using static EdiClient.Services.Utils.Utilites;
 using EdiClient.View;
-using static System.Net.WebRequestMethods;
-using System.Net;
-using System.IO;
-using System.Text;
-using EdiClient.Model.WebModel;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
-using System.Diagnostics;
-using System.Windows;
+using System.Threading;
 
 namespace EdiClient.ViewModel
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+
+        public MainViewModel()
+        {
+            DateFrom = DateTime.Today;
+            DateTo = DateTime.Today.AddDays(1);
+
+            tokenSource2 = new CancellationTokenSource();
+            ct = tokenSource2.Token;
+
+            AutoHandlerTask = new Task(() =>
+            {
+                int c1 = 0, c2 = 0, c3 = 0;
+                while (true)
+                {
+                    // если токен запросил завершение
+                    if (ct.IsCancellationRequested) tokenSource2.Cancel();
+                    c1 = GetNewOrders();
+                    if (ct.IsCancellationRequested) tokenSource2.Cancel();
+                    c2 = SendOrderResponses();
+                    if (ct.IsCancellationRequested) tokenSource2.Cancel();
+                    c3 = SendDespatchAdvice();
+                    Time = $"[{DateTime.Now.ToShortTimeString()}] ORDERS: {c1} | ORDRSP: {c2} | DESADV: {c3}";
+                    Logger.Log($"[AUTOHANDLER]ORDERS:{c1}|ORDRSP:{c2}|DESADV: {c3}");
+                    NotifyPropertyChanged("Time");
+                    RaiseAllProps();
+                    Thread.Sleep(1000*60*10);
+                }
+            }, tokenSource2.Token);
+
+            AppConfig = AppConfigHandler.conf;
+            if (AppConfig.EnableAutoHandler) AutoHandlerTask.Start();
+            RaiseAllProps();
+        }
+
+        private Task AutoHandlerTask;
+        private CancellationTokenSource tokenSource2;
+        private CancellationToken ct;
 
         public Command EditValueChangedCommand => new Command((o) =>
         {
             ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
-            EdiService.SelectedRelationship = cmb.SelectedItem as Relation;
+            SelectedRelationship = cmb.SelectedItem as Relation;
         });
 
         public Command<BarEditItem> RefreshRelationshipsCommand => new Command<BarEditItem>((o) =>
         {
             UpdateData();
             ComboBoxEdit cmb = ((o as BarEditItem).Links[0] as BarEditItemLink).Editor as ComboBoxEdit;
-            cmb.ItemsSource = EdiService.Relationships;
+            cmb.ItemsSource = Relationships;
             RaiseAllProps();
         });
 
         public Command SaveConfigCommand => new Command((o) =>
         {
-            //Logger.Log($"[CONFIG SAVED]");
             RaiseAllProps();
             AppConfigHandler.conf = AppConfig;
             AppConfigHandler.Save();
@@ -58,22 +83,24 @@ namespace EdiClient.ViewModel
             AppConfig = AppConfigHandler.conf;
             AppConfigHandler.ConfigureEdi();
             AppConfigHandler.ConfigureOracle();
+
+            // эта логика необходима для случаев, когда идёт работа нескольких опреаторов
+            // и чтобы не возникало задвоений отправленных или полученных документов
+            // то запускать автообработку надо только на одном компьютере
+            if (AppConfig.EnableAutoHandler)// если стоит галка "автообработка"
+            { // то
+                if(AutoHandlerTask.Status != TaskStatus.Running) // если она НЕ запущена - запустить
+                    AutoHandlerTask.Start();
+            }
+            else
+            {// иначе если НЕ стоит галка "автообработка"
+                if (AutoHandlerTask.Status == TaskStatus.Running) // и она запущена - остановить
+                    tokenSource2.Cancel();
+            }
+
             RaiseAllProps();
         });
-
-
-        public MainViewModel()
-        {
-            DateFrom = DateTime.Today;
-            DateTo = DateTime.Today.AddDays(1);
-            AppConfig = AppConfigHandler.conf;
-            RaiseAllProps();
-        }
-
-        public PriceTypesView _PriceTypesView { get; set; }
-        public MatchMakerView _MatchMakerView { get; set; }
-        public ContractorsMatchView _ContractorsMatchView { get; set; }
-
+        
         public Command OpenPriceTypesViewCommand => new Command((o) =>
        {
            try
@@ -106,154 +133,69 @@ namespace EdiClient.ViewModel
             }
             catch (Exception ex) { Error(ex); }
         });
-
-        public AppConfig AppConfig { get; set; }
-
-
-
-
-
-        private DateTime dateTo;
-        private DateTime dateFrom;
-        private Document selectedDocument;
-        private List<Document> documents;
-        private string _Time = "0";
-
-        public string RunnedCount => tasks?.Where(x => x.Status == TaskStatus.Running)?.Count().ToString() ?? "0";
-        public string tasksCount => tasks?.Count().ToString() ?? "0";
-        public string RanToCompletionCount => tasks?.Where(x => x.Status == TaskStatus.RanToCompletion)?.Count().ToString() ?? "0";
-
-        public Task[] tasks { get; set; }
-
-        public string Time
-        {
-            get { return _Time; }
-            set
-            {
-                if (value != _Time)
-                {
-                    _Time = value;
-                    RaiseAllProps();
-                }
-            }
-        }
-
-        public string LoadedDocsCount =>  Documents.Count().ToString();
-
-
-        public List<Document> Documents
-        {
-            get { return documents ?? new List<Document>(); }
-            set
-            {
-                documents = value;
-                RaiseAllProps();
-            }
-        }
-        public Document SelectedDocument
-        {
-            get { return selectedDocument; }
-            set
-            {
-                selectedDocument = value;
-                RaiseAllProps();
-            }
-        }
-        public DateTime DateFrom
-        {
-            get { return dateFrom; }
-            set
-            {
-                dateFrom = value;
-                RaiseAllProps();
-            }
-        }
-        public DateTime DateTo
-        {
-            get { return dateTo; }
-            set
-            {
-                dateTo = value;
-                RaiseAllProps();
-            }
-        }
-
-
-        protected void NotifyPropertyChanged(string info)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
-        }
-
-
-        public void LogDocument(string name, Document doc)
+               
+        public void LogDocument(string name)
         {            
            Logger.Log("["+name+"] " +
-               "id=" + doc.ID +
-               "|number="+doc.ORDER_NUMBER +
-               "|sender="+doc.SENDER_ILN +
-               "|customer="+doc.CUSTOMER_ILN +
-               "|deliveryp="+doc.DELIVERY_POINT_ILN +
-               "|del_lines="+doc.Details_DeliveryLinesCount +
-               "|ord_lines="+doc.Details_OrderedLinesCount +
-               "|details="+doc.DetailsCount);
+               "id=" + SelectedDocument.ID +
+               "|number="+ SelectedDocument.ORDER_NUMBER +
+               "|sender="+ SelectedDocument.SENDER_ILN +
+               "|customer="+ SelectedDocument.CUSTOMER_ILN +
+               "|deliveryp="+ SelectedDocument.DELIVERY_POINT_ILN +
+               "|del_lines="+ SelectedDocument.Details_DeliveryLinesCount +
+               "|ord_lines="+ SelectedDocument.Details_OrderedLinesCount +
+               "|details="+ SelectedDocument.DetailsCount);
         } 
-
-
+        
         public Command ToTraderCommand => new Command((o) => ActionInTime(()
             => {
                 if (SelectedDocument == null) return;
-                LogDocument("ToTraderCommand", SelectedDocument);
+                LogDocument("ToTraderCommand");
                 CreateTraderDocument(SelectedDocument.ID);
-                GetDocuments(DateFrom, DateTo);
+                GetDocuments();
                 RaiseAllProps();
             }));
-
-
+        
         public Command SendORDRSPCommand => new Command((o) => ActionInTime(()
             => {
                 if (SelectedDocument == null) return;
-                LogDocument("SendORDRSPCommand", SelectedDocument);
-                SendOrdrsp(SelectedDocument);
-                GetDocuments(DateFrom, DateTo);
+                LogDocument("SendORDRSPCommand");
+                SendSelectedOrderResponse(SelectedDocument);
+                GetDocuments();
                 RaiseAllProps();
             }));
        
-
-
         public Command SendDESADVCommand => new Command((o) => ActionInTime(()
             => {
                 if (SelectedDocument == null) return;
-                LogDocument("SendDESADVCommand", SelectedDocument);
-                SendDesadv(SelectedDocument);
-                GetDocuments(DateFrom, DateTo);
+                LogDocument("SendDESADVCommand");
+                SendSelectedDespatchAdvice(SelectedDocument);
+                GetDocuments();
                 RaiseAllProps();
             }));
-
-
+        
         public Command GetDocumentsCommand => new Command((o) => ActionInTime(()
             => {
                 Logger.Log("[GetDocumentsCommand]count="+Documents.Count());
-                GetDocuments(DateFrom, DateTo);
+                GetDocuments();
                 RaiseAllProps();
             }));
-
-
+        
         public Command GetEDIDOCCommand => new Command((o) => ActionInTime(()
             => {
                 //GetRecadv();
-                GetNewOrders(dateFrom, dateTo);
+                GetNewOrders(true);
                 //Documents = GetDocuments(DateFrom, DateTo);
                 RaiseAllProps();
             }));
-
-
+        
         public Command ReloadDocumentCommand => new Command((o) =>
         {
             if (SelectedDocument == null) return;
-            LogDocument("ReloadDocumentCommand", SelectedDocument);
+            LogDocument("ReloadDocumentCommand");
             var sql = "delete from EDI.EDI_DOC WHERE ID = "+SelectedDocument.ID;
             ExecuteLine(sql);
-            GetNewOrders(dateFrom, dateTo);
+            GetNewOrders(true);
             RaiseAllProps();
 
         });
@@ -274,7 +216,6 @@ namespace EdiClient.ViewModel
 
         public void ActionInTime(Action act)
         {
-            //Logger.Log($"{MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name} => {act.Method.Name}");
             var watch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -292,219 +233,9 @@ namespace EdiClient.ViewModel
                 RaiseAllProps();
             }
         }
-
-        private void RaiseAllProps()
-        {
-            foreach(var prop in typeof(MainViewModel).GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                NotifyPropertyChanged(prop.Name);
-            }
-        }
-
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct WIN32_FIND_DATA
-        {
-            public uint dwFileAttributes;
-            public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-            public uint nFileSizeHigh;
-            public uint nFileSizeLow;
-            public uint dwReserved0;
-            public uint dwReserved1;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string cFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-            public string cAlternateFileName;
-        }
-
-
-        [Flags]
-        public enum DesiredAccess : uint
-        {
-            GENERIC_READ = 0x80000000,
-            GENERIC_WRITE = 0x40000000
-        }
-        [Flags]
-        public enum ShareMode : uint
-        {
-            FILE_SHARE_NONE = 0x0,
-            FILE_SHARE_READ = 0x1,
-            FILE_SHARE_WRITE = 0x2,
-            FILE_SHARE_DELETE = 0x4,
-
-        }
-        public enum CreationDisposition : uint
-        {
-            CREATE_NEW = 1,
-            CREATE_ALWAYS = 2,
-            OPEN_EXISTING = 3,
-            OPEN_ALWAYS = 4,
-            TRUNCATE_EXSTING = 5
-        }
-        [Flags]
-        public enum FlagsAndAttributes : uint
-        {
-            FILE_ATTRIBUTES_ARCHIVE = 0x20,
-            FILE_ATTRIBUTE_HIDDEN = 0x2,
-            FILE_ATTRIBUTE_NORMAL = 0x80,
-            FILE_ATTRIBUTE_OFFLINE = 0x1000,
-            FILE_ATTRIBUTE_READONLY = 0x1,
-            FILE_ATTRIBUTE_SYSTEM = 0x4,
-            FILE_ATTRIBUTE_TEMPORARY = 0x100,
-            FILE_FLAG_WRITE_THROUGH = 0x80000000,
-            FILE_FLAG_OVERLAPPED = 0x40000000,
-            FILE_FLAG_NO_BUFFERING = 0x20000000,
-            FILE_FLAG_RANDOM_ACCESS = 0x10000000,
-            FILE_FLAG_SEQUENTIAL_SCAN = 0x8000000,
-            FILE_FLAG_DELETE_ON = 0x4000000,
-            FILE_FLAG_POSIX_SEMANTICS = 0x1000000,
-            FILE_FLAG_OPEN_REPARSE_POINT = 0x200000,
-            FILE_FLAG_OPEN_NO_CALL = 0x100000
-        }
-
-        [DllImport("kernel32", CharSet = CharSet.Auto)]
-        public static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport("kernel32", CharSet = CharSet.Auto)]
-        public static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport("kernel32", CharSet = CharSet.Auto)]
-        public static extern bool FindClose(IntPtr hFindFile);
-
-        [DllImport("kernel32", SetLastError = true)]
-        internal static extern bool ReadFile(SafeFileHandle hFile, Byte[] aBuffer, UInt32 cbToRead, UInt32 cbThatWereRead, IntPtr pOverlapped);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern SafeFileHandle CreateFile(string lpFileName, DesiredAccess dwDesiredAccess, ShareMode dwShareMode, IntPtr lpSecurityAttributes,
-            CreationDisposition dwCreationDisposition, FlagsAndAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
-
-        [DllImport("kernel32", SetLastError = true)]
-        internal static extern Int32 CloseHandle(SafeFileHandle hObject);
-
-
-        public void GetNewOrders(DateTime dateFrom, DateTime dateTo)
-        {
-            if (SelectedRelationship == null) return;
-            if (string.IsNullOrEmpty(SelectedRelationship.partnerIln)) return;
-                        
-            List<string> sqls = new List<string>();
-            List<WIN32_FIND_DATA> files = new List<WIN32_FIND_DATA>();
-            string dir = AppConfig.FtpDir+SelectedRelationship.partnerIln;
-            byte[] aBuffer;
-            DocumentOrder order;
-            List<OracleCommand> commands = new List<OracleCommand>();
-            WIN32_FIND_DATA w32file = new WIN32_FIND_DATA();
-            SafeFileHandle hFile = null;
-            DateTime w32fileCreateTime, minDate = DateTime.MaxValue, maxDate = DateTime.MinValue;
-            
-            Documents.Clear();
-            GetDocuments(dateFrom, dateTo);
-
-            IntPtr h = FindFirstFile(dir+"\\*.*", out w32file);
-            FindNextFile(h, out w32file); // пропускаем указатель на родительский каталог
-            while (FindNextFile(h, out w32file))
-            {
-                w32fileCreateTime = DateTime.FromFileTime((((long)w32file.ftCreationTime.dwHighDateTime) << 32) | ((uint)w32file.ftCreationTime.dwLowDateTime));
-                if (!(w32fileCreateTime > dateFrom.AddHours(-1) && w32fileCreateTime < dateTo.AddHours(1))) continue;
-                // 1 - в скобках раньше, 0 - равно, -1 - позже
-                if (minDate.CompareTo(w32fileCreateTime) >= 0) minDate = w32fileCreateTime;
-                if (maxDate.CompareTo(w32fileCreateTime) <= 0) maxDate = w32fileCreateTime;
-                files.Add(w32file);
-            }
-            FindClose(h);
-            
-            
-            foreach (var w32f in files)
-            {
-                var name = w32f.cFileName;
-                var size = w32f.nFileSizeLow;
-                hFile = CreateFile(dir + "\\" + name, DesiredAccess.GENERIC_READ, ShareMode.FILE_SHARE_READ, IntPtr.Zero, CreationDisposition.OPEN_EXISTING, 0, IntPtr.Zero);
-                if (hFile.IsInvalid)
-                {
-                    int Err = Marshal.GetLastWin32Error();
-                    throw new System.ComponentModel.Win32Exception(Err);
-                    //failCount++;
-                    //fails += "\n#" + failCount + " : Win32Err#" + Err + ", file: " + name + "\n" + new System.ComponentModel.Win32Exception(Err).Message + "\n";
-                    continue;
-                }
-                
-                aBuffer = new byte[size];
-                ReadFile(hFile, aBuffer, size, 0, IntPtr.Zero);
-                hFile.Close();
-
-                order = (DocumentOrder)new XmlSerializer(typeof(DocumentOrder))
-                    .Deserialize(new StringReader(((XmlNode[])((Envelope)new XmlSerializer(typeof(Envelope))
-                    .Deserialize(new StringReader(Encoding.UTF8.GetString(aBuffer)))).Body.receiveResponse.@return.cnt)
-                    .First().OuterXml));
-
-                if (!Documents.Any(x => order.OrderHeader.OrderNumber == x.ORDER_NUMBER))
-                {
-                    commands.Add(new OracleCommand()
-                    {
-                        Parameters = {
-                        new OracleParameter("P_SENDER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Sender?.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_EXPECTED_DELIVERY_DATE", OracleDbType.NVarChar, (order?.OrderHeader?.ExpectedDeliveryDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),
-                        new OracleParameter("P_DELIVERY_POINT_ILN", OracleDbType.NVarChar, order?.OrderParties.DeliveryPoint?.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_BUYER_ILN", OracleDbType.NVarChar, order?.OrderParties?.Buyer?.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_CUSTOMER_ILN", OracleDbType.NVarChar, order?.OrderParties?.UltimateCustomer?.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_SELLER_ILN", OracleDbType.NVarChar, order?.DocumentParties?.Receiver.ILN ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_ORDER_CURRENCY", OracleDbType.NVarChar, order?.OrderHeader?.OrderCurrency ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_ORDER_DATE", OracleDbType.NVarChar, (order?.OrderHeader?.OrderDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),
-                        new OracleParameter("P_ORDER_NUMBER", OracleDbType.NVarChar, order?.OrderHeader?.OrderNumber ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_REMARKS", OracleDbType.NVarChar, order?.OrderHeader?.Remarks ?? "", ParameterDirection.Input),
-                        new OracleParameter("P_TOTAL_GROSS_AMOUNT", OracleDbType.NVarChar, order?.OrderSummary?.TotalGrossAmount ?? "", ParameterDirection.Input)
-                    },
-                        CommandType = CommandType.StoredProcedure,
-                        CommandText = "EDI.Edi_MANAGER.ADD_ORDER"
-                    });
-                    if (order.OrderLines.Lines.Count > 0)
-                        foreach (var line in order.OrderLines.Lines)
-                        {
-                            commands.Add(new OracleCommand()
-                            {
-                                Parameters =
-                        {
-                            new OracleParameter("P_Edi_DOC_NUMBER", OracleDbType.NVarChar, order.OrderHeader.OrderNumber, ParameterDirection.Input),
-                            new OracleParameter("P_LINE_NUMBER", OracleDbType.NVarChar, line?.LineItem?.LineNumber ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_BUYER_ITEM_CODE", OracleDbType.NVarChar, line?.LineItem?.BuyerItemCode ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ITEM_DESCRIPTION", OracleDbType.NVarChar, line?.LineItem?.ItemDescription ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_UNIT_NET_PRICE", OracleDbType.NVarChar, line?.LineItem?.OrderedUnitNetPrice ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_UNIT_GROSS_PRICE", OracleDbType.NVarChar, line?.LineItem?.OrderedUnitGrossPrice ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_TAX_RATE", OracleDbType.NVarChar, line?.LineItem?.TaxRate ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_EAN", OracleDbType.NVarChar, line?.LineItem?.EAN ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_GROSS_WEIGHT", OracleDbType.NVarChar, line?.LineItem?.GrossWeight ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_NET_WEIGHT", OracleDbType.NVarChar, line?.LineItem?.NetWeight ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_GROSS_AMOUNT", OracleDbType.NVarChar, line?.LineItem?.OrderedGrossAmount ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_NET_AMOUNT", OracleDbType.NVarChar, line?.LineItem?.OrderedNetAmount ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_TAX_AMOUNT", OracleDbType.NVarChar, line?.LineItem?.OrderedTaxAmount ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_SUPPLIER_ITEM_CODE", OracleDbType.NVarChar, line?.LineItem?.SupplierItemCode ?? "", ParameterDirection.Input),
-                            new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
-                        },
-                                CommandType = CommandType.StoredProcedure,
-                                CommandText = "EDI.Edi_MANAGER.ADD_ORDER_DETAIL"
-                            });
-                        }
-
-                }
-
-            }
-            try
-            {
-                ExecuteCommand(commands);
-                GetDocuments(dateFrom, dateTo);
-                commands.Clear();
-                RaiseAllProps();                
-            }
-            catch (Exception ex)
-            {
-                Error(ex);
-            }
-        }
-
-
-        internal void GetDocuments(DateTime dateFrom, DateTime dateTo)
+        
+        
+        internal void GetDocuments()
         {
             var sql = Sqls.GET_ORDERS(SelectedRelationship?.partnerIln ?? "'%'", dateFrom, dateTo);
             Documents = DocumentSelect<Document>(sql);
@@ -522,8 +253,6 @@ namespace EdiClient.ViewModel
             return result;
         }
 
-        private string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
-
         public Command UpdateFailedDetailsCommand = new Command((o) =>
         {
             try
@@ -540,10 +269,6 @@ namespace EdiClient.ViewModel
 
         });
 
-        /// <summary>
-        /// Создать реальный документ для работы в trader
-        /// </summary>
-        /// <param name="orderNumber">номер заказа (не его ID в базе!)</param>
         internal void CreateTraderDocument(string orderID)
         {
             var commands = new List<OracleCommand>()
@@ -563,6 +288,7 @@ namespace EdiClient.ViewModel
             ExecuteCommand(commands);
             commands.Clear();
         }
+
 
 
         internal DocumentDespatchAdvice DocumentToXmlDespatchAdvice(Document doc)
@@ -648,39 +374,7 @@ namespace EdiClient.ViewModel
 
             return advice;
         }
-
-        /// <summary>
-        /// Отправить извещение об отгрузке в систему EDI
-        /// </summary>
-        /// <param name="advice">отправляемый заказ</param>
-        internal void SendDesadv(Document doc)
-        {
-            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            // преобразование выбранного документа в xml-desadv
-            DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
-
-            if (advice == null) { Error("При отправке уведомления об отгрузке: не выбран заказ"); return; }
-            if (advice.DocumentParties == null) { Error("При отправке уведомления об отгрузке: отсутсвуют части документа(DocumentParties)"); return; }
-            if (advice.DocumentParties?.Receiver == null) { Error("При отправке уведомления об отгрузке: отсутствует отправитель"); return; }
-            if (String.IsNullOrEmpty(advice.DocumentParties.Receiver.ILN)) { Error("При отправке уведомления об отгрузке: у отправителя отсутствует GLN"); return; }
-            if (SelectedRelationship == null) { Error("При отправке уведомления об отгрузке: не выбран покупатель"); return; }
-            if (SelectedRelationship.partnerIln == null) { Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
-            if (advice.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
-
-
-            EdiService.Send(SelectedRelationship?.partnerIln, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
-            ExecuteCommand(new OracleCommand()
-            {
-                Parameters =
-                        {
-                            new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
-                        },
-                Connection = Connection.conn,
-                CommandType = CommandType.StoredProcedure,
-                CommandText = "EDI.EDI_MANAGER.MAKE_DESADV"
-            });
-        }
-
+        
         internal DocumentOrderResponse DocumentToXmlOrderResponse(Document doc)
         {
             DocumentOrderResponse ordrsp = null;
@@ -735,7 +429,7 @@ namespace EdiClient.ViewModel
                     },
                     OrderResponseHeader = new DocumentOrderResponseOrderResponseHeader()
                     {
-                        DocumentFunctionCode = "9", // требование EDISOFT
+                        DocumentFunctionCode = "9",
                         OrderResponseNumber = doc?.CODE ?? "",
                         OrderResponseDate = DateTime.Parse(doc?.DOC_DATETIME),
                         OrderResponseCurrency = doc?.ORDER_CURRENCY ?? "",
@@ -774,13 +468,106 @@ namespace EdiClient.ViewModel
             catch (Exception ex) { Error(ex); }
             return ordrsp;
         }
-                
 
-        /// <summary>
-        /// Отправить ответ на заказ в систему EDI
-        /// </summary>
-        /// <param name="order">отправляемый заказ</param>
-        internal void SendOrdrsp(Document doc)
+
+
+        public int GetNewOrders(bool selectedDates = false)
+        {
+            int count = 0;
+
+            List<OracleCommand> commands = new List<OracleCommand>();
+
+
+            foreach (var rel in Relationships)
+            {
+                if (Relationships == null) return count;
+
+                var sql = Sqls.GET_ORDERS(rel?.partnerIln ?? "'%'",
+                            !selectedDates ? DateTime.Now.AddDays(-14) : dateFrom,
+                            !selectedDates ? DateTime.Now.AddDays(2) : dateTo);
+                var docs = DocumentSelect<Document>(sql);
+
+                List<Model.WebModel.DocumentInfo> NewOrders
+                   = ListMBEx(rel.partnerIln, "ORDER", "", "", "", ToEdiDateString(!selectedDates ? DateTime.Now.AddDays(-14) : dateFrom),
+                   ToEdiDateString(!selectedDates ? DateTime.Now.AddDays(2) : dateTo), "", "", "")
+                   .Where(x => x?.documentStatus != "Ошибка" || !string.IsNullOrEmpty(x.fileName)).Where(x => !docs.Any(d => d.ORDER_NUMBER == x.documentNumber)).ToList();
+
+                if (NewOrders.Count() > 0)
+                {
+                    foreach (var order in NewOrders)
+                    {
+                        var document = Receive<DocumentOrder>(rel.partnerIln, rel.documentType, order.trackingId, rel.documentStandard, "").First();
+
+                        if (!docs.Any(x => document.OrderHeader.OrderNumber == x.ORDER_NUMBER))
+                        {
+                            count++;
+                            commands.Add(new OracleCommand()
+                            {
+                                Parameters = {
+                                    new OracleParameter("P_SENDER_ILN", OracleDbType.NVarChar, document?.DocumentParties?.Sender?.ILN ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_EXPECTED_DELIVERY_DATE", OracleDbType.NVarChar, (document?.OrderHeader?.ExpectedDeliveryDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),
+                                    new OracleParameter("P_DELIVERY_POINT_ILN", OracleDbType.NVarChar, document?.OrderParties.DeliveryPoint?.ILN ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_BUYER_ILN", OracleDbType.NVarChar, document?.OrderParties?.Buyer?.ILN ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_CUSTOMER_ILN", OracleDbType.NVarChar, document?.OrderParties?.UltimateCustomer?.ILN ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_SELLER_ILN", OracleDbType.NVarChar, document?.DocumentParties?.Receiver.ILN ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_ORDER_CURRENCY", OracleDbType.NVarChar, document?.OrderHeader?.OrderCurrency ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_ORDER_DATE", OracleDbType.NVarChar, (document?.OrderHeader?.OrderDate ?? DateTime.Now).ToShortDateString(), ParameterDirection.Input),
+                                    new OracleParameter("P_ORDER_NUMBER", OracleDbType.NVarChar, document?.OrderHeader?.OrderNumber ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_REMARKS", OracleDbType.NVarChar, document?.OrderHeader?.Remarks ?? "", ParameterDirection.Input),
+                                    new OracleParameter("P_TOTAL_GROSS_AMOUNT", OracleDbType.NVarChar, document?.OrderSummary?.TotalGrossAmount ?? "", ParameterDirection.Input)
+                                },
+                                CommandType = CommandType.StoredProcedure,
+                                CommandText = "EDI.Edi_MANAGER.ADD_ORDER"
+                            });
+                            if (document.OrderLines.Lines.Count > 0)
+                                foreach (var line in document.OrderLines.Lines)
+                                {
+                                    commands.Add(new OracleCommand()
+                                    {
+                                        Parameters =
+                                        {
+                                            new OracleParameter("P_Edi_DOC_NUMBER", OracleDbType.NVarChar, document.OrderHeader.OrderNumber, ParameterDirection.Input),
+                                            new OracleParameter("P_LINE_NUMBER", OracleDbType.NVarChar, line?.LineItem?.LineNumber ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_BUYER_ITEM_CODE", OracleDbType.NVarChar, line?.LineItem?.BuyerItemCode ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ITEM_DESCRIPTION", OracleDbType.NVarChar, line?.LineItem?.ItemDescription ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ORDERED_UNIT_NET_PRICE", OracleDbType.NVarChar, line?.LineItem?.OrderedUnitNetPrice ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ORDERED_UNIT_GROSS_PRICE", OracleDbType.NVarChar, line?.LineItem?.OrderedUnitGrossPrice ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_TAX_RATE", OracleDbType.NVarChar, line?.LineItem?.TaxRate ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_EAN", OracleDbType.NVarChar, line?.LineItem?.EAN ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_GROSS_WEIGHT", OracleDbType.NVarChar, line?.LineItem?.GrossWeight ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_NET_WEIGHT", OracleDbType.NVarChar, line?.LineItem?.NetWeight ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ORDERED_GROSS_AMOUNT", OracleDbType.NVarChar, line?.LineItem?.OrderedGrossAmount ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ORDERED_NET_AMOUNT", OracleDbType.NVarChar, line?.LineItem?.OrderedNetAmount ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ORDERED_TAX_AMOUNT", OracleDbType.NVarChar, line?.LineItem?.OrderedTaxAmount ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_SUPPLIER_ITEM_CODE", OracleDbType.NVarChar, line?.LineItem?.SupplierItemCode ?? "", ParameterDirection.Input),
+                                            new OracleParameter("P_ORDERED_QUANTITY", OracleDbType.Number, line?.LineItem?.OrderedQuantity ?? "0", ParameterDirection.Input)
+                                        },
+                                        CommandType = CommandType.StoredProcedure,
+                                        CommandText = "EDI.Edi_MANAGER.ADD_ORDER_DETAIL"
+                                    });
+                                }
+                        }
+
+                    }
+
+                }
+
+                try
+                {
+                    ExecuteCommand(commands);
+                    commands.Clear();
+                    RaiseAllProps();
+                }
+                catch (Exception ex)
+                {
+                    Error(ex);
+                }
+
+            }
+            return count;
+        }
+
+        internal void SendSelectedOrderResponse(Document doc)
         {
             //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
             // преобразование выбранного документа в xml-desadv
@@ -795,7 +582,7 @@ namespace EdiClient.ViewModel
             if (order.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
 
             var sendOrder = XmlService<DocumentOrderResponse>.Serialize(order);
-            EdiService.Send(SelectedRelationship.partnerIln, "ORDRSP", "", "", "T", "", sendOrder, 20);
+            Send(SelectedRelationship.partnerIln, "ORDRSP", "", "", "T", "", sendOrder, 20);
             ExecuteCommand(new OracleCommand()
             {
                 Parameters =
@@ -808,12 +595,185 @@ namespace EdiClient.ViewModel
             });
         }
 
-
-
-        internal List<DocumentReceivingAdvice> GetRecadv()
+        internal void SendSelectedDespatchAdvice(Document doc)
         {
-            //Logger.Log($"[DOCREP] {MethodBase.GetCurrentMethod().DeclaringType} {MethodBase.GetCurrentMethod().Name}");
-            return new List<DocumentReceivingAdvice>();
+            DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
+
+            if (advice == null) { Error("При отправке уведомления об отгрузке: не выбран заказ"); return; }
+            if (advice.DocumentParties == null) { Error("При отправке уведомления об отгрузке: отсутсвуют части документа(DocumentParties)"); return; }
+            if (advice.DocumentParties?.Receiver == null) { Error("При отправке уведомления об отгрузке: отсутствует отправитель"); return; }
+            if (String.IsNullOrEmpty(advice.DocumentParties.Receiver.ILN)) { Error("При отправке уведомления об отгрузке: у отправителя отсутствует GLN"); return; }
+            if (SelectedRelationship == null) { Error("При отправке уведомления об отгрузке: не выбран покупатель"); return; }
+            if (SelectedRelationship.partnerIln == null) { Error("Невозможная ошибка: у покупателя отсутствует GLN (звоните в IT-отдел!)"); return; }
+            if (advice.DocumentParties.Receiver.ILN != SelectedRelationship.partnerIln) { Error("Нельзя отправить документ другому покупателю! Выберите соответствующего документу покупателя и повторите отправку."); return; }
+
+
+            Send(SelectedRelationship?.partnerIln, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
+            ExecuteCommand(new OracleCommand()
+            {
+                Parameters =
+                        {
+                            new OracleParameter("P_ID", OracleDbType.NVarChar, doc.ID, ParameterDirection.Input)
+                        },
+                Connection = Connection.conn,
+                CommandType = CommandType.StoredProcedure,
+                CommandText = "EDI.EDI_MANAGER.MAKE_DESADV"
+            });
         }
+
+        private int SendOrderResponses()
+        {
+            List<Document> docs; // словить с базы все документы подходящие под отправку
+            var sql = "SELECT * FROM EDI.EDI_GET_ORDERS WHERE ORDRSP IS NULL " +
+    "AND DESADV IS NULL " +
+    "AND ID_TRADER IS NOT NULL " +
+    "AND ACT_STATUS >= 3 " +
+    "AND CONTRACTOR_MANE IS NOT NULL ";//да-да, это ошибка: MANE->NAME
+            //кому какое дело? я тут разработчик!
+
+            docs = DocumentSelect<Document>(sql);
+            foreach (var doc in docs)
+            {
+                doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
+                DocumentOrderResponse order = DocumentToXmlOrderResponse(doc);
+                Send(doc.SENDER_ILN, "ORDRSP", "", "", "T", "", XmlService<DocumentOrderResponse>.Serialize(order));
+                ExecuteCommand(new OracleCommand()
+                {
+                    Parameters =
+                        {
+                            new OracleParameter("P_ID", OracleDbType.Number, doc.ID, ParameterDirection.Input)
+                        },
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = "EDI.EDI_MANAGER.MAKE_ORDRSP"
+                });
+            }
+            return docs.Count;
+        }
+
+        private int SendDespatchAdvice()
+        {
+            List<Document> docs;
+
+            var sql = "SELECT * FROM EDI.EDI_GET_ORDERS WHERE ORDRSP IS NOT NULL " +
+"AND DESADV IS NULL " +
+"AND ID_TRADER IS NOT NULL " +
+"AND ACT_STATUS >= 4 " +
+"AND CONTRACTOR_MANE IS NOT NULL ";//да-да, это ошибка: MANE->NAME
+            //кому какое дело? я тут разработчик!
+
+            docs = DocumentSelect<Document>(sql);
+            if (docs != null)
+                if (docs.Count > 0)
+                    foreach (var doc in docs)
+                        doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
+
+            foreach (var doc in docs)
+            {
+                doc.Details = GetDocumentDetails(doc.ID) ?? new List<Detail>();
+                DocumentDespatchAdvice advice = DocumentToXmlDespatchAdvice(doc);
+                Send(doc.SENDER_ILN, "DESADV", "", "", "T", "", XmlService<DocumentDespatchAdvice>.Serialize(advice), 20);
+                ExecuteCommand(new OracleCommand()
+                {
+                    Parameters =
+                        {
+                            new OracleParameter("P_ID", OracleDbType.Number, doc.ID, ParameterDirection.Input)
+                        },
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = "EDI.EDI_MANAGER.MAKE_DESADV"
+                });
+            }
+            return docs.Count;
+        }
+
+
+
+        private string ToEdiDateString(DateTime date) => $"{date.Year}-{date.Month}-{date.Day}";
+
+        private void RaiseAllProps()
+        {
+            foreach (var prop in typeof(MainViewModel).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                NotifyPropertyChanged(prop.Name);
+            }
+        }
+
+
+
+
+
+
+
+
+        public AppConfig AppConfig { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public PriceTypesView _PriceTypesView { get; set; }
+        public MatchMakerView _MatchMakerView { get; set; }
+        public ContractorsMatchView _ContractorsMatchView { get; set; }
+        private DateTime dateTo;
+        private DateTime dateFrom;
+        private Document selectedDocument;
+        private List<Document> documents;
+        private string _Time = "0";
+
+        public string Time
+        {
+            get { return _Time; }
+            set
+            {
+                if (value != _Time)
+                {
+                    _Time = value;
+                    RaiseAllProps();
+                }
+            }
+        }
+
+        public string LoadedDocsCount => Documents.Count().ToString();
+
+        public List<Document> Documents
+        {
+            get { return documents ?? new List<Document>(); }
+            set
+            {
+                documents = value;
+                RaiseAllProps();
+            }
+        }
+
+        public Document SelectedDocument
+        {
+            get { return selectedDocument; }
+            set
+            {
+                selectedDocument = value;
+                RaiseAllProps();
+            }
+        }
+
+        public DateTime DateFrom
+        {
+            get { return dateFrom; }
+            set
+            {
+                dateFrom = value;
+                RaiseAllProps();
+            }
+        }
+
+        public DateTime DateTo
+        {
+            get { return dateTo; }
+            set
+            {
+                dateTo = value;
+                RaiseAllProps();
+            }
+        }
+
+        protected void NotifyPropertyChanged(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
     }
 }
